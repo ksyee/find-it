@@ -10,7 +10,7 @@ const pxToRemFunc = (start, end) => {
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./src/**/*.{js,ts,jsx,tsx}'],
+  content: ['./app/**/*.{jsx,ts,tsx}', './components/**/*.{jsx, ts, tsx}'],
   theme: {
     extend: {
       spacing: {
