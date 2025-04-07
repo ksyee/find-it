@@ -7,6 +7,8 @@ interface ButtonSelectItemProps {
   onClickFirst?: () => void;
   onClickSecond?: () => void;
   disabledSecond: boolean;
+  hasFirstSelection?: boolean;
+  hasSecondSelection?: boolean;
 }
 
 const ButtonSelectItem: React.FC<ButtonSelectItemProps> = ({
@@ -15,35 +17,36 @@ const ButtonSelectItem: React.FC<ButtonSelectItemProps> = ({
   onClickFirst,
   onClickSecond,
   disabledSecond,
+  hasFirstSelection = false,
+  hasSecondSelection = false,
 }) => {
   /* -------------------------------------------------------------------------- */
   // 버튼 선택시 스타일변경 & 상위 프롭 함수 실행
-  const [isActiveFirst, setIsActiveFirst] = useState(false);
-  const [secondTextColor, setSecondTextColor] = useState('#666');
-  const [secondBorderColor, setSecondBorderColor] = useState('#666');
+  const isActiveColor = '#4785ff';
   const commonStyle =
     'flex h-fit items-center truncate rounded-full px-14px py-6px text-10px';
-  const isActiveColor = '#4785ff';
 
   const onFirst = () => {
-    setIsActiveFirst(true);
-    setSecondTextColor('#666');
-    setSecondBorderColor('#BCBCBC');
     if (onClickFirst) {
       onClickFirst();
     }
   };
   const onSecond = () => {
-    setSecondTextColor(isActiveColor);
-    setSecondBorderColor(isActiveColor);
-
     if (onClickSecond) {
       onClickSecond();
     }
   };
-  const handleDisabledSecond = disabledSecond && !isActiveFirst;
-  const firstTextColor = (!isActiveFirst && 'black') || isActiveColor;
-  const firstBorderColor = (!isActiveFirst && '#666') || isActiveColor;
+
+  // 실제 선택된 값에 따라 색상 결정
+  const firstTextColor = hasFirstSelection ? isActiveColor : 'black';
+  const firstBorderColor = hasFirstSelection ? isActiveColor : '#666';
+
+  const secondTextColor = hasSecondSelection ? isActiveColor : '#666';
+  const secondBorderColor = hasSecondSelection
+    ? isActiveColor
+    : disabledSecond
+      ? '#BCBCBC'
+      : '#666';
 
   /* -------------------------------------------------------------------------- */
   // jsx 반환
@@ -63,7 +66,7 @@ const ButtonSelectItem: React.FC<ButtonSelectItemProps> = ({
       </button>
       <button
         onClick={onSecond}
-        disabled={handleDisabledSecond}
+        disabled={disabledSecond}
         className={commonStyle}
         type="button"
         style={{

@@ -16,7 +16,7 @@ const Navigation: React.FC = () => {
   const location = useLocation();
 
   //비회원은 마이페이지 대신 로그인 노출
-  const isLoggedIn = localStorage.getItem('pocketbase_auth');
+  const isLoggedIn = localStorage.getItem('supabase_auth');
 
   const pathname = location.pathname;
 

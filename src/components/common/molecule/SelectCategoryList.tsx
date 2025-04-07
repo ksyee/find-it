@@ -5,6 +5,7 @@ interface SelectCategoryListProps {
   dataList: string[];
   getSelectItem: (item: string) => void;
   onClose: () => void;
+  initialSelectedItem?: string;
 }
 
 const SelectCategoryList: React.FC<SelectCategoryListProps> = ({
@@ -12,11 +13,12 @@ const SelectCategoryList: React.FC<SelectCategoryListProps> = ({
   dataList,
   getSelectItem,
   onClose,
-}) => {
+  initialSelectedItem = '',
+}): React.ReactElement => {
   /* -------------------------------------------------------------------------- */
   //함수 본문
 
-  const [selectedItem, setSelectedItem] = useState<string>('');
+  const [selectedItem, setSelectedItem] = useState<string>(initialSelectedItem);
   const ulRef = useRef<HTMLUListElement>(null);
   const defaultColor = '#666';
   const selectedColor = '#4785ff';
@@ -38,12 +40,16 @@ const SelectCategoryList: React.FC<SelectCategoryListProps> = ({
     </svg>
   );
 
+  // 초기 선택 값을 설정
+  useEffect(() => {
+    if (initialSelectedItem) {
+      setSelectedItem(initialSelectedItem);
+    }
+  }, [initialSelectedItem]);
+
   /* -------------------------------------------------------------------------- */
   // 클릭한 아이템값 가져오기
-  const handleClickItem = (
-    item: string,
-    event?: React.MouseEvent<HTMLAnchorElement>
-  ) => {
+  const handleClickItem = (item: string, event?: React.MouseEvent) => {
     event?.preventDefault();
     setSelectedItem(item);
     getSelectItem(item);
@@ -53,11 +59,8 @@ const SelectCategoryList: React.FC<SelectCategoryListProps> = ({
   // 바깥 영역 클릭시 컴포넌트 사라짐
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (
-        selectedItem &&
-        ulRef.current &&
-        !ulRef.current.contains(e.target as Node)
-      ) {
+      if (ulRef.current && !ulRef.current.contains(e.target as Node)) {
+        // 아무것도 선택하지 않은 상태에서는 아무 값도 전달하지 않고 그냥 닫기만 함
         onClose();
       }
     };
@@ -65,7 +68,7 @@ const SelectCategoryList: React.FC<SelectCategoryListProps> = ({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [onClose, selectedItem]);
+  }, [onClose]);
 
   /* -------------------------------------------------------------------------- */
   // jsx 반환
@@ -77,18 +80,19 @@ const SelectCategoryList: React.FC<SelectCategoryListProps> = ({
         className="absolute bottom-0 left-1/2 h-3/4 w-full max-w-400px translate-x-[-50%] overflow-auto rounded-t-40px bg-white px-40px pt-40px"
       >
         <h3 className="pb-36px text-18px">{title}</h3>
-        {dataList.map((item, index) => (
-          <li
-            className="flex items-center justify-between pb-20px"
-            key={index}
-            style={{
-              color: `${(selectedItem === item && selectedColor) || defaultColor}`,
-            }}
-          >
-            <button onClick={() => handleClickItem(item)}>{item}</button>
-            {selectedItem === item && checkIcon}
-          </li>
-        ))}
+        {Array.isArray(dataList) &&
+          dataList.map((item, index) => (
+            <li
+              className="flex items-center justify-between pb-20px"
+              key={index}
+              style={{
+                color: `${(selectedItem === item && selectedColor) || defaultColor}`,
+              }}
+            >
+              <button onClick={() => handleClickItem(item)}>{item}</button>
+              {selectedItem === item && checkIcon}
+            </li>
+          ))}
       </ul>
     </div>
   );

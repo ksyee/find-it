@@ -1,10 +1,10 @@
-import { pb } from '@/lib/api/getPbData';
 // import PocketBase from 'pocketbase';
 
 // const pb = new PocketBase('https://findit.pockethost.io');
 import { Link } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { updateData, getData } from '@/lib/utils/crud';
+import { supabase } from '@/lib/api/supabase';
 import {
   GetSidoList,
   GetGunguList,
@@ -13,12 +13,12 @@ import {
 import profile from '@/assets/profile.svg';
 import profileIcon from '@/assets/icons/icon_camera.svg';
 import Header from '@/components/Header/Header';
-import getPbImgURL from '@/lib/utils/getPbImgURL';
 import Horizon from '@/components/common/atom/Horizon';
 import InputFormSlim from '@/components/SignIn/molecule/InputFormSlim';
 import ButtonSelectItem from '@/components/common/molecule/ButtonSelectItem';
 import SelectCategoryList from '@/components/common/molecule/SelectCategoryList';
 import ModalComp from '@/components/common/molecule/ModalComp';
+import getImageURL from '@/lib/utils/getImageURL';
 
 // 타입 정의
 type AlertProps =
@@ -37,13 +37,13 @@ const MypageEdit = () => {
   };
   /* -------------------------------------------------------------------------- */
   //로컬 데이터 가져오기
-  const loginUserData = localStorage.getItem('pocketbase_auth');
+  const loginUserData = localStorage.getItem('supabase_auth');
   const localData = loginUserData && JSON.parse(loginUserData);
-  const userNickname = localData?.model?.nickname;
-  const userId = localData?.model?.id;
-  const userAvatar = localData?.model?.avatar;
-  const userSido = localData?.model?.state;
-  const userGungu = localData?.model?.city;
+  const userNickname = localData?.user?.user_metadata?.nickname;
+  const userId = localData?.session?.user?.id;
+  const userAvatar = localData?.user?.user_metadata?.avatar_url;
+  const userSido = localData?.user?.user_metadata?.state;
+  const userGungu = localData?.user?.user_metadata?.city;
 
   /* -------------------------------------------------------------------------- */
   // 입력값
@@ -81,12 +81,12 @@ const MypageEdit = () => {
     }
   };
   // 비밀번호 기존 입력
-  const handlePasswordDefault = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePasswordDefault = (e: React.ChangeEvent) => {
     const newValue = e.target.value;
     setPasswordDefaultValue(newValue);
   };
   // 비밀번호2 입력 & 동일 검사
-  const handlePasswordCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePasswordCheck = (e: React.ChangeEvent) => {
     const newValue = e.target.value;
     setPasswordCheckValue(newValue);
     if (newValue !== passwordValue) {
@@ -96,7 +96,7 @@ const MypageEdit = () => {
     }
   };
   //닉네임 입력 & 중복검사 문구 지우기, 중복검사 상태 지우기
-  const handleNickname = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNickname = (e: React.ChangeEvent) => {
     const newValue = e.target.value;
     setNicknameValue(newValue);
     setAlertNickname('');
@@ -107,12 +107,12 @@ const MypageEdit = () => {
   // 닉네임 중복확인
   const handleDoubleCheckNickname = async () => {
     try {
-      const records = await getData('users', {
-        filter: `nickname="${nicknameValue}"`,
-      });
-      const realdata = records && records[0];
-      const nicknameData = realdata && realdata.nickname;
-      if (nicknameData === nicknameValue) {
+      const { data } = await supabase
+        .from('users')
+        .select('nickname')
+        .eq('nickname', nicknameValue);
+
+      if (data && data.length > 0) {
         setAlertNickname('doubleCheckNickname');
         setValiNickDouble(false);
       } else {
@@ -166,7 +166,7 @@ const MypageEdit = () => {
 
   // 대분류 버튼 클릭시 대분류 리스트 랜더링 & 소분류 비활성화 & 소분류 초기화
   const [renderFirstList, setRenderFirstList] = useState(false);
-  const [disabledSecond, setDisabledSecond] = useState(true);
+  const [disabledSecond, setDisabledSecond] = useState(false);
   const handleFirstItem = () => {
     setRenderFirstList(true);
     setSelectSecondItem('');
@@ -179,10 +179,11 @@ const MypageEdit = () => {
   };
 
   // 렌더된 리스트 (SelectCategoryList 컴포넌트) 에서 찍은거 가져오기
-  // // 첫번째 아이템 리스트
+  // 첫번째 아이템 리스트
   const [selectFirstItem, setSelectFirstItem] = useState('');
   const handleSelectFirstItem = (item: string) => {
     setSelectFirstItem(item);
+    setDisabledSecond(false);
   };
   // 두번째 아이템 리스트
   const [selectSecondItem, setSelectSecondItem] = useState('');
@@ -233,10 +234,29 @@ const MypageEdit = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [PWModalOpen, setPWModalOpen] = useState(false);
 
-  const buttonSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const buttonSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await updateData('users', userId, updateUserData);
+      if (passwordValue && passwordDefaultValue) {
+        // 비밀번호 변경
+        const { error: passwordError } = await supabase.auth.updateUser({
+          password: passwordValue,
+        });
+        if (passwordError) throw passwordError;
+      }
+
+      // 프로필 데이터 업데이트
+      const { error: profileError } = await supabase
+        .from('users')
+        .update({
+          nickname: nicknameValue || userNickname,
+          state: selectFirstItem || userSido,
+          city: selectSecondItem || userGungu,
+        })
+        .eq('id', userId);
+
+      if (profileError) throw profileError;
+
       setIsModalOpen(true);
     } catch (error) {
       setPWModalOpen(true);
@@ -245,7 +265,7 @@ const MypageEdit = () => {
   };
   const onClickConfirm = () => {
     setPWModalOpen(false);
-    window.location.href = '/mypage ';
+    window.location.href = '/mypage';
 
     if (isModalOpen === true) {
       window.location.reload();
@@ -259,36 +279,43 @@ const MypageEdit = () => {
   const avatarRef = useRef<HTMLImageElement>(null);
 
   const [fileInput, setFileInput] = useState<HTMLInputElement | null>(null);
-  const formData = new FormData();
   useEffect(() => {
     const input = document.getElementById('fileInput') as HTMLInputElement;
     setFileInput(input);
   }, []);
 
-  // 포켓베이스 파일 업로드 부분
+  // Supabase 파일 업로드 부분
   const handleFileInput = async () => {
     try {
       if (fileInput && fileInput.files && fileInput.files.length > 0) {
         const file = fileInput.files[0];
         console.log('업로드한 이미지:', file);
-        formData.append('avatar', file);
+
+        // 파일명 생성
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${userId}-${Math.random()}.${fileExt}`;
+
+        // 파일 업로드
+        const { error: uploadError } = await supabase.storage
+          .from('avatars')
+          .upload(fileName, file);
+
+        if (uploadError) throw uploadError;
+
+        // 프로필 업데이트
+        const { error: updateError } = await supabase.auth.updateUser({
+          data: { avatar_url: fileName },
+        });
+
+        if (updateError) throw updateError;
+
+        // 업로드한 이미지 반영
+        if (avatarRef.current) {
+          avatarRef.current.src = getImageURL('avatars', fileName);
+        }
+
+        window.location.reload();
       }
-      console.log('폼데이터에 심은 업로드한 이미지:', formData.get('avatar'));
-
-      // pb 업로드
-      const updatedUserInfo = await pb
-        .collection('users')
-        .update(userId, formData);
-
-      // 업로드한거 화면 반영
-      const avatarUrl = (avatarRef.current.src = pb.files.getUrl(
-        updatedUserInfo,
-        updatedUserInfo.avatar,
-        { thumb: '88x88' }
-      ));
-      avatarRef.current.src = avatarUrl;
-
-      window.location.reload();
     } catch (error) {
       console.error('프로필 변경 데이터 통신 오류:', error);
       alert('서버가 불안정하여 재로그인이 필요합니다.');
@@ -329,11 +356,10 @@ const MypageEdit = () => {
           <img
             ref={avatarRef}
             className="size-88px rounded-full"
-            src={userAvatar !== '' ? getPbImgURL(userId, userAvatar) : profile}
+            src={userAvatar ? getImageURL('avatars', userAvatar) : profile}
             alt="나의 프로필 사진"
           />
           <img
-            ref={avatarRef}
             className="absolute	bottom-0 right-0 z-10 size-32px translate-x-4px translate-y-4px "
             src={profileIcon}
             alt="프로필 사진 변경 버튼"

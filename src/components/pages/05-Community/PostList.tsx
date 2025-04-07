@@ -6,7 +6,7 @@ import Navigation from '@/components/Navigation/Navigation';
 import Horizon from '@/components/common/atom/Horizon';
 
 const PostList = () => {
-  const loginUserData = localStorage.getItem('pocketbase_auth');
+  const loginUserData = localStorage.getItem('supabase_auth');
 
   return (
     <div className="flex h-screen w-full flex-col items-center">

@@ -2,8 +2,8 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getData } from '@/lib/utils/crud';
 import { getTimeDiff } from '@/lib/utils/getTimeDiff';
-import getPbImgURL from '@/lib/utils/getPbImgURL';
 import profile from '@/assets/profile.svg';
+import getImageURL from '@/lib/utils/getImageURL';
 
 const PostDetailBody = () => {
   const { id } = useParams();
@@ -44,7 +44,7 @@ const PostDetailBody = () => {
       <section className="flex items-center gap-8px pt-20px">
         <img
           src={
-            (userAvatar !== '' && getPbImgURL(userId, userAvatar)) || profile
+            (userAvatar !== '' && getImageURL('avatars', userAvatar)) || profile
           }
           alt="글쓴이 프로필 사진"
           className="size-34px rounded-full"

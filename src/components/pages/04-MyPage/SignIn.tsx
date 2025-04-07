@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { pb } from '@/lib/api/getPbData';
-import { getData } from '@/lib/utils/crud';
+import { signIn } from '@/lib/utils/auth';
 import Header from '@/components/Header/Header';
 import InputForm from '@/components/SignIn/molecule/InputForm';
 import ButtonVariable from '@/components/common/molecule/ButtonVariable';
@@ -33,13 +32,13 @@ const SignIn = () => {
 
   /* -------------------------------------------------------------------------- */
   // 입력 함수
-  const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleEmail = (e: React.ChangeEvent) => {
     e.preventDefault();
     const newValue = e.target.value;
     setEmailValue(newValue);
     setAlertEmail('');
   };
-  const handlePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePassword = (e: React.ChangeEvent) => {
     const newValue = e.target.value;
     setPasswordValue(newValue);
     setAlertPassword('');
@@ -61,7 +60,7 @@ const SignIn = () => {
   };
   /* -------------------------------------------------------------------------- */
   // 회원가입 버튼
-  const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignUp = (e: React.FormEvent) => {
     e.preventDefault();
     window.location.href = '/signup';
   };
@@ -77,29 +76,20 @@ const SignIn = () => {
   }, [emailValue, passwordValue]);
 
   // 최종 로그인 버튼
-  const handleSignIn = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    (async () => {
-      // 이메일 있는지 확인
-      const records = await getData('users', {
-        filter: `email="${emailValue}"`, //pb 에서 조건 충족 리스트 가져옴(객체 1개배열)
-      });
-      const realdata = records && records[0];
-      const emailData = realdata && realdata.email;
-      if (emailData === emailValue) {
-        /// 이메일 같을 경우 권한 db 전송
-        try {
-          await pb
-            .collection('users')
-            .authWithPassword(emailValue, passwordValue);
-          window.location.href = '/';
-        } catch (error) {
-          setAlertPassword('invalidValue');
-        }
-      } else {
-        setAlertEmail('userEmail');
+    try {
+      const data = await signIn(emailValue, passwordValue);
+      if (data.session) {
+        // 로그인 성공 시 로컬 스토리지에 세션 정보 저장
+        localStorage.setItem('supabase_auth', JSON.stringify(data));
+        window.location.href = '/';
       }
-    })();
+    } catch (error) {
+      console.error('로그인 실패:', error);
+      // 이메일이나 비밀번호가 잘못된 경우
+      setAlertPassword('invalidValue');
+    }
   };
   /* -------------------------------------------------------------------------- */
   /* -------------------------------------------------------------------------- */

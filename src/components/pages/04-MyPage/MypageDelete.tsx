@@ -1,4 +1,5 @@
-import { pb } from '@/lib/api/getPbData';
+import { supabase } from '@/lib/api/supabase';
+import { signOut } from '@/lib/utils/auth';
 import { useEffect, useRef, useState } from 'react';
 import Header from '@/components/Header/Header';
 import InputFormSlim from '@/components/SignIn/molecule/InputFormSlim';
@@ -20,10 +21,10 @@ type AlertProps =
 const MypageDelete = () => {
   /* -------------------------------------------------------------------------- */
   //로컬 데이터 가져오기
-  const loginUserData = localStorage.getItem('pocketbase_auth');
+  const loginUserData = localStorage.getItem('supabase_auth');
   const localData = loginUserData && JSON.parse(loginUserData);
-  const userEmail = localData?.model?.email;
-  const userId = localData?.model?.id;
+  const userEmail = localData?.session?.user?.email;
+  const userId = localData?.session?.user?.id;
 
   // 이메일 변수
   const [emailValue, setEmailValue] = useState('');
@@ -34,14 +35,14 @@ const MypageDelete = () => {
   const emailCheckRef = useRef(null);
 
   // 이메일1 입력값
-  const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleEmail = (e: React.ChangeEvent) => {
     e.preventDefault();
     const newValue = e.target.value;
     setEmailValue(newValue);
     setAlertEmail('');
   };
   // 이메일2 입력갑 확인 & 1과 비교
-  const handleEmailCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleEmailCheck = (e: React.ChangeEvent) => {
     e.preventDefault();
     const newValue = e.target.value;
     setEmailCheckValue(newValue);
@@ -75,13 +76,18 @@ const MypageDelete = () => {
 
   const deleteData = async () => {
     try {
-      await pb.collection('users').delete(userId);
+      // 사용자 프로필 데이터 삭제
+      await supabase.from('users').delete().eq('id', userId);
+
+      // 사용자 계정 삭제
+      const { error } = await supabase.auth.admin.deleteUser(userId);
+      if (error) throw error;
     } catch (error) {
-      console.error('pb 유저 데이터 삭제 오류', error);
+      console.error('사용자 데이터 삭제 오류', error);
     }
   };
 
-  const isComplete = (e: React.FormEvent<HTMLFormElement>) => {
+  const isComplete = (e: React.FormEvent) => {
     e.preventDefault();
     if (emailValue !== userEmail) {
       setAlertEmail('userEmailDouble');
@@ -91,8 +97,9 @@ const MypageDelete = () => {
       setIsModalOpen(true);
     }
   };
-  const onClickConfirm = () => {
-    pb.authStore.clear();
+  const onClickConfirm = async () => {
+    await signOut();
+    localStorage.removeItem('supabase_auth');
     window.location.href = '/';
     setIsModalOpen(false);
   };

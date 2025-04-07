@@ -1,10 +1,14 @@
-import { pb } from '@/lib/api/getPbData';
+import { supabase } from '@/lib/api/supabase';
 
 export const getData = async (collection: string, options: object = {}) => {
   try {
-    const response = pb.collection(collection).getFullList(options);
+    const { data, error } = await supabase
+      .from(collection)
+      .select('*')
+      .order('created_at', { ascending: false });
 
-    return response;
+    if (error) throw error;
+    return data;
   } catch (error) {
     console.error('에러 발생: ', error);
   }
@@ -12,9 +16,13 @@ export const getData = async (collection: string, options: object = {}) => {
 
 export const createData = async (collection: string, data: object) => {
   try {
-    const response = pb.collection(collection).create(data);
+    const { data: insertedData, error } = await supabase
+      .from(collection)
+      .insert(data)
+      .select();
 
-    return response;
+    if (error) throw error;
+    return insertedData[0];
   } catch (error) {
     console.error('에러 발생: ', error);
   }
@@ -26,9 +34,14 @@ export const updateData = async (
   data: object
 ) => {
   try {
-    const response = pb.collection(collection).update(id, data);
+    const { data: updatedData, error } = await supabase
+      .from(collection)
+      .update(data)
+      .eq('id', id)
+      .select();
 
-    return response;
+    if (error) throw error;
+    return updatedData[0];
   } catch (error) {
     console.error('에러 발생: ', error);
   }
@@ -36,9 +49,10 @@ export const updateData = async (
 
 export const deleteData = async (collection: string, id: string) => {
   try {
-    const response = pb.collection(collection).delete(id);
+    const { error } = await supabase.from(collection).delete().eq('id', id);
 
-    return response;
+    if (error) throw error;
+    return { success: true };
   } catch (error) {
     console.error('에러 발생: ', error);
   }

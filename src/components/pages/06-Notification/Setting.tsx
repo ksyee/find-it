@@ -1,11 +1,12 @@
-import { pb } from '@/lib/utils/pb';
+import { supabase } from '@/lib/api/supabase';
 import { useState, useEffect } from 'react';
 import Horizon from '@/components/common/atom/Horizon';
 import icon_delete from '@/assets/icons/icon_delete.svg';
 import ModalComp from '@/components/common/molecule/ModalComp';
 
-const pocketAuth = localStorage.getItem('pocketbase_auth');
-const pocketData = pocketAuth ? JSON.parse(pocketAuth) : null;
+const loginUserData = localStorage.getItem('supabase_auth');
+const userData = loginUserData ? JSON.parse(loginUserData) : null;
+const userId = userData?.session?.user?.id;
 
 interface KeywordType {
   keywords: string;
@@ -44,20 +45,27 @@ const Setting = () => {
   };
 
   useEffect(() => {
-    (async () => {
-      if (pocketData) {
-        const userKeyword: KeywordType = await pb
-          .collection('users')
-          .getOne(pocketData.model.id, {
-            fields: 'keywords',
-            headers: {
-              'Access-Control-Allow-Origin': '*',
-            },
-          });
+    const fetchUserKeywords = async () => {
+      if (userId) {
+        try {
+          const { data, error } = await supabase
+            .from('users')
+            .select('keywords')
+            .eq('id', userId)
+            .single();
 
-        setUserKeyword(userKeyword);
+          if (error) throw error;
+
+          if (data && data.keywords) {
+            setUserKeyword({ keywords: data.keywords });
+          }
+        } catch (error) {
+          console.error('Failed to fetch user keywords:', error);
+        }
       }
-    })();
+    };
+
+    fetchUserKeywords();
   }, []);
 
   const handleAddButton = async () => {
@@ -80,36 +88,49 @@ const Setting = () => {
       return;
     }
 
-    // pb에 키워드 업데이트
-    if (newKeyword) {
+    // Supabase에 키워드 업데이트
+    if (newKeyword && userId) {
       const updateKeyword = userKeyword.keywords
         ? `${userKeyword.keywords}, ${newKeyword}`
         : newKeyword;
 
-      const data = {
-        keywords: updateKeyword,
-      };
-      await pb.collection('users').update(pocketData.model.id, data);
+      try {
+        const { error } = await supabase
+          .from('users')
+          .update({ keywords: updateKeyword })
+          .eq('id', userId);
 
-      setUserKeyword({ keywords: updateKeyword });
-      keywordInput.value = '';
+        if (error) throw error;
+
+        setUserKeyword({ keywords: updateKeyword });
+        keywordInput.value = '';
+      } catch (error) {
+        console.error('Failed to update keywords:', error);
+      }
     }
   };
 
-  const handleClearButton = (keywordToDelete: string) => {
+  const handleClearButton = async (keywordToDelete: string) => {
     const updatedKeywords = userKeyword.keywords
       .split(', ')
       .filter((keyword) => keyword !== keywordToDelete)
       .join(', ');
 
-    setUserKeyword({ keywords: updatedKeywords });
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({ keywords: updatedKeywords })
+        .eq('id', userId);
 
-    pb.collection('users').update(pocketData.model.id, {
-      keywords: updatedKeywords,
-    });
+      if (error) throw error;
 
-    // 로컬 스토리지에서 키워드 삭제
-    localStorage.removeItem(keywordToDelete);
+      setUserKeyword({ keywords: updatedKeywords });
+
+      // 로컬 스토리지에서 키워드 삭제
+      localStorage.removeItem(keywordToDelete);
+    } catch (error) {
+      console.error('Failed to delete keyword:', error);
+    }
   };
 
   const noKeywordMessage = (

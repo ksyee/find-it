@@ -6,7 +6,7 @@ import Horizon from '@/components/common/atom/Horizon';
 
 /* -------------------------------------------------------------------------- */
 //로컬 데이터 가져오기
-const loginUserData = localStorage.getItem('pocketbase_auth');
+const loginUserData = localStorage.getItem('supabase_auth');
 const localData = loginUserData && JSON.parse(loginUserData);
 const userNickname = localData?.model?.nickname;
 
@@ -49,7 +49,7 @@ const CreatePost = () => {
   }, [titleValue, bodyValue, tagValue]);
 
   //완료 버튼
-  const buttonSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const buttonSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await createData('community', newPostData);
     window.location.href = '/postlist';

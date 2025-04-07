@@ -53,7 +53,7 @@ const LostList = () => {
   // }, [fetching]);
 
   const handleScroll = useCallback(
-    (event: UIEvent<HTMLDivElement>) => {
+    (event: UIEvent) => {
       const { scrollTop, scrollHeight, clientHeight } = event.currentTarget;
       if (scrollTop + clientHeight >= scrollHeight && hasNextPage) {
         fetchNextPage();
@@ -119,8 +119,8 @@ const LostList = () => {
           className="h-[calc(100vh-66px-80px)] overflow-auto"
         >
           <ul className="flex flex-col items-center">
-            {data.pages.map((page: AllData[]) =>
-              page.map((item, index) => (
+            {data?.pages?.map((page: AllData[]) =>
+              page?.map((item, index) => (
                 <li key={index}>
                   <ItemBox item={item} itemType="lost" />
                 </li>

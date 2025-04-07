@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { pb } from '@/lib/api/getPbData';
+import { signOut } from '@/lib/utils/auth';
 import { Link, useLocation } from 'react-router-dom';
 
 import profile from '@/assets/profile.svg';
@@ -10,7 +10,7 @@ import icon_envelope from '@/assets/icons/icon_envelope.svg';
 import icon_search from '@/assets/icons/icon_search_16.svg';
 import icon_bell from '@/assets/icons/icon_bell.svg';
 import Horizon from '../../common/atom/Horizon';
-import getPbImgURL from '@/lib/utils/getPbImgURL';
+import getImageURL from '@/lib/utils/getImageURL';
 import Header from '../../Header/Header';
 
 declare global {
@@ -24,16 +24,17 @@ declare global {
 
 /* -------------------------------------------------------------------------- */
 // 로그인 유저 정보 가져오기
-const loginUserData = localStorage.getItem('pocketbase_auth');
+const loginUserData = localStorage.getItem('supabase_auth');
 const localData = loginUserData && JSON.parse(loginUserData);
-const userNickname = localData?.model?.nickname;
-const userEmail = localData?.model?.email;
-const userId = localData?.model?.id;
-const userAvatar = localData?.model?.avatar;
+const userNickname = localData?.user?.user_metadata?.nickname;
+const userEmail = localData?.session?.user?.email;
+const userId = localData?.session?.user?.id;
+const userAvatar = localData?.user?.user_metadata?.avatar_url;
 
 // 로그아웃 기능
-const handleLogout = () => {
-  pb.authStore.clear();
+const handleLogout = async () => {
+  await signOut();
+  localStorage.removeItem('supabase_auth');
   window.location.href = '/';
 };
 
@@ -48,7 +49,7 @@ const Profile = () => {
   return (
     <section className="my-30px flex items-center gap-4">
       <img
-        src={userAvatar !== '' ? getPbImgURL(userId, userAvatar) : profile}
+        src={userAvatar ? getImageURL('avatars', userAvatar) : profile}
         alt="나의 프로필 사진"
         className="size-66px rounded-full"
       />

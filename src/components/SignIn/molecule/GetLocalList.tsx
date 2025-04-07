@@ -42,11 +42,11 @@ export const GetSidoList = () => {
 
 export const GetCode = (addrName: string) => {
   const accessToken = useGetToken();
-  const [localCode, setLocalCode] = useState<string | null>();
+  const [localCode, setLocalCode] = useState<string | null>(null);
 
   useEffect(() => {
     const getLocalList = async () => {
-      if (!accessToken) return;
+      if (!accessToken || !addrName) return;
 
       try {
         const SIDOURL = `${import.meta.env.VITE_LOCAL_API_URL}?accessToken=${accessToken}`;
@@ -60,7 +60,9 @@ export const GetCode = (addrName: string) => {
         const code = data?.find((item) =>
           item.addr_name.includes(addrName)
         )?.cd;
-        setLocalCode(code?.toString());
+        if (code) {
+          setLocalCode(code.toString());
+        }
       } catch (error) {
         console.error('시도 코드 가져오기 에러남: ' + error);
       }

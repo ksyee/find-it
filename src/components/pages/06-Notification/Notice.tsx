@@ -1,145 +1,144 @@
-import { pb } from '@/lib/utils/pb';
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getAllData } from '@/lib/utils/getAPIData';
-import { GetDetailData, JsonType } from '@/types/types';
-import none_alarm from '@/assets/none_alarm.svg';
-import icon_next from '@/assets/icons/icon_next.svg';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/api/supabase';
+import Horizon from '@/components/common/atom/Horizon';
+import icon_bell from '@/assets/icons/icon_bell.svg';
+import { getTimeDiff } from '@/lib/utils/getTimeDiff';
+
 interface KeywordType {
   keywords: string;
 }
 
 interface RecommendationType {
-  keyword: string;
-  selectedItem: string;
+  id: string;
+  receiveTime: string;
+  regionString: string;
+  organizationName: string;
+  productName: string;
+  foundDate: string;
+  foundPlace: string;
+  userName: string;
+  keywordName: string;
 }
 
 const Notice = () => {
-  const navigate = useNavigate();
-  const [userKeyword, setUserKeyword] = useState<KeywordType | null>(null);
+  const [userKeywordData, setUserKeywordData] = useState<KeywordType>({
+    keywords: '',
+  });
   const [recommendations, setRecommendations] = useState<RecommendationType[]>(
-    () => {
-      const savedRecommendations = localStorage.getItem('recommendations');
-      return savedRecommendations ? JSON.parse(savedRecommendations) : [];
-    }
+    []
   );
 
   useEffect(() => {
-    const fetchUserKeyword = async () => {
-      const pocketAuth = localStorage.getItem('pocketbase_auth');
-      const pocketData = pocketAuth ? JSON.parse(pocketAuth) : null;
+    (async () => {
+      const supabaseAuth = localStorage.getItem('supabase_auth');
+      const supabaseData = supabaseAuth ? JSON.parse(supabaseAuth) : null;
+      const userId = supabaseData?.session?.user?.id;
 
-      // 로그인 유저의 키워드 데이터 가져오기
-      if (pocketAuth) {
-        const userKeywordData: KeywordType = await pb
-          .collection('users')
-          .getOne(pocketData.model.id, {
-            fields: 'keywords',
-            headers: {
-              'Access-Control-Allow-Origin': '*',
-            },
-          });
-        setUserKeyword(userKeywordData);
-      }
-    };
-    fetchUserKeyword();
-  }, []);
+      if (userId) {
+        try {
+          const { data, error } = await supabase
+            .from('users')
+            .select('keywords')
+            .eq('id', userId)
+            .single();
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      // 등록된 키워드가 있을 경우, 최근 습득물 데이터 가져오기
-      if (userKeyword) {
-        const keywordsArray = userKeyword.keywords.split(', ').filter((k) => k);
-        const data = await getAllData({ numOfRows: 100 });
+          if (error) throw error;
 
-        // 최근 습득물 데이터 중 키워드와 일치하는 데이터 (물품명, ID) 추출
-        const recentItemData = (data as JsonType).map(
-          (item: GetDetailData) => `${item.fdPrdtNm}^${item.atcId}`
-        );
-
-        // 추출한 데이터 중 랜덤으로 추천하기
-        const newRecommendations = keywordsArray
-          .map((keyword) => {
-            const filteredItems = recentItemData.filter((item) =>
-              item.includes(keyword)
-            );
-            if (filteredItems.length > 0) {
-              const randomIndex = Math.floor(
-                Math.random() * filteredItems.length
-              );
-              const selectedItem = filteredItems[randomIndex];
-              return { keyword, selectedItem };
-            }
-            return null;
-          })
-          .filter((item) => item !== null);
-
-        // 추천 데이터가 있을 경우, 로컬스토리지에 저장
-        if (newRecommendations.length > 0) {
-          setRecommendations((prevRecommendations) => {
-            const updatedRecommendations = [
-              ...prevRecommendations,
-              ...newRecommendations,
-            ];
-            localStorage.setItem(
-              'recommendations',
-              JSON.stringify(updatedRecommendations)
-            );
-            return updatedRecommendations;
-          });
+          if (data && data.keywords) {
+            setUserKeywordData({ keywords: data.keywords });
+          }
+        } catch (error) {
+          console.error('키워드 가져오기 에러:', error);
         }
       }
-    };
-    fetchPosts();
-
-    // 1시간마다 키워드 추천 알림
-    const interval = setInterval(fetchPosts, 30000);
-    return () => clearInterval(interval);
-  }, [userKeyword]);
-
-  // 추천 알림 클릭 -> 상세 페이지 이동 및 로컬 삭제
-  const handleButton = (index: number) => {
-    navigate(
-      `/getlist/detail/${recommendations[index].selectedItem.split('^')[1]}`
-    );
-
-    const updatedRecommendations = recommendations.filter(
-      (_, i) => i !== index
-    );
-    localStorage.setItem(
-      'recommendations',
-      JSON.stringify(updatedRecommendations)
-    );
-    setRecommendations(updatedRecommendations);
-  };
-
-  const noneAlarmImage = (
-    <img
-      src={none_alarm}
-      alt="새로운 알림이 없습니다."
-      className="mx-auto mt-90px"
-    />
-  );
-
-  const alarmList = (
-    <ul className="">
-      {recommendations.map((recommendation, index) => (
-        <li key={index} className="pb-25px text-14px">
-          <button
-            className="flex w-full justify-between"
-            onClick={() => handleButton(index)}
-          >
-            <span>[{recommendation.keyword}] 관련 습득물을 확인해보세요</span>
-            <img src={icon_next} alt="관련 글 확인하기" />
-          </button>
-        </li>
-      ))}
-    </ul>
-  );
+    })();
+  }, []);
 
   return (
-    <div className="w-375px px-30px pt-40px">
-      {recommendations.length === 0 ? noneAlarmImage : alarmList}
+    <div className="w-375px">
+      <div className="text-center text-14px">
+        {!userKeywordData.keywords ? (
+          <section className="flex flex-col items-center py-80px">
+            <img
+              src={icon_bell}
+              alt="키워드 등록 필요"
+              className="h-32px w-32px"
+            ></img>
+            <p className="pt-20px text-center text-14px">
+              키워드를 등록하면 관련 알림을 볼 수 있어요.
+            </p>
+          </section>
+        ) : (
+          <ul className="px-30px">
+            {userKeywordData.keywords.split(', ').map((keyword) => {
+              // 로컬 스토리지에서 키워드별 알림 정보 가져오기
+              const savedRecommendations = localStorage.getItem(
+                `recommendations_${keyword}`
+              );
+              if (savedRecommendations) {
+                try {
+                  const parsedRecommendations: RecommendationType[] =
+                    JSON.parse(savedRecommendations);
+                  if (parsedRecommendations.length > 0) {
+                    return (
+                      <li key={keyword} className="pb-25px text-14px">
+                        <p className="pb-10px text-left">
+                          <span className="text-primary">{keyword}</span> 키워드
+                          관련 습득물 알림
+                        </p>
+                        {parsedRecommendations.map((rec, index) => (
+                          <button
+                            key={index}
+                            className="w-full pb-20px text-left"
+                            onClick={() => {
+                              window.open(
+                                `https://www.lost112.go.kr/find/findDetail.do?FIND_IDNTFCTN_NO=${rec.id}`
+                              );
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                window.open(
+                                  `https://www.lost112.go.kr/find/findDetail.do?FIND_IDNTFCTN_NO=${rec.id}`
+                                );
+                              }
+                            }}
+                            aria-label={`${rec.productName} 습득물 상세정보 보기`}
+                          >
+                            <div className="flex justify-between text-12px">
+                              <p className="text-gray-400">
+                                {rec.organizationName}
+                              </p>
+                              <p className="text-gray-400">
+                                {getTimeDiff({ createdAt: rec.receiveTime })}
+                              </p>
+                            </div>
+                            <p className="pb-5px pt-15px text-15px">
+                              {rec.productName}
+                            </p>
+                            <p className="text-black-500 text-13px">
+                              습득장소: {rec.foundPlace}
+                            </p>
+                            <p className="text-black-500 text-13px">
+                              습득일자: {rec.foundDate}
+                            </p>
+                            <Horizon lineBold="thin" lineWidth="short" />
+                          </button>
+                        ))}
+                      </li>
+                    );
+                  }
+                } catch (error) {
+                  console.error(
+                    `Error parsing recommendations for ${keyword}:`,
+                    error
+                  );
+                }
+              }
+              return null;
+            })}
+          </ul>
+        )}
+      </div>
     </div>
   );
 };

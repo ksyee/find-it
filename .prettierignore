@@ -1,0 +1,16 @@
+# 빌드 산출물
+build
+dist
+coverage
+
+# 패키지 관련 파일
+node_modules
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# 기타 파일
+.git
+.github
+.vscode
+.DS_Store
