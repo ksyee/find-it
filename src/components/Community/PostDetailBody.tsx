@@ -37,7 +37,7 @@ const PostDetailBody = () => {
 
   if (isLoading) return <div>로딩중...</div>;
 
-  const { title, content: bodyText, tag, nickname, created } = thisData;
+  const { title, content: bodyText, tag, nickname, created_at } = thisData;
 
   return (
     <div className="w-315px">
@@ -51,7 +51,7 @@ const PostDetailBody = () => {
         />
         <div className="flex flex-col text-12px">
           <span className="text-14px">{nickname}</span>
-          {getTimeDiff({ createdAt: created })}
+          {getTimeDiff({ createdAt: created_at })}
         </div>
       </section>
 

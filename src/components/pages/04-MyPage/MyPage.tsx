@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { signOut } from '@/lib/utils/auth';
 import { Link, useLocation } from 'react-router-dom';
+import { supabase } from '@/lib/api/supabase';
 
 import profile from '@/assets/profile.svg';
 import icon_pencil from '@/assets/icons/icon_pencil.svg';
@@ -29,7 +30,33 @@ const localData = loginUserData && JSON.parse(loginUserData);
 const userNickname = localData?.user?.user_metadata?.nickname;
 const userEmail = localData?.session?.user?.email;
 const userId = localData?.session?.user?.id;
-const userAvatar = localData?.user?.user_metadata?.avatar_url;
+
+// 프로필 이미지 URL 처리 함수
+const getProfileImageSrc = (avatarValue: string | null | undefined): string => {
+  console.log('프로필 이미지 값:', avatarValue);
+
+  if (!avatarValue) {
+    console.log('기본 이미지 사용');
+    return profile;
+  }
+
+  // URL인지 확인 (http 또는 https로 시작하는지)
+  if (avatarValue.startsWith('http')) {
+    console.log('전체 URL 사용:', avatarValue);
+    return avatarValue;
+  }
+
+  // 파일명만 있는 경우 getImageURL 사용
+  const imageUrl = getImageURL('avatars', avatarValue);
+  console.log('생성된 URL:', imageUrl);
+  return imageUrl;
+};
+
+// 이미지 로드 오류 처리
+const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+  console.error('이미지 로드 실패:', e.currentTarget.src);
+  e.currentTarget.src = profile; // 기본 프로필 이미지로 대체
+};
 
 // 로그아웃 기능
 const handleLogout = async () => {
@@ -46,12 +73,56 @@ const showAlert = () => {
 /* -------------------------------------------------------------------------- */
 // 마이페이지 마크업
 const Profile = () => {
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    // 캐시된 URL이 있는지 확인
+    const cachedUrl = sessionStorage.getItem('user_avatar_url');
+
+    if (cachedUrl) {
+      // 캐시된 URL 사용
+      console.log('캐시된 프로필 이미지 URL 사용:', cachedUrl);
+      setAvatarUrl(cachedUrl);
+    } else {
+      // 없으면 데이터베이스에서 가져오기
+      const fetchAvatarUrl = async () => {
+        if (!userId) return;
+
+        try {
+          // users 테이블에서 사용자의 avatar URL 조회
+          const { data, error } = await supabase
+            .from('users')
+            .select('avatar')
+            .eq('id', userId)
+            .single();
+
+          if (error) {
+            console.error('프로필 이미지 URL 조회 오류:', error);
+            return;
+          }
+
+          if (data && data.avatar) {
+            console.log('데이터베이스에서 가져온 avatar URL:', data.avatar);
+            setAvatarUrl(data.avatar);
+            // 세션 스토리지에 URL 캐싱
+            sessionStorage.setItem('user_avatar_url', data.avatar);
+          }
+        } catch (error) {
+          console.error('프로필 이미지 조회 중 오류 발생:', error);
+        }
+      };
+
+      fetchAvatarUrl();
+    }
+  }, []);
+
   return (
     <section className="my-30px flex items-center gap-4">
       <img
-        src={userAvatar ? getImageURL('avatars', userAvatar) : profile}
+        src={avatarUrl ? getProfileImageSrc(avatarUrl) : profile}
         alt="나의 프로필 사진"
-        className="size-66px rounded-full"
+        className="size-66px rounded-full object-cover"
+        onError={handleImageError}
       />
       <div className="flex flex-col gap-6px">
         <div className="flex items-center gap-4px">

@@ -35,14 +35,14 @@ const MypageDelete = () => {
   const emailCheckRef = useRef(null);
 
   // 이메일1 입력값
-  const handleEmail = (e: React.ChangeEvent) => {
+  const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const newValue = e.target.value;
     setEmailValue(newValue);
     setAlertEmail('');
   };
   // 이메일2 입력갑 확인 & 1과 비교
-  const handleEmailCheck = (e: React.ChangeEvent) => {
+  const handleEmailCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const newValue = e.target.value;
     setEmailCheckValue(newValue);

@@ -29,22 +29,40 @@ export const signUp = async (
   userData: UserData
 ) => {
   try {
-    // 사용자 계정 생성
+    // 1. 사용자 계정 생성 (메타데이터 포함)
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          ...userData, // 모든 사용자 데이터를 메타데이터로 포함
+        },
+      },
     });
 
     if (authError) throw authError;
 
-    // 추가 사용자 데이터 저장
-    if (authData.user) {
-      const { error: profileError } = await supabase.from('users').insert({
-        id: authData.user.id,
-        ...userData,
+    // 2. 생성된 사용자 ID를 가져오기
+    const userId = authData?.user?.id;
+
+    if (userId) {
+      // 3. users 테이블에 직접 데이터 삽입
+      const { error: insertError } = await supabase.from('users').insert({
+        id: userId,
+        email: email,
+        nickname: userData.nickname || '',
+        avatar: userData.avatar_url || '',
+        state: userData.state || '',
+        city: userData.city || '',
+        keywords: userData.keywords || '',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       });
 
-      if (profileError) throw profileError;
+      if (insertError) {
+        console.error('사용자 데이터 삽입 에러:', insertError);
+        // 인증은 성공했으므로 에러를 던지지 않고 진행
+      }
     }
 
     return authData;

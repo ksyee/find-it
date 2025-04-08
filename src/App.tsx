@@ -29,12 +29,14 @@ import SearchFindDetail from '@/components/SearchDetail/pages/SearchFindDetail';
 import SearchLostDetail from './components/SearchDetail/pages/SearchLostDetail';
 import SearchFindResult from '@/components/SearchResult/SearchFindResult';
 import SearchLostResult from './components/SearchResult/SearchLostResult';
+import { SyncScheduler } from './lib/utils/scheduledSync';
+import { setupSupabase } from './lib/utils/setupSupabase';
 
 const SPLASH_KEY = 'alreadyVisited';
 
 const queryClient = new QueryClient();
 
-const App = () => {
+const App = (): JSX.Element => {
   const [showSplash, setShowSplash] = useState(() => {
     // 로컬 스토리지에서 키 값을 읽기
     const alreadyVisited = JSON.parse(localStorage.getItem(SPLASH_KEY));
@@ -44,7 +46,7 @@ const App = () => {
   });
 
   useEffect(() => {
-    let timeout: number;
+    let timeout: ReturnType<typeof setTimeout>;
 
     if (showSplash) {
       // 스플래시 보이는 시간 :  3.5초 뒤 사라짐
@@ -58,6 +60,29 @@ const App = () => {
       clearTimeout(timeout);
     };
   }, [showSplash]);
+
+  // Supabase 초기화 및 동기화 스케줄러 설정
+  useEffect(() => {
+    const initSyncScheduler = async () => {
+      try {
+        // Supabase 테이블 초기 설정
+        await setupSupabase();
+
+        // 동기화 스케줄러 시작
+        const scheduler = SyncScheduler.getInstance();
+        scheduler.start();
+
+        // 앱 종료 시 스케줄러 중지 (정리 함수)
+        return () => {
+          scheduler.stop();
+        };
+      } catch (error) {
+        console.error('동기화 스케줄러 초기화 오류:', error);
+      }
+    };
+
+    initSyncScheduler();
+  }, []);
 
   if (showSplash) {
     return <Splash />;

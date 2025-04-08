@@ -3,9 +3,31 @@ interface timeProps {
 }
 
 export const getTimeDiff: React.FC<timeProps> = ({ createdAt }) => {
-  const milliSeconds = new Date().getTime() - new Date(createdAt).getTime();
-  const seconds = milliSeconds / 1000;
+  // 현재 시간을 가져오기
+  const now = new Date();
 
+  // 생성 시간을 Date 객체로 변환
+  const createdDate = new Date(createdAt);
+
+  // 유효한 날짜인지 확인
+  if (isNaN(createdDate.getTime())) {
+    return <span className="text-10px text-gray-450">날짜 정보 없음</span>;
+  }
+
+  // 디버깅을 위한 로그
+  console.log('현재 시간:', now.toISOString());
+  console.log('생성 시간:', createdDate.toISOString());
+
+  // 시간 차이 계산
+  const milliSeconds = now.getTime() - createdDate.getTime();
+  console.log('시간 차이(ms):', milliSeconds);
+
+  // 방금 작성한 글이면 (10초 이내)
+  if (milliSeconds < 10 * 1000) {
+    return <span className="text-10px text-gray-450">방금 전</span>;
+  }
+
+  const seconds = milliSeconds / 1000;
   if (seconds < 60) {
     return <span className="text-10px text-gray-450">방금 전</span>;
   }

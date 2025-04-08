@@ -19,6 +19,7 @@ import ButtonSelectItem from '@/components/common/molecule/ButtonSelectItem';
 import SelectCategoryList from '@/components/common/molecule/SelectCategoryList';
 import ModalComp from '@/components/common/molecule/ModalComp';
 import getImageURL from '@/lib/utils/getImageURL';
+import { uploadProfileImage } from '@/lib/utils/uploadImage';
 
 // 타입 정의
 type AlertProps =
@@ -81,12 +82,12 @@ const MypageEdit = () => {
     }
   };
   // 비밀번호 기존 입력
-  const handlePasswordDefault = (e: React.ChangeEvent) => {
+  const handlePasswordDefault = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setPasswordDefaultValue(newValue);
   };
   // 비밀번호2 입력 & 동일 검사
-  const handlePasswordCheck = (e: React.ChangeEvent) => {
+  const handlePasswordCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setPasswordCheckValue(newValue);
     if (newValue !== passwordValue) {
@@ -96,7 +97,7 @@ const MypageEdit = () => {
     }
   };
   //닉네임 입력 & 중복검사 문구 지우기, 중복검사 상태 지우기
-  const handleNickname = (e: React.ChangeEvent) => {
+  const handleNickname = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setNicknameValue(newValue);
     setAlertNickname('');
@@ -291,36 +292,56 @@ const MypageEdit = () => {
         const file = fileInput.files[0];
         console.log('업로드한 이미지:', file);
 
-        // 파일명 생성
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${userId}-${Math.random()}.${fileExt}`;
-
-        // 파일 업로드
-        const { error: uploadError } = await supabase.storage
-          .from('avatars')
-          .upload(fileName, file);
-
-        if (uploadError) throw uploadError;
-
-        // 프로필 업데이트
-        const { error: updateError } = await supabase.auth.updateUser({
-          data: { avatar_url: fileName },
-        });
-
-        if (updateError) throw updateError;
-
-        // 업로드한 이미지 반영
-        if (avatarRef.current) {
-          avatarRef.current.src = getImageURL('avatars', fileName);
+        // 파일 크기 및 타입 검증
+        const fileSizeInMB = file.size / (1024 * 1024);
+        if (fileSizeInMB > 2) {
+          alert('파일 크기는 2MB 이하여야 합니다.');
+          return;
         }
 
-        window.location.reload();
+        if (!file.type.startsWith('image/')) {
+          alert('이미지 파일만 업로드 가능합니다.');
+          return;
+        }
+
+        // 업로드 진행
+        const fileName = await uploadProfileImage(file, userId);
+
+        if (!fileName) {
+          throw new Error('이미지 업로드 실패');
+        }
+
+        // 최신 사용자 데이터 조회
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('avatar')
+          .eq('id', userId)
+          .single();
+
+        if (userError) {
+          console.error('사용자 데이터 조회 오류:', userError);
+        } else if (userData && avatarRef.current) {
+          // 업로드한 이미지 반영 (URL 직접 사용)
+          avatarRef.current.src = getProfileImageSrc(userData.avatar);
+        } else {
+          // 백업 방법: Supabase Storage에서 URL 가져오기
+          const { data } = supabase.storage
+            .from('avatars')
+            .getPublicUrl(fileName);
+          if (avatarRef.current) {
+            avatarRef.current.src = data.publicUrl;
+          }
+        }
+
+        // 성공 알림
+        alert('프로필 이미지가 성공적으로 업데이트되었습니다.');
       }
     } catch (error) {
       console.error('프로필 변경 데이터 통신 오류:', error);
-      alert('서버가 불안정하여 재로그인이 필요합니다.');
+      alert('프로필 이미지 업로드에 실패했습니다. 다시 시도해주세요.');
     }
   };
+
   //프로필 버튼 클릭시 파일 선택창 열기
   const handleProfileChange = () => {
     if (fileInput) {
@@ -355,12 +376,13 @@ const MypageEdit = () => {
         >
           <img
             ref={avatarRef}
-            className="size-88px rounded-full"
-            src={userAvatar ? getImageURL('avatars', userAvatar) : profile}
+            className="size-88px rounded-full object-cover"
+            src={getProfileImageSrc(userAvatar)}
             alt="나의 프로필 사진"
+            onError={handleImageError}
           />
           <img
-            className="absolute	bottom-0 right-0 z-10 size-32px translate-x-4px translate-y-4px "
+            className="absolute bottom-0 right-0 z-10 size-32px translate-x-4px translate-y-4px "
             src={profileIcon}
             alt="프로필 사진 변경 버튼"
           ></img>
@@ -505,6 +527,33 @@ const MypageEdit = () => {
       )}
     </>
   );
+};
+
+// 프로필 이미지 URL 처리 함수
+const getProfileImageSrc = (avatarValue: string | null | undefined): string => {
+  console.log('프로필 이미지 값:', avatarValue);
+
+  if (!avatarValue) {
+    console.log('기본 이미지 사용');
+    return profile;
+  }
+
+  // URL인지 확인 (http 또는 https로 시작하는지)
+  if (avatarValue.startsWith('http')) {
+    console.log('전체 URL 사용:', avatarValue);
+    return avatarValue;
+  }
+
+  // 파일명만 있는 경우 getImageURL 사용
+  const imageUrl = getImageURL('avatars', avatarValue);
+  console.log('생성된 URL:', imageUrl);
+  return imageUrl;
+};
+
+// 이미지 로드 오류 처리
+const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+  console.error('이미지 로드 실패:', e.currentTarget.src);
+  e.currentTarget.src = profile; // 기본 프로필 이미지로 대체
 };
 
 export default MypageEdit;

@@ -11,6 +11,9 @@ import { useNavigate } from 'react-router-dom';
 import Skeleton from './../ItemBox/Skeleton';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
+/**
+ * 습득물 검색 결과 컴포넌트
+ */
 const SearchFindResult = () => {
   const {
     selectStartDate,
@@ -20,52 +23,10 @@ const SearchFindResult = () => {
     selectedAreaValue,
   } = useSearchStore();
 
-  // const [items, setItems] = useState([]);
-  // const [page, setPage] = useState(1);
-  // const [fetching, setFetching] = useState(false);
-  // const [isLoading, setIsLoading] = useState(true);
-
-  const scrollContainerRef = useRef(null);
-
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  // const fetchData = async (pageNo: number) => {
-  //   setFetching(true);
-  //   const data = await getSearchFindData({
-  //     PRDT_CL_CD_01: selectedMainCategoryValue,
-  //     PRDT_CL_CD_02: selectedSubCategoryValue,
-  //     N_FD_LCT_CD: selectedAreaValue,
-  //     START_YMD:
-  //       selectStartDate !== '날짜를 선택하세요.'
-  //         ? getFormattedDate(selectStartDate)
-  //         : '',
-  //     END_YMD:
-  //       selectEndDate !== '날짜를 선택하세요.'
-  //         ? getFormattedDate(selectEndDate)
-  //         : '',
-  //     pageNo: pageNo,
-  //     numOfRows: 10,
-  //   });
-
-  //   console.log('data');
-  //   console.log(data);
-
-  //   if (data === undefined) {
-  //     setFetching(false);
-  //     return setItems(null);
-  //   }
-
-  //   setItems((prev) => {
-  //     return [...prev, ...(data as JsonArray)];
-  //   });
-
-  //   console.log('items');
-  //   console.log(items);
-
-  //   setIsLoading(false);
-  //   setFetching(false);
-  // };
-
+  // React Query를 사용한 무한 스크롤 데이터 로딩
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
       queryKey: ['searchFindResult'],
@@ -86,47 +47,48 @@ const SearchFindResult = () => {
           numOfRows: 10,
         }),
       initialPageParam: 1,
-      getNextPageParam: (allPages) => {
-        if (Array.isArray(allPages)) {
-          return allPages.length + 1;
+      getNextPageParam: (lastPage) => {
+        if (lastPage.body?.items?.item && lastPage.body.items.item.length > 0) {
+          return lastPage.body.pageNo + 1;
         }
+        return undefined;
       },
     });
 
-  // const fetchMoreItems = useCallback(async () => {
-  //   if (!fetching) {
-  //     setFetching(true);
-  //     setPage((prevPage) => prevPage + 1);
-  //   }
-  // }, [fetching]);
-
+  // 스크롤 이벤트 핸들러
   const handleScroll = useCallback(
     (event: UIEvent<HTMLDivElement>) => {
       const { scrollTop, scrollHeight, clientHeight } = event.currentTarget;
-      if (scrollTop + clientHeight >= scrollHeight && hasNextPage) {
-        // fetchMoreItems();
+      if (
+        scrollTop + clientHeight >= scrollHeight - 20 &&
+        hasNextPage &&
+        !isFetchingNextPage
+      ) {
         fetchNextPage();
       }
     },
-    [fetchNextPage, hasNextPage]
+    [fetchNextPage, hasNextPage, isFetchingNextPage]
   );
 
+  // 스크롤 이벤트 리스너 등록
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
     if (scrollContainer) {
-      scrollContainer.addEventListener('scroll', handleScroll);
+      scrollContainer.addEventListener('scroll', handleScroll as any);
       return () => {
-        scrollContainer.removeEventListener('scroll', handleScroll);
+        scrollContainer.removeEventListener('scroll', handleScroll as any);
       };
     }
   }, [handleScroll]);
 
+  // 시작 날짜가 선택되지 않은 경우 검색 페이지로 리다이렉트
   useEffect(() => {
     if (selectStartDate === '날짜를 선택하세요.') {
       navigate('/searchfind');
     }
   }, [navigate, selectStartDate]);
 
+  // 로딩 중 UI
   if (isLoading) {
     return (
       <div className="flex h-screen w-full flex-col items-center bg-gray-200">
@@ -139,16 +101,11 @@ const SearchFindResult = () => {
             className="h-[calc(100vh-66px-80px)] overflow-auto"
           >
             <div className="flex flex-col items-center">
-              <Skeleton />
-              <Skeleton />
-              <Skeleton />
-              <Skeleton />
-              <Skeleton />
-              <Skeleton />
-              <Skeleton />
-              <Skeleton />
-              <Skeleton />
-              <Skeleton />
+              {Array(10)
+                .fill(0)
+                .map((_, index) => (
+                  <Skeleton key={index} />
+                ))}
             </div>
           </div>
         </div>
@@ -157,6 +114,7 @@ const SearchFindResult = () => {
     );
   }
 
+  // 결과 UI
   return (
     <div className="flex h-screen w-full flex-col items-center bg-gray-200">
       <Header isShowPrev={true} empty={true}>
@@ -167,25 +125,23 @@ const SearchFindResult = () => {
           ref={scrollContainerRef}
           className="h-[calc(100vh-66px-80px)] overflow-auto"
         >
-          {/* {data.pages[0] === undefined ? (
-            <span className="text-center">검색 결과가 없습니다.</span>
-          ) : ( */}
           <ul className="flex flex-col items-center">
-            {data.pages.map((page: AllData[], pageIndex: number) =>
-              page
-                ? page.map((item, itemIndex) => (
-                    <li key={itemIndex}>
-                      <ItemBox item={item} itemType="get" />
-                    </li>
-                  ))
+            {data?.pages.map((page, pageIndex: number) =>
+              page.body?.items?.item && page.body.items.item.length > 0
+                ? page.body.items.item.map(
+                    (item: AllData, itemIndex: number) => (
+                      <li key={`${pageIndex}-${itemIndex}`}>
+                        <ItemBox item={item} itemType="get" />
+                      </li>
+                    )
+                  )
                 : pageIndex === data.pages.length - 1 && (
-                    <li key={pageIndex} className="mb-16px">
+                    <li key={pageIndex} className="mb-16px text-center">
                       검색 결과가 없습니다.
                     </li>
                   )
             )}
           </ul>
-          {/* )} */}
           {isFetchingNextPage && (
             <img src={loading} alt="로딩 중" className="mx-auto" />
           )}

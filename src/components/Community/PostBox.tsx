@@ -3,7 +3,7 @@ import { getData } from '@/lib/utils/crud';
 import { getTimeDiff } from '@/lib/utils/getTimeDiff';
 
 // pb 데이터 뿌리기
-const data = await getData('community', { sort: '-created' });
+const data = await getData('community', { sort: '-created_at' });
 
 const PostBox = () => {
   return (
@@ -12,7 +12,7 @@ const PostBox = () => {
         <div key={item.id} className="w-full">
           <Link to={`/postdetail/${item.id}`}>
             <section className="relative mx-auto my-0 h-160px w-335px bg-white px-10px pt-10px">
-              {getTimeDiff({ createdAt: data[index].created })}
+              {getTimeDiff({ createdAt: data[index].created_at })}
               <h1 className="truncate pt-8px text-16px text-black">
                 {item.title}
               </h1>

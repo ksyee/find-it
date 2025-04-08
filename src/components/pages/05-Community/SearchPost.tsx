@@ -49,7 +49,7 @@ const SearchPost = () => {
         <div key={item.id} className="w-full">
           <Link to={`/postdetail/${item.id}`}>
             <section className="relative mx-auto my-0 h-160px w-335px px-10px pt-10px">
-              {getTimeDiff({ createdAt: data[index].created })}
+              {getTimeDiff({ createdAt: data[index].created_at })}
               <h1 className="truncate pt-8px text-16px text-black">
                 {item.title}
               </h1>
