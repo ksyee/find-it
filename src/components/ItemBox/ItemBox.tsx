@@ -84,42 +84,27 @@ const ItemBox: React.FC<ItemBoxProps> = ({ itemType, item }) => {
       ? default_item
       : itemData.image;
 
-  // 공통 스타일 객체
-  const styles = {
-    container: `mb-3 flex h-140px w-335px justify-between rounded-[20px] transition-all duration-300 hover:cursor-pointer hover:shadow-lg ${
-      itemType === 'main' ? 'bg-primary' : 'bg-white'
-    }`,
-    title: `pb-2 text-20px font-medium leading-[1.3] tracking-tighter ${
-      itemType === 'main' ? 'text-white' : ''
-    }`,
-    location:
-      itemType === 'main'
-        ? 'rounded-full bg-white px-3 py-1 text-10px font-medium leading-[1.3] tracking-tighter text-primary'
-        : itemType === 'get'
-          ? 'rounded-full bg-primary px-3 py-1 text-10px font-medium leading-[1.3] tracking-tighter text-white'
-          : 'rounded-full border-[1px] border-primary px-3 py-3px text-10px font-medium leading-[1.3] tracking-tighter text-primary',
-    dateLabel: `text-start text-12px font-medium leading-[1.3] tracking-tighter ${
-      itemType === 'main' ? 'text-skyblue-400' : 'text-gray-500'
-    }`,
-    date: `text-12px font-medium leading-[1.3] tracking-tighter ${
-      itemType === 'main' ? 'text-white' : ''
-    }`,
-  };
-
   return (
-    <button className="block" onClick={handleClickedItem}>
-      <div className={styles.container}>
-        <div className="flex flex-col items-start py-18px pl-20px">
-          <h1 className={styles.title}>{displayTitle}</h1>
-          <span className={styles.location}>{itemData.location}</span>
-
-          <div className="mt-13px flex flex-col gap-1">
-            <span className={styles.dateLabel}>{itemData.dateLabel}</span>
-            <span className={styles.date}>{itemData.date}</span>
+    <button className="block mx-auto" onClick={handleClickedItem}>
+      <div className="mb-12px flex h-140px w-335px items-center justify-between rounded-20px bg-white pl-20px pr-10px shadow">
+        <div className="flex-grow space-y-3">
+          <h1 className="h-26px text-20px font-medium leading-[1.3] tracking-tighter">
+            {displayTitle}
+          </h1>
+          <span className="h-21px w-fit rounded-full bg-primary px-3 py-1 text-10px font-medium leading-[1.3] tracking-tighter text-white">
+            {itemData.location}
+          </span>
+          <div className="flex flex-col gap-1">
+            <span className="h-16px text-12px font-medium leading-[1.3] tracking-tighter text-gray-500">
+              {itemData.dateLabel}
+            </span>
+            <span className="h-16px text-12px font-medium leading-[1.3] tracking-tighter">
+              {itemData.date}
+            </span>
           </div>
         </div>
 
-        <div className="p-10px">
+        <div className="h-120px w-120px rounded-14px overflow-hidden">
           <img
             src={imageUrl}
             alt={
@@ -127,7 +112,7 @@ const ItemBox: React.FC<ItemBoxProps> = ({ itemType, item }) => {
                 ? '등록된 사진이 없습니다.'
                 : '물품 사진'
             }
-            className="size-120px rounded-14px"
+            className="h-full w-full object-cover"
             loading="lazy"
           />
         </div>

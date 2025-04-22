@@ -8,8 +8,6 @@ import { useEffect, useRef, UIEvent, useCallback, useState } from 'react';
 import Skeleton from '@/components/ItemBox/Skeleton';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { lostAllData } from '@/lib/utils/lostAPIData';
-import { getLostItems } from '@/lib/utils/getLostSupabaseData';
-import { SyncScheduler } from '@/lib/utils/scheduledSync';
 import { AllData, LostAllData } from '@/types/types';
 
 // 샘플 데이터
@@ -52,29 +50,29 @@ const sampleData = [
   },
 ];
 
+// 타입 정의
+interface LostItemData {
+  atcId: string;
+  lstPrdtNm: string;
+  lstFilePathImg: string;
+  lstYmd: string;
+  lstPlace: string;
+  lstSbjt: string;
+  lstSn: string;
+  prdtClNm: string;
+  rnum: string;
+}
+
 const LostList = () => {
   // const [items, setItems] = useState([]);
   // const [page, setPage] = useState(1);
   // const [fetching, setFetching] = useState(false);
   // const [isLoading, setIsLoading] = useState(true);
 
-  const scrollContainerRef = useRef(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [useBackupData, setUseBackupData] = useState(false);
   const [hasSwitchedToRealData, setHasSwitchedToRealData] = useState(false);
-  const [dataSource, setDataSource] = useState<'supabase' | 'api' | 'sample'>(
-    'supabase'
-  );
-
-  // 동기화 스케줄러 시작
-  useEffect(() => {
-    console.log('동기화 스케줄러 시작');
-    const scheduler = SyncScheduler.getInstance();
-    scheduler.start();
-
-    return () => {
-      scheduler.stop();
-    };
-  }, []);
+  const [dataSource, setDataSource] = useState<'api' | 'sample'>('api');
 
   const {
     data,
@@ -88,61 +86,37 @@ const LostList = () => {
   } = useInfiniteQuery({
     queryKey: ['lostListItems'],
     queryFn: async ({ pageParam = 1 }) => {
-      // 데이터 소스에 따라 다른 함수 호출
-      switch (dataSource) {
-        case 'supabase':
-          try {
-            // Supabase에서 데이터 가져오기 (실패하면 자동으로 API로 폴백)
-            const supabaseData = await getLostItems({
-              pageNo: pageParam,
-              numOfRows: 10,
-            });
-            if (supabaseData && supabaseData.length > 0) {
-              return supabaseData;
-            }
-            // Supabase 데이터가 없으면 API로 변경
-            console.log('Supabase 분실물 데이터 없음, API로 변경');
-            setDataSource('api');
-            return await lostAllData({ pageNo: pageParam, numOfRows: 10 });
-          } catch (error) {
-            console.error('Supabase 분실물 데이터 가져오기 실패:', error);
-            setDataSource('api');
-            return await lostAllData({ pageNo: pageParam, numOfRows: 10 });
-          }
-
-        case 'api':
-          try {
+      let result;
+      try {
+        switch (dataSource) {
+          case 'api': {
             const apiData = await lostAllData({
               pageNo: pageParam,
               numOfRows: 10,
             });
             if (apiData && Array.isArray(apiData) && apiData.length > 0) {
-              return apiData;
+              result = apiData;
+              break;
             }
-            // API 데이터도 없으면 샘플 데이터로 변경
-            console.log('API 분실물 데이터 없음, 샘플 데이터로 변경');
-            setDataSource('sample');
-            setUseBackupData(true);
-            return sampleData;
-          } catch (error) {
-            console.error('API 분실물 데이터 가져오기 실패:', error);
-            setDataSource('sample');
-            setUseBackupData(true);
-            return sampleData;
+            throw new Error('API 데이터가 비어있습니다.');
           }
-
-        case 'sample':
-          return sampleData;
-
-        default:
-          return sampleData;
+          case 'sample':
+            result = sampleData;
+            break;
+          default:
+            result = sampleData;
+        }
+      } catch (error) {
+        console.error('데이터 가져오기 실패:', error);
+        setDataSource('sample');
+        setUseBackupData(true);
+        result = sampleData;
       }
+      return result;
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
-      // 샘플 데이터인 경우 더 이상 페이지 없음
       if (dataSource === 'sample') return undefined;
-
       if (Array.isArray(lastPage) && lastPage.length > 0) {
         return allPages.length + 1;
       }
@@ -170,6 +144,31 @@ const LostList = () => {
     return () => clearTimeout(timeout);
   }, [isError, isLoading, data, useBackupData]);
 
+  // 백업 데이터 사용 중일 때 30초마다 실제 데이터 로드 재시도
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout | null = null;
+
+    if (useBackupData && !hasSwitchedToRealData) {
+      intervalId = setInterval(() => {
+        console.log('백그라운드에서 실제 데이터 로드 재시도...');
+        // 데이터 소스를 API로 변경하고 다시 시도
+        setDataSource('api');
+        refetch();
+      }, 30000); // 30초마다 재시도
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [useBackupData, hasSwitchedToRealData, refetch]);
+
+  const handleRetryRealData = () => {
+    console.log('사용자가 실제 데이터 로드 재시도를 요청했습니다.');
+    setDataSource('api');
+    setUseBackupData(false);
+    refetch();
+  };
+
   const handleScroll = useCallback(
     (event: UIEvent<HTMLDivElement>) => {
       const { scrollTop, scrollHeight, clientHeight } = event.currentTarget;
@@ -178,7 +177,6 @@ const LostList = () => {
         hasNextPage &&
         !isFetchingNextPage
       ) {
-        console.log('스크롤 감지, 다음 페이지 불러오기 시도');
         fetchNextPage();
       }
     },
@@ -187,12 +185,16 @@ const LostList = () => {
 
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
-    if (scrollContainer) {
-      scrollContainer.addEventListener('scroll', handleScroll);
-      return () => {
-        scrollContainer.removeEventListener('scroll', handleScroll);
-      };
-    }
+    if (!scrollContainer) return;
+
+    const handleScrollEvent = (event: Event) => {
+      handleScroll(event as unknown as UIEvent<HTMLDivElement>);
+    };
+
+    scrollContainer.addEventListener('scroll', handleScrollEvent);
+    return () => {
+      scrollContainer.removeEventListener('scroll', handleScrollEvent);
+    };
   }, [handleScroll]);
 
   if (isLoading) {
@@ -204,7 +206,7 @@ const LostList = () => {
           isShowSearch={true}
           link="/searchlost"
         />
-        <div className="w-375px">
+        <div className="w-full max-w-md px-4 mx-auto">
           <div
             ref={scrollContainerRef}
             className="h-[calc(100vh-66px-80px)] overflow-auto"
@@ -228,14 +230,52 @@ const LostList = () => {
     );
   }
 
+  // 백업 데이터 사용 시 렌더링
+  if (useBackupData) {
+    return (
+      <div className="flex h-screen w-full flex-col items-center bg-gray-200">
+        <Header
+          isShowSymbol={true}
+          children="분실물 확인"
+          isShowSearch={true}
+          link="/searchlost"
+        />
+        <div className="w-full max-w-md px-4 mx-auto">
+          <div
+            ref={scrollContainerRef}
+            className="h-[calc(100vh-66px-80px)] overflow-auto"
+          >
+            <ul className="flex flex-col items-center">
+              {sampleData.map((item, index) => (
+                <li key={index} className="flex justify-center">
+                  <ItemBox item={mapLostDataToItemData(item)} itemType="lost" />
+                </li>
+              ))}
+            </ul>
+            <div className="text-center text-gray-500 my-4">
+              API 연결 문제로 인해 샘플 데이터를 보여주고 있습니다.
+              <button
+                onClick={handleRetryRealData}
+                className="block mx-auto mt-2 px-4 py-2 bg-primary text-white rounded-lg text-sm hover:bg-blue-600 transition-colors"
+              >
+                실제 데이터 다시 불러오기
+              </button>
+            </div>
+          </div>
+        </div>
+        <Navigation />
+      </div>
+    );
+  }
+
   // LostAllData를 ItemData로 변환
-  const mapLostDataToItemData = (lostData: any): ItemData => {
+  const mapLostDataToItemData = (lostData: LostAllData): ItemData => {
     return {
-      atcId: lostData.atcId,
-      lstPrdtNm: lostData.lstPrdtNm,
-      lstYmd: lostData.lstYmd,
-      lstPlace: lostData.lstPlace,
-      lstFilePathImg: lostData.lstFilePathImg,
+      atcId: lostData.lstSn || '',
+      lstPrdtNm: lostData.lstPrdtNm || '',
+      lstYmd: lostData.lstYmd || '',
+      lstPlace: lostData.lstPlace || '',
+      lstFilePathImg: lostData.lstFilePathImg || '',
     };
   };
 
@@ -247,22 +287,38 @@ const LostList = () => {
         isShowSearch={true}
         link="/searchlost"
       />
-      <div className="w-375px">
+      <div className="w-full max-w-md px-4 mx-auto">
         <div
           ref={scrollContainerRef}
           className="h-[calc(100vh-66px-80px)] overflow-auto"
         >
-          <ul className="flex flex-col items-center">
-            {data?.pages?.map((page: any[]) =>
-              page?.map((item, index) => (
-                <li key={index}>
-                  <ItemBox item={mapLostDataToItemData(item)} itemType="lost" />
-                </li>
-              ))
-            )}
-          </ul>
-          {isFetchingNextPage && (
-            <img src={loading} alt="로딩 중" className="mx-auto" />
+          {isSuccess && data.pages[0].length > 0 ? (
+            <>
+              <ul className="flex flex-col items-center w-full">
+                {data.pages.map((page: LostAllData[], pageIndex) =>
+                  page.map((item, index) => (
+                    <li
+                      key={`${pageIndex}-${index}`}
+                      className="w-full flex justify-center px-4"
+                    >
+                      <div className="w-full">
+                        <ItemBox
+                          item={mapLostDataToItemData(item)}
+                          itemType="lost"
+                        />
+                      </div>
+                    </li>
+                  ))
+                )}
+              </ul>
+              {isFetchingNextPage && (
+                <img src={loading} alt="로딩 중" className="mx-auto" />
+              )}
+            </>
+          ) : (
+            <div className="flex justify-center items-center h-full">
+              <p className="text-gray-500">표시할 데이터가 없습니다.</p>
+            </div>
           )}
         </div>
       </div>

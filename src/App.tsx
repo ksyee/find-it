@@ -29,8 +29,8 @@ import SearchFindDetail from '@/components/SearchDetail/pages/SearchFindDetail';
 import SearchLostDetail from './components/SearchDetail/pages/SearchLostDetail';
 import SearchFindResult from '@/components/SearchResult/SearchFindResult';
 import SearchLostResult from './components/SearchResult/SearchLostResult';
-import { SyncScheduler } from './lib/utils/scheduledSync';
-import { setupSupabase } from './lib/utils/setupSupabase';
+// import { SyncScheduler } from './lib/utils/scheduledSync';
+// import { setupSupabase } from './lib/utils/setupSupabase';
 
 const SPLASH_KEY = 'alreadyVisited';
 
@@ -61,7 +61,8 @@ const App = (): JSX.Element => {
     };
   }, [showSplash]);
 
-  // Supabase 초기화 및 동기화 스케줄러 설정
+  // Supabase 초기화 및 동기화 스케줄러 설정 비활성화
+  /* 
   useEffect(() => {
     const initSyncScheduler = async () => {
       try {
@@ -83,6 +84,7 @@ const App = (): JSX.Element => {
 
     initSyncScheduler();
   }, []);
+  */
 
   if (showSplash) {
     return <Splash />;

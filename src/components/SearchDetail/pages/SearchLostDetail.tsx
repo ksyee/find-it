@@ -71,6 +71,20 @@ const SearchLostDetail: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log('SearchLostDetail - 검색 조건:', {
+          PRDT_CL_CD_01: selectedMainCategoryValue,
+          PRDT_CL_CD_02: selectedSubCategoryValue,
+          LST_LCT_CD: selectedAreaValue,
+          START_YMD:
+            selectStartDate !== '날짜를 선택하세요.'
+              ? getFormattedDate(selectStartDate)
+              : '',
+          END_YMD:
+            selectEndDate !== '날짜를 선택하세요.'
+              ? getFormattedDate(selectEndDate)
+              : '',
+        });
+
         const searchData = await getSearchLostData({
           PRDT_CL_CD_01: selectedMainCategoryValue,
           PRDT_CL_CD_02: selectedSubCategoryValue,
@@ -87,12 +101,15 @@ const SearchLostDetail: React.FC = () => {
           numOfRows: 6,
         });
 
+        console.log('SearchLostDetail - API 응답:', searchData);
+
         if (typeof searchData === 'object') {
           const resultData = (searchData as SearchData).body?.items?.item;
+          console.log('SearchLostDetail - 저장할 결과 데이터:', resultData);
           useSearchStore.setState({ resultData });
         }
       } catch (error) {
-        console.error('error: ' + error);
+        console.error('SearchLostDetail - 데이터 로드 오류:', error);
       }
     };
 
