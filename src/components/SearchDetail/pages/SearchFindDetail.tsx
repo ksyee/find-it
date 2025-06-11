@@ -20,7 +20,7 @@ interface SearchData {
   };
 }
 
-const SearchFindDetail: React.FC = () => {
+const SearchFindDetail = () => {
   const {
     selectStartDate,
     setSelectStartDate,

@@ -12,11 +12,11 @@ interface IconProps {
   disabledDoubleCheck?: boolean;
 }
 /* -------------------------------------------------------------------------- */
-const DoubleCheck: React.FC<IconProps> = ({
+const DoubleCheck = ({
   isShow,
   onClickDoubleCheck,
   disabledDoubleCheck,
-}) => {
+}: IconProps) => {
   const doubleCheckcolor = (!disabledDoubleCheck && 'black') || '#bcbcbc';
   if (isShow) {
     return (
@@ -33,7 +33,7 @@ const DoubleCheck: React.FC<IconProps> = ({
   }
 };
 /* -------------------------------------------------------------------------- */
-const DeleteContent: React.FC<IconProps> = ({ isShow, onClickDelete }) => {
+const DeleteContent = ({ isShow, onClickDelete }: IconProps) => {
   if (isShow) {
     return (
       <button type="button" onClick={onClickDelete}>
@@ -45,7 +45,7 @@ const DeleteContent: React.FC<IconProps> = ({ isShow, onClickDelete }) => {
   }
 };
 /* -------------------------------------------------------------------------- */
-const EyeToggle: React.FC<IconProps> = ({ isShow, onClickEye }) => {
+const EyeToggle = ({ isShow, onClickEye }: IconProps) => {
   const [isEyeOn, setIsEyeOn] = useState(false);
   const toggleEye = () => {
     setIsEyeOn(!isEyeOn);
@@ -79,7 +79,7 @@ interface InputIconButtonProps {
   onClickEye?: () => void;
   disabledDoubleCheck?: boolean;
 }
-export const InputIconButton: React.FC<InputIconButtonProps> = ({
+export const InputIconButton = ({
   iconDoubleCheck = false,
   iconDelete = false,
   iconEyeToggle = false,
@@ -87,7 +87,7 @@ export const InputIconButton: React.FC<InputIconButtonProps> = ({
   onClickDelete,
   onClickEye,
   disabledDoubleCheck,
-}) => {
+}: InputIconButtonProps) => {
   return (
     <div className="flex gap-10px pr-12px">
       <DoubleCheck

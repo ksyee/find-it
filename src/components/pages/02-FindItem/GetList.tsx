@@ -2,7 +2,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import Header from '../../Header/Header';
 import loading from '@/assets/loading.svg';
 import ItemBox from '../../ItemBox/ItemBox';
-import Navigation from '../../Navigation/Navigation';
+
 import { getAllData } from '@/lib/utils/getAPIData';
 import { useEffect, useRef, UIEvent, useCallback } from 'react';
 import Skeleton from '@/components/ItemBox/Skeleton';
@@ -75,7 +75,7 @@ const GetList = () => {
             </div>
           </div>
         </div>
-        <Navigation />
+
       </div>
     );
   }
@@ -107,7 +107,7 @@ const GetList = () => {
           )}
         </div>
       </div>
-      <Navigation />
+
     </div>
   );
 };

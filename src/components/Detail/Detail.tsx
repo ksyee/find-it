@@ -5,7 +5,7 @@ interface DetailProps {
   detail: DetailData;
 }
 
-const Detail: React.FC<DetailProps> = ({ detail }) => {
+const Detail = ({ detail }: DetailProps) => {
   return (
     <div className="w-full leading-[1.3]">
       <div className="flow-root">
@@ -81,7 +81,7 @@ const Detail: React.FC<DetailProps> = ({ detail }) => {
 
         <button
           type="button"
-          className="mx-auto mt-28px block rounded-20px border border-black px-128px py-16px"
+          className="mx-auto mt-28px block rounded-lg border border-black px-128px py-16px"
         >
           공유하기
         </button>

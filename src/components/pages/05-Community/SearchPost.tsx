@@ -4,7 +4,7 @@ import { getData } from '@/lib/utils/crud';
 import { getTimeDiff } from '@/lib/utils/getTimeDiff';
 import Header from '@/components/Header/Header';
 import Horizon from '@/components/common/atom/Horizon';
-import Navigation from '@/components/Navigation/Navigation';
+
 
 const SearchPost = () => {
   const [inputValue, setInputValue] = useState('');
@@ -96,7 +96,7 @@ const SearchPost = () => {
           {data.length > 0 ? SearchResult : showNoResult && NoResult}
         </div>
       </div>
-      <Navigation />
+
     </div>
   );
 };

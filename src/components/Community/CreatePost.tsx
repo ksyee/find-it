@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
-import { createData } from '@/lib/utils/crud';
-import Header from '@/components/Header/Header';
-import CreateBodyText from '@/components/Community/CreateBodyText';
-import Horizon from '@/components/common/atom/Horizon';
+import { useEffect, useState } from "react";
+import { createData } from "@/lib/utils/crud";
+import Header from "@/components/Header/Header";
+import CreateBodyText from "@/components/Community/CreateBodyText";
+import Horizon from "@/components/common/atom/Horizon";
 
 /* -------------------------------------------------------------------------- */
 //로컬 데이터 가져오기
-const loginUserData = localStorage.getItem('pocketbase_auth');
+const loginUserData = localStorage.getItem("pocketbase_auth");
 const localData = loginUserData && JSON.parse(loginUserData);
 const userNickname = localData?.model?.nickname;
 
@@ -16,9 +16,9 @@ const userNickname = localData?.model?.nickname;
 /* -------------------------------------------------------------------------- */
 const CreatePost = () => {
   const [submit, setSubmit] = useState(false);
-  const [titleValue, setTitleValue] = useState('');
-  const [tagValue, setTagValue] = useState('');
-  const [bodyValue, setBodyValue] = useState('');
+  const [titleValue, setTitleValue] = useState("");
+  const [tagValue, setTagValue] = useState("");
+  const [bodyValue, setBodyValue] = useState("");
 
   // 값 입력
   const receiveTitleValue = (value) => {
@@ -41,7 +41,7 @@ const CreatePost = () => {
 
   // 완료 조건
   useEffect(() => {
-    if (titleValue !== '' && bodyValue !== '' && tagValue !== '') {
+    if (titleValue !== "" && bodyValue !== "" && tagValue !== "") {
       setSubmit(true);
     } else {
       setSubmit(false);
@@ -51,8 +51,8 @@ const CreatePost = () => {
   //완료 버튼
   const buttonSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await createData('community', newPostData);
-    window.location.href = '/postlist';
+    await createData("community", newPostData);
+    window.location.href = "/postlist";
   };
 
   return (

@@ -1,6 +1,6 @@
 import { forwardRef, useState } from 'react';
-import AlertText from '@/components/common/atom/AlertText';
-import ConfirmText from '@/components/common/atom/ConfirmText';
+import AlertText, { AlertCase } from '@/components/atoms/AlertText';
+import ConfirmText, { ConfirmCase } from '@/components/atoms/ConfirmText';
 import InputIconButton from '@/components/SignIn/molecule/InputIconButton';
 
 interface InputFormProps {
@@ -8,17 +8,8 @@ interface InputFormProps {
   title: string;
   placeholder: string;
   value: string;
-  alertCase?:
-    | 'doubleCheckEmail'
-    | 'doubleCheckNickname'
-    | 'doubleCheckPassword'
-    | 'invalidValue'
-    | 'invalidEmail'
-    | 'invalidPassword'
-    | 'userEmail'
-    | 'userEmailDouble'
-    | '';
-  confirmCase?: 'doubleCheckEmail' | 'doubleCheckNickname' | '';
+  alertCase?: AlertCase | '';
+  confirmCase?: ConfirmCase | '';
 
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   iconDoubleCheck?: boolean;

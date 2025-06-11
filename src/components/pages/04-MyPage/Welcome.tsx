@@ -1,5 +1,6 @@
 import ButtonVariable from '@/components/common/molecule/ButtonVariable';
 import welcomeImg from '@/assets/img_welcome.png';
+
 const Welcome = () => {
   const handleButton = () => {
     window.location.href = '/';

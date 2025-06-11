@@ -7,11 +7,11 @@ interface SearchDateProps {
   setSelectDate: (date: string) => void;
 }
 
-const SearchDate: React.FC<SearchDateProps> = ({
+const SearchDate = ({
   children,
   selectDate,
   setSelectDate,
-}) => {
+}: SearchDateProps) => {
   const dateInputId = useId();
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,9 +37,7 @@ const SearchDate: React.FC<SearchDateProps> = ({
         <input
           id={dateInputId}
           type="date"
-
           className="date-input bg-white text-white"
-
           aria-label="날짜 입력"
           onChange={handleDateChange}
         />

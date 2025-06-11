@@ -9,13 +9,13 @@ interface ButtonSelectItemProps {
   disabledSecond: boolean;
 }
 
-const ButtonSelectItem: React.FC<ButtonSelectItemProps> = ({
+const ButtonSelectItem = ({
   firstName = '대분류 선택',
   secondName = '소분류 선택',
   onClickFirst,
   onClickSecond,
   disabledSecond,
-}) => {
+}: ButtonSelectItemProps) => {
   /* -------------------------------------------------------------------------- */
   // 버튼 선택시 스타일변경 & 상위 프롭 함수 실행
   const [isActiveFirst, setIsActiveFirst] = useState(false);

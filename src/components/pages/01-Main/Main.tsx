@@ -4,9 +4,10 @@ import { getTimeDiff } from '@/lib/utils/getTimeDiff';
 import Header from '../../Header/Header';
 import Shortcut from '../../Shortcut/Shortcut';
 import SwiperItem from '../../ItemBox/SwiperItem';
-import Navigation from '../../Navigation/Navigation';
 import icon_right from '@/assets/icons/icon_right.svg';
 import icon_search from '@/assets/icons/icon_search_36.svg';
+import * as React from 'react';
+const { useState, useEffect } = React;
 
 /* -------------------------------------------------------------------------- */
 /*                                  유저 이름 렌더링                              */
@@ -23,9 +24,9 @@ interface ProfileBoxProps {
 }
 
 // 프로필 영역
-const ProfileBox: React.FC<ProfileBoxProps> = ({
-  userName = userNickname || '방문자',
-}) => {
+const ProfileBox = ({
+  userName = userNickname || '방문자'
+}: ProfileBoxProps) => {
   let profileName: string;
   if (userNickname?.length > 5) {
     profileName = `${userName.slice(0, 4)}...`;
@@ -34,20 +35,20 @@ const ProfileBox: React.FC<ProfileBoxProps> = ({
   }
 
   return (
-    <div className="h-140px w-180px rounded-20px bg-skyblue-300 transition-all duration-300 hover:shadow-lg">
+    <article className="bg-skyblue-300 h-[140px] w-[180px] rounded-2xl transition-all duration-300 hover:shadow-lg">
       <Link
         to="/mypageentry"
-        style={{ display: 'block', height: '100%', padding: '20px' }}
+        className="block h-full p-5"
+        aria-label={`${profileName}님의 마이페이지로 이동`}
       >
-        <span style={{ fontSize: '17px' }}>
-          <b style={{ fontSize: '24px', fontWeight: 'normal' }}>
-            {profileName}
-          </b>{' '}
-          님 <br />
+        <p className="text-[17px] font-medium">
+          <strong className="block text-[24px] font-semibold">
+            {profileName}님
+          </strong>
           안녕하세요!
-        </span>
+        </p>
       </Link>
-    </div>
+    </article>
   );
 };
 
@@ -56,13 +57,18 @@ const ProfileBox: React.FC<ProfileBoxProps> = ({
 /* -------------------------------------------------------------------------- */
 const FindItemBox = () => {
   return (
-    <div className="relative w-140px rounded-20px bg-gray-200 transition-all duration-300 hover:shadow-lg">
-      <Link to="/searchfind" className="block h-full p-5">
-        <span className="text-20px">물품 찾기</span>
+    <div className="relative h-[140px] w-[140px] rounded-2xl bg-gray-200 p-5 transition-all duration-300 hover:shadow-lg">
+      <Link
+        to="/searchfind"
+        className="flex h-full w-full flex-col"
+        aria-label="물품 찾기 페이지로 이동"
+      >
+        <span className="text-xl font-semibold">물품 찾기</span>
         <img
           src={icon_search}
-          alt="돋보기 아이콘"
-          className="absolute bottom-5 right-5"
+          className="absolute right-5 bottom-5 h-8 w-8"
+          alt=""
+          aria-hidden="true"
         />
       </Link>
     </div>
@@ -73,62 +79,93 @@ const FindItemBox = () => {
 /*                             자유게시판 최근 게시물 렌더링                             */
 /* -------------------------------------------------------------------------- */
 
-const recentPost = await pb.collection('community').getList(1, 2, {
-  sort: '-created',
-  expand: 'title, created',
-});
-const recentPost1 = recentPost.items[0].title;
-const recentPost2 = recentPost.items[1].title;
-const postTime1 = recentPost.items[0].created;
-const postTime2 = recentPost.items[1].created;
+const CommunityBox: React.FC = () => {
+  const [posts, setPosts] = useState<{ title: string; created: string }[]>([]);
+  const [loading, setLoading] = useState(true);
 
-const CommunityBox = () => {
-  return (
-    <Link to="/postlist" className="block">
-      <div className="mb-5 flex h-140px w-335px flex-col gap-20px rounded-20px border border-black p-5 transition-all duration-300 hover:cursor-pointer hover:shadow-lg">
-        <div className="flex justify-between">
-          <h1 className="text-20px">자유게시판</h1>
-          <img src={icon_right} alt="자유게시판 바로가기" />
-        </div>
-        <div className="">
-          <div className="flex items-center gap-2 pb-1">
-            <span className="text-14px">{recentPost1}</span>
-            {getTimeDiff({ createdAt: postTime1 })}
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-14px">{recentPost2}</span>
-            {getTimeDiff({ createdAt: postTime2 })}
-          </div>
-        </div>
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await pb
+          .collection('community')
+          .getList(1, 2, { sort: '-created' });
+        setPosts(
+          res.items.map((item) => ({
+            title: item.title,
+            created: item.created
+          }))
+        );
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPosts();
+  }, []);
+
+  if (loading) {
+    return (
+      <div role="status" aria-live="polite">
+        게시물을 불러오는 중입니다...
       </div>
-    </Link>
+    );
+  }
+  if (posts.length === 0) {
+    return <div role="status">표시할 게시물이 없습니다.</div>;
+  }
+
+  return (
+    <section aria-labelledby="community-section-title">
+      <Link to="/postlist" className="block" aria-label="자유게시판 전체보기">
+        <div className="mb-5 flex h-[140px] w-[335px] flex-col gap-[20px] rounded-lg border border-black p-5 transition-all duration-300 hover:cursor-pointer hover:shadow-lg">
+          <div className="flex items-center justify-between">
+            <h2 id="community-section-title" className="text-[20px]">
+              자유게시판
+            </h2>
+            <img src={icon_right} alt="" aria-hidden="true" />
+          </div>
+          <ul className="space-y-2">
+            {posts.map((post, idx) => (
+              <li key={idx} className="flex items-center gap-2 pb-1">
+                <span className="text-[14px]">{post.title || '–'}</span>
+                <span className="text-[12px] text-gray-500">
+                  {getTimeDiff({ createdAt: post.created })}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </Link>
+    </section>
   );
 };
 
 /* -------------------------------------------------------------------------- */
-/*                                메인페이지 렌더링                               */
+/*                                메인페이지 렌더링                              */
 /* -------------------------------------------------------------------------- */
 const Main = () => {
   return (
     <>
       <div className="flex w-full flex-col items-center">
         <Header isShowLogo={true} />
-        <div className="w-375px px-5">
-          <div className="flex gap-4">
-            <ProfileBox />
-            <FindItemBox />
+        <main id="main-content" className="w-full">
+          <div className="mx-auto w-[375px] px-5">
+            <div className="flex gap-4">
+              <ProfileBox />
+              <FindItemBox />
+            </div>
+            <div className="pt-3 pb-[5px] pl-[10px]">
+              <Shortcut
+                link="/getlist"
+                text="주인을 찾아요!"
+                alt="습득물 페이지 바로가기"
+              />
+            </div>
+            <SwiperItem />
+            <CommunityBox />
           </div>
-          <div className="pb-5px pl-10px pt-3">
-            <Shortcut
-              link="/getlist"
-              text="주인을 찾아요!"
-              alt="습득물 페이지 바로가기"
-            />
-          </div>
-          <SwiperItem />
-          <CommunityBox />
-        </div>
-        <Navigation />
+        </main>
       </div>
     </>
   );

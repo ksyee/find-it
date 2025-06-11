@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 const CreateBodyText = ({
   titleValue,
@@ -8,7 +8,7 @@ const CreateBodyText = ({
   bodyValue,
   onChangeBody,
 }) => {
-  const [height, setHeight] = useState('200px');
+  const [height, setHeight] = useState("200px");
   const handleTitleValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     onChangeTitle(e.target.value);
@@ -18,7 +18,7 @@ const CreateBodyText = ({
     e.preventDefault();
     onChangeBody(e.target.value);
     const workingHeight = `${e.target.scrollHeight}px`;
-    if (workingHeight >= '200px') {
+    if (workingHeight >= "200px") {
       setHeight(workingHeight);
     }
   };
@@ -33,7 +33,7 @@ const CreateBodyText = ({
           type="text"
           placeholder="제목을 입력하세요."
           className="mt-10px w-full text-24px tracking-tight text-black"
-          style={{ outline: 'none' }}
+          style={{ outline: "none" }}
           maxLength={24}
           value={titleValue}
           onChange={handleTitleValue}
@@ -41,7 +41,7 @@ const CreateBodyText = ({
         <textarea
           placeholder="이야기하고 싶은 내용을 입력하세요."
           className="mb-24px mt-12px w-full whitespace-normal break-keep text-16px leading-28px tracking-tight text-gray-700"
-          style={{ outline: 'none', resize: 'none', height: height }}
+          style={{ outline: "none", resize: "none", height: height }}
           maxLength={500}
           value={bodyValue}
           onChange={handleBodyValue}
@@ -52,7 +52,7 @@ const CreateBodyText = ({
         type="text"
         placeholder="#해시태그를 입력하세요."
         className="mb-40px mt-20px  flex w-315px text-16px tracking-tight text-black"
-        style={{ outline: 'none' }}
+        style={{ outline: "none" }}
         maxLength={15}
         value={tagValue}
         onChange={handleTagValue}

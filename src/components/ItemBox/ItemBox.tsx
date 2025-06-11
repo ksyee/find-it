@@ -28,7 +28,7 @@ interface LostItemType {
   lost_place: string;
 }
 
-const ItemBox: React.FC<itemTypeProps> = ({ itemType, item }) => {
+const ItemBox = ({ itemType, item }: itemTypeProps) => {
   const [getItemData, setGetItemData] = useState<GetItemType | null>(null);
   const [lostItemData, setLostItemData] = useState<LostItemType | null>(null);
   const navigate = useNavigate();

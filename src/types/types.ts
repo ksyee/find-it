@@ -79,7 +79,7 @@ export type JsonValue =
   | JsonObject
   | null;
 
-export interface JsonArray extends Array<JsonValue> {}
+export type JsonArray = JsonValue[];
 
 export type JsonItem = JsonValue | string | GetDetailData;
 export interface JsonType extends Array<JsonItem> {}

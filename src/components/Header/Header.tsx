@@ -24,9 +24,11 @@ type ElementType =
   | number
   | boolean
   | JSX.Element
-  | Iterable<ReactNode>;
+  | Iterable<ReactNode>
+  | null
+  | undefined;
 
-const Header: React.FC<HeaderProps> = ({
+const Header = ({
   isShowLogo,
   isShowPrev,
   isShowSymbol,
@@ -36,19 +38,19 @@ const Header: React.FC<HeaderProps> = ({
   link,
   customStyle,
   children,
-}) => {
+}: HeaderProps) => {
   const queryClient = useQueryClient();
   const location = useLocation();
 
-  let homeLogo: ElementType;
-  let symbolLogo: ElementType;
-  let prevIcon: ElementType;
-  let searchIcon: ElementType;
-  let paragraph: ElementType;
-  let submitButton: ElementType;
-  let emptyBox: ElementType;
+  let homeLogo: ElementType = null;
+  let symbolLogo: ElementType = null;
+  let prevIcon: ElementType = null;
+  let searchIcon: ElementType = null;
+  let paragraph: ElementType = null;
+  let submitButton: ElementType = null;
+  let emptyBox: ElementType = null;
 
-  const defaultStyle = 'h-26px flex w-375px items-center justify-around';
+  const defaultStyle = 'h-[26px] flex w-[375px] items-center justify-around';
 
   const navigate = useNavigate();
 
@@ -80,7 +82,7 @@ const Header: React.FC<HeaderProps> = ({
         </Link>
       );
     } else {
-      return homeLogo;
+      homeLogo = null;
     }
   }
 
@@ -94,7 +96,7 @@ const Header: React.FC<HeaderProps> = ({
         </Link>
       );
     } else {
-      return symbolLogo;
+      symbolLogo = null;
     }
   }
 
@@ -106,19 +108,19 @@ const Header: React.FC<HeaderProps> = ({
         </button>
       );
     } else {
-      return prevIcon;
+      prevIcon = null;
     }
   }
 
   if (isShowSearch !== undefined) {
-    if (isShowSearch) {
+    if (isShowSearch && link) {
       searchIcon = (
         <Link to={link}>
           <img src={icon_search} alt="검색하기" />
         </Link>
       );
     } else {
-      return searchIcon;
+      searchIcon = null;
     }
   }
 
@@ -139,25 +141,33 @@ const Header: React.FC<HeaderProps> = ({
   }
 
   if (children !== undefined) {
-    paragraph = <p className="text-20px">{children}</p>;
+    paragraph = <p className="text-[20px]">{children}</p>;
   }
 
   if (empty !== undefined) {
-    emptyBox = <span className="h-21px w-21px"></span>;
+    emptyBox = <span className="h-[21px] w-[21px]"></span>;
   }
 
   return (
-    <header className="py-20px">
-      <div className={`${defaultStyle} ${customStyle}`}>
-        {prevIcon}
-        {symbolLogo}
-        {paragraph}
-        {homeLogo}
-        {searchIcon}
-        {submitButton}
-        {emptyBox}
-      </div>
-    </header>
+    <>
+      <a 
+        href="#main-content" 
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:px-4 focus:py-2"
+      >
+        메인 콘텐츠로 건너뛰기
+      </a>
+      <header className="py-[20px]" role="banner">
+        <div className={`${defaultStyle} ${customStyle || ''}`}>
+          {prevIcon}
+          {symbolLogo}
+          {paragraph}
+          {homeLogo}
+          {searchIcon}
+          {submitButton}
+          {emptyBox}
+        </div>
+      </header>
+    </>
   );
 };
 

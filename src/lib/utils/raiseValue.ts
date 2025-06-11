@@ -1,19 +1,4 @@
-import { DetailData, AllData } from '@/types/types';
-
-type JsonValue =
-  | string
-  | number
-  | boolean
-  | JsonObject
-  | JsonArray
-  | AllData[]
-  | DetailData;
-
-interface JsonObject {
-  [key: string]: JsonValue;
-}
-
-type JsonArray = JsonValue[];
+import { DetailData, AllData, JsonValue, JsonObject, JsonArray } from '@/types/types';
 
 export const raiseValue = (item: JsonValue): JsonValue => {
   // 객체 또는 배열인지 확인하고, 아니라면 직접 반환
@@ -30,8 +15,8 @@ export const raiseValue = (item: JsonValue): JsonValue => {
   const result: JsonObject = {};
   Object.keys(item).forEach((key) => {
     const value: JsonValue = item[key];
-    if (typeof value === 'object' && value !== null && '#text' in value) {
-      result[key] = value['#text'];
+    if (typeof value === 'object' && value !== null && '#text' in (value as any)) {
+      result[key] = (value as any)['#text'];
     } else {
       result[key] = raiseValue(value); // 재귀적으로 함수 적용
     }

@@ -1,4 +1,14 @@
-export default {
+/**
+ * @see https://prettier.io/docs/configuration
+ * @type {import("prettier").Config}
+ */
+const config = {
+  overrides: [
+    {
+      files: ['*.tsx', '*.ts'],
+      options: { parser: 'babel-ts' },
+    },
+  ],
   // 화살표 함수 식 매개변수 () 생략 여부 (ex: (a) => a)
   arrowParens: 'always',
   // 닫는 괄호(>) 위치 설정
@@ -23,9 +33,11 @@ export default {
   // 탭 너비 설정
   tabWidth: 2,
   // 객체 마지막 속성 선언 뒷 부분에 콤마 추가 여부
-  trailingComma: 'es5',
+  trailingComma: 'none',
   // 탭 사용 여부
   useTabs: false,
   // 플러그인 추가
   plugins: ['prettier-plugin-tailwindcss'],
 };
+
+export default config;

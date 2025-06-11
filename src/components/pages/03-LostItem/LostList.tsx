@@ -1,7 +1,7 @@
 import Header from '../../Header/Header';
 import loading from '@/assets/loading.svg';
 import ItemBox from '../../ItemBox/ItemBox';
-import Navigation from '../../Navigation/Navigation';
+
 // import { JsonArray } from '@/types/types';
 // import { lostAllData } from '@/lib/utils/lostAPIData';
 import { useEffect, useRef, UIEvent, useCallback } from 'react';
@@ -100,7 +100,7 @@ const LostList = () => {
             </div>
           </div>
         </div>
-        <Navigation />
+
       </div>
     );
   }
@@ -132,7 +132,7 @@ const LostList = () => {
           )}
         </div>
       </div>
-      <Navigation />
+
     </div>
   );
 };

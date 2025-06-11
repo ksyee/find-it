@@ -16,17 +16,17 @@ type CancelButton =
   | JSX.Element
   | Iterable<ReactNode>;
 
-const Modal: React.FC<ModalProps> = ({
+const Modal = ({
   cancelText,
   confirmText = '확인',
   children,
   onClickCancel,
   onClickConfirm,
-}) => {
-  let cancelButton: CancelButton;
-
+}: ModalProps) => {
   const buttonTextStyle =
-    'leading-21px text-center font-medium tracking-[-.48px]';
+    'leading-[21px] text-center font-medium tracking-[-0.48px]';
+
+  let cancelButton: CancelButton | null = null;
 
   if (cancelText !== undefined) {
     cancelButton = (
@@ -41,10 +41,12 @@ const Modal: React.FC<ModalProps> = ({
   }
 
   return (
-    <div className="flex w-302px flex-col items-center justify-center gap-26px rounded-20px bg-white px-76px pb-26px pt-46px">
-      <p className="w-280px text-center text-14px text-gray-400">{children}</p>
-      <div className="flex h-21px w-150px items-center justify-center gap-90px">
-        {cancelButton}
+    <div className="flex w-[302px] flex-col items-center justify-center gap-[26px] rounded-lg bg-white px-[76px] pt-[46px] pb-[26px]">
+      <p className="w-[280px] text-center text-[14px] text-gray-400">
+        {children}
+      </p>
+      <div className="flex h-[21px] w-[150px] items-center justify-center gap-[90px]">
+        {cancelButton && cancelButton}
         <button
           type="button"
           onClick={onClickConfirm}

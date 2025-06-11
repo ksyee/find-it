@@ -1,6 +1,6 @@
 import { xmlToJson } from '@/lib/utils/xmlToJson';
 import { raiseValue } from '@/lib/utils/raiseValue';
-import { JsonObject, DetailData } from '@/types/types';
+import { JsonObject, DetailData, JsonValue } from '@/types/types';
 
 const isJsonObject = (value: unknown): value is JsonObject => {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -79,12 +79,14 @@ export const getAllData = async (options = {}) => {
         throw new Error('items의 타입이 배열이 아닙니다.');
       }
 
-      const result = raiseValue(items);
+      // items는 JsonValue[] (JsonArray)이므로 JsonValue로 캐스팅하여 전달
+      const result = raiseValue(items as JsonValue);
 
       return result;
     }
   } catch (error) {
     console.error('error: ' + error);
+    return null;
   }
 };
 
@@ -115,7 +117,7 @@ export const getSearchData = async (query: string, options = {}) => {
       isJsonObject(json.response.body) &&
       isJsonObject(json.response.body.items)
     ) {
-      const result = raiseValue(json.response?.body.items.item);
+      const result = raiseValue(json.response?.body.items.item as JsonValue);
 
       return result;
     }
@@ -148,7 +150,7 @@ export const getSearchId = async (id: string): Promise<DetailData | null> => {
       isJsonObject(json.response) &&
       isJsonObject(json.response.body)
     ) {
-      const item = raiseValue(json.response?.body.item);
+      const item = raiseValue(json.response?.body.item as JsonValue);
 
       if (isJsonObject(item)) {
         const result = {
@@ -176,8 +178,10 @@ export const getSearchId = async (id: string): Promise<DetailData | null> => {
         }
       }
     }
+    return null;
   } catch (error) {
     console.error('error: ' + error);
+    return null;
   }
 };
 

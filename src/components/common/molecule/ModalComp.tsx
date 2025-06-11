@@ -1,4 +1,4 @@
-import Modal from '@/components/common/molecule/Modal';
+import Modal from "@/components/common/molecule/Modal";
 
 const ModalComp = ({ children, confirmText, onClickConfirm }) => {
   return (

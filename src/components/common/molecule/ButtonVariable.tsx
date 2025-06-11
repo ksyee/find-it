@@ -1,20 +1,21 @@
 interface ButtonVariableProps {
   buttonText: string;
   variant:
+    | 'normal'
     | 'submit'
     | 'disabled'
     | 'lineStyle'
     | 'blackSolidThin'
     | 'blackLineThin'
     | 'primarySolidThin';
-  onClick?: (e: React.FormEvent<HTMLFormElement>) => void;
+  onClick?: (e: React.FormEvent) => void;
 }
-const ButtonVariable: React.FC<ButtonVariableProps> = ({
+const ButtonVariable = ({
   buttonText = '확인',
   variant = 'normal',
   onClick,
   ...restProps
-}) => {
+}: ButtonVariableProps) => {
   let buttonType: 'button' | 'reset' | 'submit' | undefined;
   let background, color, borderColor, width, height;
   switch (variant) {
@@ -74,7 +75,7 @@ const ButtonVariable: React.FC<ButtonVariableProps> = ({
   return (
     <button
       type={buttonType}
-      onClick={onClick as unknown as React.MouseEventHandler<HTMLButtonElement>}
+      onClick={onClick as unknown as React.MouseEventHandler}
       style={{
         width,
         height,

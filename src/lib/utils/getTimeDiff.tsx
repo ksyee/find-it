@@ -2,7 +2,7 @@ interface timeProps {
   createdAt: string;
 }
 
-export const getTimeDiff: React.FC<timeProps> = ({ createdAt }) => {
+export const getTimeDiff = ({ createdAt }: timeProps) => {
   const milliSeconds = new Date().getTime() - new Date(createdAt).getTime();
   const seconds = milliSeconds / 1000;
 

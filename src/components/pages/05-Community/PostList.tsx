@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import Header from '@/components/Header/Header';
 import PostBox from '@/components/Community/PostBox';
 import IconPlus from '@/assets/icons/icon_plus.svg';
-import Navigation from '@/components/Navigation/Navigation';
+
 import Horizon from '@/components/common/atom/Horizon';
 
 const PostList = () => {
@@ -31,7 +31,7 @@ const PostList = () => {
           </Link>
         )}
       </div>
-      <Navigation />
+
     </div>
   );
 };

@@ -1,7 +1,7 @@
-import { JsonObject, JsonValue } from '@/types/types';
+import { JsonValue, JsonObject } from '@/types/types';
 
 // XML을 JSON으로 변환하는 함수
-export const xmlToJson = (xml: Node): JsonObject | string => {
+export const xmlToJson = (xml: Node): JsonValue => {
   const obj: JsonValue = {};
 
   if (xml.nodeType === 1 && xml instanceof Element) {

@@ -1,17 +1,16 @@
 import SwiperCore from 'swiper';
 import { useQuery } from '@tanstack/react-query';
 import ItemBox from './ItemBox';
-import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { getAllData } from '@/lib/utils/getAPIData';
 import { Autoplay, Pagination, Keyboard } from 'swiper/modules';
 import 'swiper/swiper-bundle.css';
-import '@/tailwind.css';
+import '@/main.css';
 import Skeleton from './Skeleton';
 
 SwiperCore.use([Autoplay, Pagination, Keyboard]);
 
-const SwiperItem: React.FC = () => {
+const SwiperItem = () => {
   // const [items, setItems] = useState([]);
   // const [isLoading, setIsLoading] = useState(true);
 

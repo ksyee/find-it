@@ -6,7 +6,7 @@ import { AllData } from '@/types/types';
 import ItemBox from '@/components/ItemBox/ItemBox';
 import { getSearchFindData } from '@/lib/utils/getAPIData';
 import getFormattedDate from '@/lib/utils/getFormattedDate';
-import Navigation from '../Navigation/Navigation';
+
 import { useNavigate } from 'react-router-dom';
 import Skeleton from './../ItemBox/Skeleton';
 import { useInfiniteQuery } from '@tanstack/react-query';
@@ -152,7 +152,7 @@ const SearchFindResult = () => {
             </div>
           </div>
         </div>
-        <Navigation />
+
       </div>
     );
   }

@@ -7,7 +7,7 @@ interface ShortcutProps {
   alt: string;
 }
 
-const Shortcut: React.FC<ShortcutProps> = ({ link, text, alt }) => {
+const Shortcut = ({ link, text, alt }: ShortcutProps) => {
   return (
     <Link to={link} className="flex">
       <span className="text-14px text-gray-700">{text}</span>

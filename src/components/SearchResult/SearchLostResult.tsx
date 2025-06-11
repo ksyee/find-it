@@ -6,7 +6,7 @@ import { AllData } from '@/types/types';
 import ItemBox from '@/components/ItemBox/ItemBox';
 import { getSearchLostData } from '@/lib/utils/getAPIData';
 import getFormattedDate from '@/lib/utils/getFormattedDate';
-import Navigation from '../Navigation/Navigation';
+
 import { useNavigate } from 'react-router-dom';
 import Skeleton from './../ItemBox/Skeleton';
 import { useInfiniteQuery } from '@tanstack/react-query';
@@ -149,7 +149,7 @@ const SearchLostResult = () => {
             </div>
           </div>
         </div>
-        <Navigation />
+
       </div>
     );
   }

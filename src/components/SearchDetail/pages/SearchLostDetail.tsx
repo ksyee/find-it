@@ -20,7 +20,7 @@ interface SearchData {
   };
 }
 
-const SearchLostDetail: React.FC = () => {
+const SearchLostDetail = () => {
   const {
     selectStartDate,
     setSelectStartDate,
@@ -114,13 +114,13 @@ const SearchLostDetail: React.FC = () => {
         <section className={sectionStyle}>
           <div className="flex items-center justify-between">
             <SearchParagraph>분류</SearchParagraph>
-            <div className="flex h-25px w-274px justify-end gap-14px">
+            <div className="h-25px w-274px gap-14px flex justify-end">
               <div className="relative inline-block">
                 <select
                   id="mainCategory"
                   value={selectedMainCategoryValue}
                   onChange={handleMainCategoriesSelectChange}
-                  className="hover: flex h-25px w-87px appearance-none items-center justify-center rounded-full border border-gray-500 pl-14px text-10px"
+                  className="hover: h-25px w-87px pl-14px text-10px flex appearance-none items-center justify-center rounded-full border border-gray-500"
                 >
                   {mainCategories.map((category) => (
                     <option key={category.value} value={category.value}>
@@ -131,7 +131,7 @@ const SearchLostDetail: React.FC = () => {
                 <img
                   src={select}
                   alt="대분류 선택"
-                  className="pointer-events-none absolute bottom-0 right-10px top-7px h-11px w-9px"
+                  className="right-10px top-7px h-11px w-9px pointer-events-none absolute bottom-0"
                 />
               </div>
               <div className="relative inline-block">
@@ -139,7 +139,7 @@ const SearchLostDetail: React.FC = () => {
                   id="subCategory"
                   value={selectedSubCategoryValue}
                   onChange={handleSubCategoriesSelectChange}
-                  className="flex h-25px w-87px appearance-none items-center justify-center rounded-full border border-gray-350 px-14px text-10px"
+                  className="h-25px w-87px border-gray-350 px-14px text-10px flex appearance-none items-center justify-center rounded-full border"
                 >
                   {subCategories[selectedMainCategoryValue] &&
                     subCategories[selectedMainCategoryValue].map(
@@ -156,7 +156,7 @@ const SearchLostDetail: React.FC = () => {
                 <img
                   src={select}
                   alt="소분류 선택"
-                  className="pointer-events-none absolute bottom-0 right-10px top-7px h-11px w-9px"
+                  className="right-10px top-7px h-11px w-9px pointer-events-none absolute bottom-0"
                 />
               </div>
             </div>
@@ -166,13 +166,13 @@ const SearchLostDetail: React.FC = () => {
         <section className={sectionStyle}>
           <div className="flex items-center justify-between">
             <SearchParagraph>분실 지역</SearchParagraph>
-            <div className="flex h-25px w-274px justify-end gap-14px">
+            <div className="h-25px w-274px gap-14px flex justify-end">
               <div className="relative inline-block">
                 <select
                   id="area"
                   value={selectedAreaValue}
                   onChange={handleAreasSelectChange}
-                  className="hover: flex h-25px w-87px appearance-none items-center justify-center rounded-full border border-gray-500 pl-14px text-10px"
+                  className="hover: h-25px w-87px pl-14px text-10px flex appearance-none items-center justify-center rounded-full border border-gray-500"
                 >
                   {areas.map((area) => (
                     <option key={area.value} value={area.value}>
@@ -183,7 +183,7 @@ const SearchLostDetail: React.FC = () => {
                 <img
                   src={select}
                   alt="시/도 선택"
-                  className="pointer-events-none absolute bottom-0 right-10px top-7px h-11px w-9px"
+                  className="right-10px top-7px h-11px w-9px pointer-events-none absolute bottom-0"
                 />
               </div>
             </div>

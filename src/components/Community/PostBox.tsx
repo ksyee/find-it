@@ -1,9 +1,9 @@
-import { Link } from 'react-router-dom';
-import { getData } from '@/lib/utils/crud';
-import { getTimeDiff } from '@/lib/utils/getTimeDiff';
+import { Link } from "react-router-dom";
+import { getData } from "@/lib/utils/crud";
+import { getTimeDiff } from "@/lib/utils/getTimeDiff";
 
 // pb 데이터 뿌리기
-const data = await getData('community', { sort: '-created' });
+const data = await getData("community", { sort: "-created" });
 
 const PostBox = () => {
   return (
@@ -18,7 +18,7 @@ const PostBox = () => {
               </h1>
               <span className="w-full	 whitespace-normal pt-8px text-12px text-gray-700">
                 {(item.content.length > 64 &&
-                  item.content.slice(0, 64) + '...') ||
+                  item.content.slice(0, 64) + "...") ||
                   item.content}
               </span>
               <span className="absolute bottom-14px block text-12px text-gray-450">

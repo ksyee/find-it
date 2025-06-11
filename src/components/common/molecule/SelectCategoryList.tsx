@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
 interface SelectCategoryListProps {
   title: string;
@@ -7,19 +7,19 @@ interface SelectCategoryListProps {
   onClose: () => void;
 }
 
-const SelectCategoryList: React.FC<SelectCategoryListProps> = ({
-  title = '아이템을 선택해주세요.',
+const SelectCategoryList = ({
+  title = "아이템을 선택해주세요.",
   dataList,
   getSelectItem,
   onClose,
-}) => {
+}: SelectCategoryListProps) => {
   /* -------------------------------------------------------------------------- */
   //함수 본문
 
-  const [selectedItem, setSelectedItem] = useState<string>('');
+  const [selectedItem, setSelectedItem] = useState<string>("");
   const ulRef = useRef<HTMLUListElement>(null);
-  const defaultColor = '#666';
-  const selectedColor = '#4785ff';
+  const defaultColor = "#666";
+  const selectedColor = "#4785ff";
   const checkIcon = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -42,7 +42,7 @@ const SelectCategoryList: React.FC<SelectCategoryListProps> = ({
   // 클릭한 아이템값 가져오기
   const handleClickItem = (
     item: string,
-    event?: React.MouseEvent<HTMLAnchorElement>
+    event?: React.MouseEvent<HTMLAnchorElement>,
   ) => {
     event?.preventDefault();
     setSelectedItem(item);
@@ -61,9 +61,9 @@ const SelectCategoryList: React.FC<SelectCategoryListProps> = ({
         onClose();
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [onClose, selectedItem]);
 
@@ -73,7 +73,7 @@ const SelectCategoryList: React.FC<SelectCategoryListProps> = ({
     <div className="fixed inset-0 z-30	bg-[#00000045]">
       <ul
         ref={ulRef}
-        style={{ scrollbarWidth: 'none' }}
+        style={{ scrollbarWidth: "none" }}
         className="absolute bottom-0 left-1/2 h-3/4 w-full max-w-400px translate-x-[-50%] overflow-auto rounded-t-40px bg-white px-40px pt-40px"
       >
         <h3 className="pb-36px text-18px">{title}</h3>

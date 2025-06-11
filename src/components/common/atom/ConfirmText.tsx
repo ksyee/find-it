@@ -2,7 +2,7 @@ type ConfirmTextProps = {
   confirmCase?: 'doubleCheckEmail' | 'doubleCheckNickname' | '';
 };
 
-const ConfirmText: React.FC<ConfirmTextProps> = ({ confirmCase = '' }) => {
+const ConfirmText = ({ confirmCase = '' }: ConfirmTextProps) => {
   const comment: { [key: string]: string } = {
     doubleCheckEmail: '사용 가능한 이메일 주소입니다.',
     doubleCheckNickname: '사용 가능한 닉네임 입니다.',
