@@ -28,7 +28,7 @@ const AlertText = ({ alertCase = "" }: AlertTextProps) => {
 
   const alertMessage = comment[alertCase];
   return (
-    <span className="inline-block w-244px pl-10px pt-8px text-left text-12px text-secondary">
+    <span className="inline-block w-[244px] pl-[10px] pt-[8px] text-left text-xs text-secondary">
       {alertMessage}
     </span>
   );

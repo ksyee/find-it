@@ -36,7 +36,7 @@ const SearchFindDetail = () => {
 
   const navigate = useNavigate();
 
-  const sectionStyle = 'flex flex-col gap-20px justify-center pt-20px';
+  const sectionStyle = 'flex flex-col gap-[20px] justify-center pt-[20px]';
 
   const handleMainCategoriesSelectChange = (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -114,13 +114,13 @@ const SearchFindDetail = () => {
         <section className={sectionStyle}>
           <div className="flex items-center justify-between">
             <SearchParagraph>분류</SearchParagraph>
-            <div className="flex h-25px w-274px justify-end gap-14px">
+            <div className="flex h-[25px] w-[274px] justify-end gap-[14px]">
               <div className="relative inline-block">
                 <select
                   id="mainCategory"
                   value={selectedMainCategoryValue}
                   onChange={handleMainCategoriesSelectChange}
-                  className="hover: flex h-25px w-87px appearance-none items-center justify-center rounded-full border border-gray-500 bg-white pl-14px text-10px"
+                  className="hover: flex h-[25px] w-[87px] appearance-none items-center justify-center rounded-full border border-gray-500 bg-white pl-[14px] text-[10px]"
                 >
                   {mainCategories.map((category) => (
                     <option key={category.value} value={category.value}>
@@ -131,7 +131,7 @@ const SearchFindDetail = () => {
                 <img
                   src={select}
                   alt="대분류 선택"
-                  className="pointer-events-none absolute bottom-0 right-10px top-7px h-11px w-9px"
+                  className="pointer-events-none absolute bottom-0 right-[10px] top-[7px] h-[11px] w-[9px]"
                 />
               </div>
               <div className="relative inline-block">
@@ -139,7 +139,7 @@ const SearchFindDetail = () => {
                   id="subCategory"
                   value={selectedSubCategoryValue}
                   onChange={handleSubCategoriesSelectChange}
-                  className="flex h-25px w-87px appearance-none items-center justify-center rounded-full border border-gray-350 bg-white px-14px text-10px"
+                  className="flex h-[25px] w-[87px] appearance-none items-center justify-center rounded-full border border-gray-350 bg-white px-[14px] text-[10px]"
                 >
                   {subCategories[selectedMainCategoryValue] &&
                     subCategories[selectedMainCategoryValue].map(
@@ -156,7 +156,7 @@ const SearchFindDetail = () => {
                 <img
                   src={select}
                   alt="소분류 선택"
-                  className="pointer-events-none absolute bottom-0 right-10px top-7px h-11px w-9px"
+                  className="pointer-events-none absolute bottom-0 right-[10px] top-[7px] h-[11px] w-[9px]"
                 />
               </div>
             </div>
@@ -166,13 +166,13 @@ const SearchFindDetail = () => {
         <section className={sectionStyle}>
           <div className="flex items-center justify-between">
             <SearchParagraph>습득 지역</SearchParagraph>
-            <div className="flex h-25px w-274px justify-end gap-14px">
+            <div className="flex h-[25px] w-[274px] justify-end gap-[14px]">
               <div className="relative inline-block">
                 <select
                   id="area"
                   value={selectedAreaValue}
                   onChange={handleAreasSelectChange}
-                  className="hover: flex h-25px w-87px appearance-none items-center justify-center rounded-full border border-gray-500 bg-white pl-14px text-10px"
+                  className="hover: flex h-[25px] w-[87px] appearance-none items-center justify-center rounded-full border border-gray-500 bg-white pl-[14px] text-[10px]"
                 >
                   {areas.map((area) => (
                     <option key={area.value} value={area.value}>
@@ -183,7 +183,7 @@ const SearchFindDetail = () => {
                 <img
                   src={select}
                   alt="시/도 선택"
-                  className="pointer-events-none absolute bottom-0 right-10px top-7px h-11px w-9px"
+                  className="pointer-events-none absolute bottom-0 right-[10px] top-[7px] h-[11px] w-[9px]"
                 />
               </div>
             </div>
@@ -204,7 +204,7 @@ const SearchFindDetail = () => {
             습득 종료일
           </SearchDate>
         </section>
-        <section className={`${sectionStyle} mt-40px items-center`}>
+        <section className={`${sectionStyle} mt-[40px] items-center`}>
           <ButtonVariable
             variant="primarySolidThin"
             buttonText="검색"

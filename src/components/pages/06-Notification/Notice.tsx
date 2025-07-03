@@ -117,14 +117,14 @@ const Notice = () => {
     <img
       src={none_alarm}
       alt="새로운 알림이 없습니다."
-      className="mx-auto mt-90px"
+      className="mx-auto mt-[90px]"
     />
   );
 
   const alarmList = (
     <ul className="">
       {recommendations.map((recommendation, index) => (
-        <li key={index} className="pb-25px text-14px">
+        <li key={index} className="pb-[25px] text-sm">
           <button
             className="flex w-full justify-between"
             onClick={() => handleButton(index)}
@@ -138,7 +138,7 @@ const Notice = () => {
   );
 
   return (
-    <div className="w-375px px-30px pt-40px">
+    <div className="w-[375px] px-[30px] pt-[40px]">
       {recommendations.length === 0 ? noneAlarmImage : alarmList}
     </div>
   );

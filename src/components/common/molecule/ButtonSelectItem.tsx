@@ -22,7 +22,7 @@ const ButtonSelectItem = ({
   const [secondTextColor, setSecondTextColor] = useState('#666');
   const [secondBorderColor, setSecondBorderColor] = useState('#666');
   const commonStyle =
-    'flex h-fit items-center truncate rounded-full px-14px py-6px text-10px';
+    'flex h-fit items-center truncate rounded-full px-[14px] py-[6px] text-[10px]';
   const isActiveColor = '#4785ff';
 
   const onFirst = () => {
@@ -48,7 +48,7 @@ const ButtonSelectItem = ({
   /* -------------------------------------------------------------------------- */
   // jsx 반환
   return (
-    <div className="flex gap-10px">
+    <div className="flex gap-[10px]">
       <button
         onClick={onFirst}
         className={commonStyle}

@@ -42,9 +42,10 @@ const ProfileBox = ({
         aria-label={`${profileName}님의 마이페이지로 이동`}
       >
         <p className="text-[17px] font-medium">
-          <strong className="block text-[24px] font-semibold">
-            {profileName}님
-          </strong>
+          <div className="flex items-baseline">
+            <strong className="text-[24px] font-medium">{profileName}</strong>
+            <span className="ml-0.5">님</span>
+          </div>
           안녕하세요!
         </p>
       </Link>
@@ -63,10 +64,10 @@ const FindItemBox = () => {
         className="flex h-full w-full flex-col"
         aria-label="물품 찾기 페이지로 이동"
       >
-        <span className="text-xl font-semibold">물품 찾기</span>
+        <span className="text-xl font-medium">물품 찾기</span>
         <img
           src={icon_search}
-          className="absolute right-5 bottom-5 h-8 w-8"
+          className="absolute right-5 bottom-5 h-9 w-9"
           alt=""
           aria-hidden="true"
         />
@@ -118,18 +119,22 @@ const CommunityBox: React.FC = () => {
   return (
     <section aria-labelledby="community-section-title">
       <Link to="/postlist" className="block" aria-label="자유게시판 전체보기">
-        <div className="mb-5 flex h-[140px] w-[335px] flex-col gap-[20px] rounded-lg border border-black p-5 transition-all duration-300 hover:cursor-pointer hover:shadow-lg">
+        <div className="mb-5 flex flex-col gap-5 rounded-2xl border border-black p-5 transition-all duration-300 hover:cursor-pointer hover:shadow-lg">
           <div className="flex items-center justify-between">
-            <h2 id="community-section-title" className="text-[20px]">
+            <h2 id="community-section-title" className="text-xl">
               자유게시판
             </h2>
-            <img src={icon_right} alt="" aria-hidden="true" />
+            <img
+              src={icon_right}
+              alt="자유게시판 전체보기"
+              aria-hidden="true"
+            />
           </div>
-          <ul className="space-y-2">
+          <ul>
             {posts.map((post, idx) => (
-              <li key={idx} className="flex items-center gap-2 pb-1">
-                <span className="text-[14px]">{post.title || '–'}</span>
-                <span className="text-[12px] text-gray-500">
+              <li key={idx} className="flex items-baseline gap-2 pb-1">
+                <span className="text-sm">{post.title || '–'}</span>
+                <span className="text-2xs text-gray-500">
                   {getTimeDiff({ createdAt: post.created })}
                 </span>
               </li>

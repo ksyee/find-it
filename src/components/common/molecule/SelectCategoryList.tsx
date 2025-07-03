@@ -74,12 +74,12 @@ const SelectCategoryList = ({
       <ul
         ref={ulRef}
         style={{ scrollbarWidth: "none" }}
-        className="absolute bottom-0 left-1/2 h-3/4 w-full max-w-400px translate-x-[-50%] overflow-auto rounded-t-40px bg-white px-40px pt-40px"
+        className="absolute bottom-0 left-1/2 h-3/4 w-full max-w-[400px] translate-x-[-50%] overflow-auto rounded-t-40px bg-white px-[40px] pt-[40px]"
       >
-        <h3 className="pb-36px text-18px">{title}</h3>
+        <h3 className="pb-[36px] text-lg">{title}</h3>
         {dataList.map((item, index) => (
           <li
-            className="flex items-center justify-between pb-20px"
+            className="flex items-center justify-between pb-[20px]"
             key={index}
             style={{
               color: `${(selectedItem === item && selectedColor) || defaultColor}`,

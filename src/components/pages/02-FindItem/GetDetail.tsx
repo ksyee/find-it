@@ -19,7 +19,7 @@ const GetDetail = () => {
   }, [id, setDetail]);
 
   return (
-    <div className="mx-auto w-375px">
+    <div className="mx-auto w-[375px]">
       <Header children="습득물 상세정보" isShowPrev empty />
       {detail && <Detail detail={detail} />}
     </div>

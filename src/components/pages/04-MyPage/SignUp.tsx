@@ -283,7 +283,7 @@ const SignUp = () => {
       <div className="flex flex-col items-center ">
         <Header isShowPrev={true} children="회원가입" empty={true} />
         <div className="flex flex-col items-center">
-          <form className="w-375px px-20px pt-30px" onSubmit={createUser}>
+          <form className="w-[375px] px-[20px] pt-[30px]" onSubmit={createUser}>
             <InputForm
               ref={emailRef}
               type="email"
@@ -345,10 +345,10 @@ const SignUp = () => {
               confirmCase={confirmNickname}
               disabledDoubleCheck={!nicknameValue}
             />
-            <div className="mt-10px flex h-48px w-full items-center justify-between ">
+            <div className="mt-[10px] flex h-[48px] w-full items-center justify-between ">
               <input
                 style={{ pointerEvents: 'none', cursor: 'default' }}
-                className="text-#989898 w-full pl-2.5 pr-2.5 text-14px"
+                className="text-#989898 w-full pl-2.5 pr-2.5 text-sm"
                 type="text"
                 name="거주지역"
                 readOnly
@@ -362,7 +362,7 @@ const SignUp = () => {
                 disabledSecond={disabledSecond}
               />
             </div>
-            <div className="box-border flex flex-col items-center gap-[1rem]	pt-80px">
+            <div className="box-border flex flex-col items-center gap-[1rem]	pt-[80px]">
               <ButtonVariable buttonText="완료" variant={variant} />
             </div>
           </form>

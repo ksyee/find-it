@@ -17,8 +17,8 @@ const PostList = () => {
         link="/searchpost"
       />
       <Horizon lineBold="bold" lineWidth="long" />
-      <div className="relative w-375px">
-        <div className="h-[calc(100vh-66px-80px)] overflow-auto">
+      <div className="relative w-[375px]">
+        <div className="h-[calc(100vh-[66px]-80px)] overflow-auto">
           <PostBox />
         </div>
         {loginUserData && (
@@ -26,7 +26,7 @@ const PostList = () => {
             <img
               src={IconPlus}
               alt="글쓰기 버튼"
-              className="absolute bottom-18px right-30px z-10 size-60px drop-shadow-xl hover:animate-bounce	 "
+              className="absolute bottom-[18px] right-[30px] z-10 size-60px drop-shadow-xl hover:animate-bounce	 "
             />
           </Link>
         )}

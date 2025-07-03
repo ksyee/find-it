@@ -51,7 +51,7 @@ const ItemBox = ({ itemType, item }: itemTypeProps) => {
         get_item_name: item.fdPrdtNm,
         get_date: item.fdYmd,
         storage: item.depPlace,
-        get_item_image: item.fdFilePathImg,
+        get_item_image: item.fdFilePathImg
       };
       setGetItemData(newGetItem);
     }
@@ -62,7 +62,7 @@ const ItemBox = ({ itemType, item }: itemTypeProps) => {
       const newLostItem: LostItemType = {
         lost_item_name: item.lstPrdtNm,
         lost_date: item.lstYmd,
-        lost_place: item.lstPlace,
+        lost_place: item.lstPlace
       };
       setLostItemData(newLostItem);
     }
@@ -71,29 +71,32 @@ const ItemBox = ({ itemType, item }: itemTypeProps) => {
   return (
     <div>
       {itemType === 'get' && getItemData && (
-        <button className="block" onClick={() => handleClickedItem(item.atcId)}>
-          <div className="mb-3 flex h-140px w-335px justify-between rounded-[20px] bg-white transition-all duration-300 hover:cursor-pointer hover:shadow-lg">
-            <div className="flex flex-col items-start py-18px pl-20px">
-              <h1 className="pb-2 text-20px font-medium leading-[1.3] tracking-tighter">
+        <button
+          className="block"
+          onClick={() => item && handleClickedItem(item.atcId)}
+        >
+          <div className="mb-3 flex h-[140px] w-[335px] justify-between rounded-[20px] bg-white transition-all duration-300 hover:cursor-pointer hover:shadow-lg">
+            <div className="flex flex-col items-start py-[18px] pl-5">
+              <h1 className="pb-2 text-xl leading-[1.3] font-medium tracking-tighter">
                 {getItemData.get_item_name.length > 10
                   ? getItemData.get_item_name.slice(0, 8) + '...'
                   : getItemData.get_item_name}
               </h1>
-              <span className="rounded-full bg-primary px-3 py-1 text-10px font-medium leading-[1.3] tracking-tighter text-white">
+              <span className="bg-primary rounded-full px-3 py-1 text-[10px] leading-[1.3] font-medium tracking-tighter text-white">
                 {getItemData.storage}
               </span>
 
-              <div className="mt-13px flex flex-col gap-1">
-                <span className="text-start text-12px font-medium leading-[1.3] tracking-tighter text-gray-500">
+              <div className="mt-[13px] flex flex-col gap-1">
+                <span className="text-start text-xs leading-[1.3] font-medium tracking-tighter text-gray-500">
                   습득날짜
                 </span>
-                <span className="text-12px font-medium leading-[1.3] tracking-tighter">
+                <span className="text-xs leading-[1.3] font-medium tracking-tighter">
                   {getItemData.get_date}
                 </span>
               </div>
             </div>
 
-            <div className="p-10px">
+            <div className="p-[10px]">
               <img
                 src={
                   getItemData.get_item_image ===
@@ -102,7 +105,7 @@ const ItemBox = ({ itemType, item }: itemTypeProps) => {
                     : getItemData.get_item_image
                 }
                 alt="물품 사진"
-                className="size-120px rounded-14px"
+                className="size-[120px] rounded-[14px]"
                 loading="lazy"
               />
             </div>
@@ -111,33 +114,36 @@ const ItemBox = ({ itemType, item }: itemTypeProps) => {
       )}
 
       {itemType === 'lost' && lostItemData && (
-        <button className="block" onClick={() => handleClickedItem(item.atcId)}>
-          <div className="mb-3 flex h-140px w-335px justify-between rounded-[20px] bg-white transition-all duration-300 hover:cursor-pointer hover:shadow-lg">
-            <div className="flex flex-col items-start py-18px pl-20px">
-              <h1 className="pb-2 text-20px font-medium leading-[1.3] tracking-tighter">
+        <button
+          className="block"
+          onClick={() => item && handleClickedItem(item.atcId)}
+        >
+          <div className="mb-3 flex h-[140px] w-[335px] justify-between rounded-[20px] bg-white transition-all duration-300 hover:cursor-pointer hover:shadow-lg">
+            <div className="flex flex-col items-start py-[18px] pl-5">
+              <h1 className="pb-2 text-xl leading-[1.3] font-medium tracking-tighter">
                 {lostItemData.lost_item_name.length > 10
                   ? lostItemData.lost_item_name.slice(0, 8) + '...'
                   : lostItemData.lost_item_name}
               </h1>
-              <span className="rounded-full border-[1px] border-primary px-3 py-3px text-10px font-medium leading-[1.3] tracking-tighter text-primary ">
+              <span className="border-primary text-primary rounded-full border-[1px] px-3 py-[3px] text-[10px] leading-[1.3] font-medium tracking-tighter">
                 {lostItemData.lost_place}
               </span>
 
-              <div className="mt-13px flex flex-col gap-1">
-                <span className="text-start text-12px font-medium leading-[1.3] tracking-tighter text-gray-500">
+              <div className="mt-[13px] flex flex-col gap-1">
+                <span className="text-start text-xs leading-[1.3] font-medium tracking-tighter text-gray-500">
                   분실날짜
                 </span>
-                <span className="text-12px font-medium leading-[1.3] tracking-tighter">
+                <span className="text-xs leading-[1.3] font-medium tracking-tighter">
                   {lostItemData.lost_date}
                 </span>
               </div>
             </div>
 
-            <div className="p-10px">
+            <div className="p-[10px]">
               <img
                 src={default_item}
                 alt="등록된 사진이 없습니다."
-                className="size-120px rounded-14px"
+                className="size-[120px] rounded-[14px]"
                 loading="lazy"
               />
             </div>
@@ -146,29 +152,32 @@ const ItemBox = ({ itemType, item }: itemTypeProps) => {
       )}
 
       {itemType === 'main' && getItemData && (
-        <button className="block" onClick={() => handleClickedItem(item.atcId)}>
-          <div className="mb-3 flex h-140px w-335px justify-between rounded-[20px] bg-primary transition-all duration-300 hover:cursor-pointer hover:shadow-lg">
-            <div className="flex flex-col items-start py-18px pl-20px">
-              <h1 className="pb-2 text-20px font-medium leading-[1.3] tracking-tighter text-white">
+        <button
+          className="block"
+          onClick={() => item && handleClickedItem(item.atcId)}
+        >
+          <div className="bg-primary mb-3 flex h-[140px] w-[335px] justify-between rounded-[20px] transition-all duration-300 hover:cursor-pointer hover:shadow-lg">
+            <div className="flex flex-col items-start py-[18px] pl-5">
+              <h1 className="pb-2 text-xl leading-[1.3] font-medium tracking-tighter text-white">
                 {getItemData.get_item_name.length > 10
                   ? getItemData.get_item_name.slice(0, 8) + '...'
                   : getItemData.get_item_name}
               </h1>
-              <span className="rounded-full bg-white px-3 py-1 text-10px font-medium leading-[1.3] tracking-tighter text-primary ">
+              <span className="text-primary rounded-full bg-white px-3 py-1 text-[10px] leading-[1.3] font-medium tracking-tighter">
                 {getItemData.storage}
               </span>
 
-              <div className="mt-13px flex flex-col gap-1">
-                <span className="text-start text-12px font-medium leading-[1.3] tracking-tighter text-skyblue-400">
+              <div className="mt-[13px] flex flex-col gap-1">
+                <span className="text-skyblue-400 text-start text-xs leading-[1.3] font-medium tracking-tighter">
                   습득날짜
                 </span>
-                <span className="text-12px font-medium leading-[1.3] tracking-tighter text-white">
+                <span className="text-xs leading-[1.3] font-medium tracking-tighter text-white">
                   {getItemData.get_date}
                 </span>
               </div>
             </div>
 
-            <div className="p-10px">
+            <div className="p-[10px]">
               <img
                 src={
                   getItemData.get_item_image ===
@@ -177,7 +186,7 @@ const ItemBox = ({ itemType, item }: itemTypeProps) => {
                     : getItemData.get_item_image
                 }
                 alt="물품 사진"
-                className="size-120px rounded-14px"
+                className="size-[120px] rounded-[14px]"
                 loading="lazy"
               />
             </div>

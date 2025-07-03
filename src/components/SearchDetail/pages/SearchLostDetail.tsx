@@ -36,7 +36,7 @@ const SearchLostDetail = () => {
 
   const navigate = useNavigate();
 
-  const sectionStyle = 'flex flex-col gap-20px justify-center pt-20px';
+  const sectionStyle = 'flex flex-col gap-[20px] justify-center pt-[20px]';
 
   const handleMainCategoriesSelectChange = (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -114,13 +114,13 @@ const SearchLostDetail = () => {
         <section className={sectionStyle}>
           <div className="flex items-center justify-between">
             <SearchParagraph>분류</SearchParagraph>
-            <div className="h-25px w-274px gap-14px flex justify-end">
+            <div className="h-[25px] w-[274px] gap-[14px] flex justify-end">
               <div className="relative inline-block">
                 <select
                   id="mainCategory"
                   value={selectedMainCategoryValue}
                   onChange={handleMainCategoriesSelectChange}
-                  className="hover: h-25px w-87px pl-14px text-10px flex appearance-none items-center justify-center rounded-full border border-gray-500"
+                  className="hover: h-[25px] w-[87px] pl-[14px] text-[10px] flex appearance-none items-center justify-center rounded-full border border-gray-500"
                 >
                   {mainCategories.map((category) => (
                     <option key={category.value} value={category.value}>
@@ -131,7 +131,7 @@ const SearchLostDetail = () => {
                 <img
                   src={select}
                   alt="대분류 선택"
-                  className="right-10px top-7px h-11px w-9px pointer-events-none absolute bottom-0"
+                  className="right-[10px] top-[7px] h-[11px] w-[9px] pointer-events-none absolute bottom-0"
                 />
               </div>
               <div className="relative inline-block">
@@ -139,7 +139,7 @@ const SearchLostDetail = () => {
                   id="subCategory"
                   value={selectedSubCategoryValue}
                   onChange={handleSubCategoriesSelectChange}
-                  className="h-25px w-87px border-gray-350 px-14px text-10px flex appearance-none items-center justify-center rounded-full border"
+                  className="h-[25px] w-[87px] border-gray-350 px-[14px] text-[10px] flex appearance-none items-center justify-center rounded-full border"
                 >
                   {subCategories[selectedMainCategoryValue] &&
                     subCategories[selectedMainCategoryValue].map(
@@ -156,7 +156,7 @@ const SearchLostDetail = () => {
                 <img
                   src={select}
                   alt="소분류 선택"
-                  className="right-10px top-7px h-11px w-9px pointer-events-none absolute bottom-0"
+                  className="right-[10px] top-[7px] h-[11px] w-[9px] pointer-events-none absolute bottom-0"
                 />
               </div>
             </div>
@@ -166,13 +166,13 @@ const SearchLostDetail = () => {
         <section className={sectionStyle}>
           <div className="flex items-center justify-between">
             <SearchParagraph>분실 지역</SearchParagraph>
-            <div className="h-25px w-274px gap-14px flex justify-end">
+            <div className="h-[25px] w-[274px] gap-[14px] flex justify-end">
               <div className="relative inline-block">
                 <select
                   id="area"
                   value={selectedAreaValue}
                   onChange={handleAreasSelectChange}
-                  className="hover: h-25px w-87px pl-14px text-10px flex appearance-none items-center justify-center rounded-full border border-gray-500"
+                  className="hover: h-[25px] w-[87px] pl-[14px] text-[10px] flex appearance-none items-center justify-center rounded-full border border-gray-500"
                 >
                   {areas.map((area) => (
                     <option key={area.value} value={area.value}>
@@ -183,7 +183,7 @@ const SearchLostDetail = () => {
                 <img
                   src={select}
                   alt="시/도 선택"
-                  className="right-10px top-7px h-11px w-9px pointer-events-none absolute bottom-0"
+                  className="right-[10px] top-[7px] h-[11px] w-[9px] pointer-events-none absolute bottom-0"
                 />
               </div>
             </div>
@@ -204,7 +204,7 @@ const SearchLostDetail = () => {
             분실 종료일
           </SearchDate>
         </section>
-        <section className={`${sectionStyle} mt-40px items-center`}>
+        <section className={`${sectionStyle} mt-[40px] items-center`}>
           <ButtonVariable
             variant="primarySolidThin"
             buttonText="검색"

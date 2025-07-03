@@ -13,7 +13,7 @@ const ConfirmText = ({ confirmCase = '' }: ConfirmTextProps) => {
 
   const confirmMessage = comment[confirmCase];
   return (
-    <span className="inline-block w-244px pl-10px pt-8px text-left text-12px text-primary">
+    <span className="inline-block w-[244px] pl-[10px] pt-[8px] text-left text-xs text-primary">
       {confirmMessage}
     </span>
   );

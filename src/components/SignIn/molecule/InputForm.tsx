@@ -76,12 +76,12 @@ const InputForm: React.ForwardRefRenderFunction<
       }}
     >
       <div
-        className="flex h-48px w-full items-center justify-between"
+        className="flex h-[48px] w-full items-center justify-between"
         style={{ borderBottom: `1.4px solid ${borderColor}` }}
       >
         <label className="sr-only">{title}</label>
         <input
-          className="text-#989898 w-full pl-2.5 pr-2.5 text-14px"
+          className="text-#989898 w-full pl-2.5 pr-2.5 text-sm"
           style={{ outline: 'none' }}
           ref={ref}
           type={type}

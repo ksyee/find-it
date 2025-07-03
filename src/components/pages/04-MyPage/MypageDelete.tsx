@@ -100,20 +100,20 @@ const MypageDelete = () => {
   /* -------------------------------------------------------------------------- */
   /* -------------------------------------------------------------------------- */
   return (
-    <div className="mx-auto my-0 flex w-375px flex-col">
+    <div className="mx-auto my-0 flex w-[375px] flex-col">
       <Header isShowPrev={true} children={''} empty={true} />
-      <form className="stext-left mx-30px mt-20px" onSubmit={isComplete}>
-        <h1 className="leading-7.5 text-20px">
+      <form className="stext-left mx-[30px] mt-[20px]" onSubmit={isComplete}>
+        <h1 className="leading-7.5 text-xl">
           회원 확인을 위해
           <br />
           이메일을 입력해주세요.
         </h1>
-        <span className="inline-block w-244px pt-12px text-left text-14px text-gray-400">
+        <span className="inline-block w-[244px] pt-[12px] text-left text-sm text-gray-400">
           회원 탈퇴 처리 후 복구가 불가합니다.
         </span>
-        <li className="mt-40px flex items-baseline justify-between">
-          <h2 className="text-12px">이메일 입력</h2>
-          <div className="w-232px">
+        <li className="mt-[40px] flex items-baseline justify-between">
+          <h2 className="text-xs">이메일 입력</h2>
+          <div className="w-[232px]">
             <InputFormSlim
               ref={emailRef}
               type="email"
@@ -127,9 +127,9 @@ const MypageDelete = () => {
             />
           </div>
         </li>
-        <li className="mt-16px flex items-baseline justify-between ">
-          <h2 className="text-12px">이메일 확인</h2>
-          <div className="w-232px">
+        <li className="mt-[16px] flex items-baseline justify-between ">
+          <h2 className="text-xs">이메일 확인</h2>
+          <div className="w-[232px]">
             <InputFormSlim
               ref={emailCheckRef}
               type="email"
@@ -142,7 +142,7 @@ const MypageDelete = () => {
             />
           </div>
         </li>
-        <div className="mt-60px w-full">
+        <div className="mt-[60px] w-full">
           <ButtonVariable buttonText="회원탈퇴" variant={variant} />
         </div>
       </form>

@@ -28,12 +28,12 @@ const SearchDate = ({
   };
 
   return (
-    <div className="flex h-20px w-316px items-center justify-between">
+    <div className="flex h-[20px] w-[316px] items-center justify-between">
       <label htmlFor={dateInputId}>
         <SearchParagraph>{children}</SearchParagraph>
       </label>
-      <div className="flex items-center gap-8px">
-        <p className="text-12px">{selectDate}</p>
+      <div className="flex items-center gap-[8px]">
+        <p className="text-xs">{selectDate}</p>
         <input
           id={dateInputId}
           type="date"

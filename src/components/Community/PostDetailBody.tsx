@@ -40,8 +40,8 @@ const PostDetailBody = () => {
   const { title, content: bodyText, tag, nickname, created } = thisData;
 
   return (
-    <div className="w-315px">
-      <section className="flex items-center gap-8px pt-20px">
+    <div className="w-[315px]">
+      <section className="flex items-center gap-[8px] pt-[20px]">
         <img
           src={
             (userAvatar !== '' && getPbImgURL(userId, userAvatar)) || profile
@@ -49,18 +49,18 @@ const PostDetailBody = () => {
           alt="글쓴이 프로필 사진"
           className="size-34px rounded-full"
         />
-        <div className="flex flex-col text-12px">
-          <span className="text-14px">{nickname}</span>
+        <div className="flex flex-col text-xs">
+          <span className="text-sm">{nickname}</span>
           {getTimeDiff({ createdAt: created })}
         </div>
       </section>
 
-      <section className="flex flex-col pt-18px">
-        <h1 className="text-24px tracking-tight text-black">{title}</h1>
-        <p className="w-full	whitespace-normal break-keep pt-10px	text-16px leading-28px tracking-tight	text-gray-700">
+      <section className="flex flex-col pt-[18px]">
+        <h1 className="text-2xl tracking-tight text-black">{title}</h1>
+        <p className="w-full	whitespace-normal break-keep pt-[10px]	text-base leading-28px tracking-tight	text-gray-700">
           {bodyText}
         </p>
-        <span className="block pt-30px text-14px tracking-tight text-primary">
+        <span className="block pt-[30px] text-sm tracking-tight text-primary">
           #{tag}
         </span>
       </section>

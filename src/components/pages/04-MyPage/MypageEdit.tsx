@@ -307,7 +307,7 @@ const MypageEdit = () => {
   return (
     <>
       <form
-        className="mx-auto my-0 flex w-375px flex-col "
+        className="mx-auto my-0 flex w-[375px] flex-col "
         onSubmit={buttonSubmit}
       >
         <Header
@@ -324,7 +324,7 @@ const MypageEdit = () => {
         <button
           type="button"
           onClick={handleProfileChange}
-          className="relative mx-auto mb-30px mt-20px"
+          className="relative mx-auto mb-[30px] mt-[20px]"
         >
           <img
             ref={avatarRef}
@@ -339,10 +339,10 @@ const MypageEdit = () => {
             alt="프로필 사진 변경 버튼"
           ></img>
         </button>
-        <ul className="mx-30px">
+        <ul className="mx-[30px]">
           <li className="flex items-baseline justify-between ">
-            <h2 className="text-12px">닉네임</h2>
-            <div className="w-232px">
+            <h2 className="text-xs">닉네임</h2>
+            <div className="w-[232px]">
               <InputFormSlim
                 ref={nicknameRef}
                 type="text"
@@ -360,12 +360,12 @@ const MypageEdit = () => {
               />
             </div>
           </li>
-          <li className=" py-26px">
+          <li className=" py-[26px]">
             <Horizon lineBold="thin" lineWidth="short" />
           </li>
           <li className="flex items-baseline justify-between ">
-            <h2 className="text-12px">기존 비밀번호</h2>
-            <div className="w-232px">
+            <h2 className="text-xs">기존 비밀번호</h2>
+            <div className="w-[232px]">
               <InputFormSlim
                 ref={passwordDefaultRef}
                 type={passwordDefaultType}
@@ -381,9 +381,9 @@ const MypageEdit = () => {
               />
             </div>
           </li>
-          <li className="mt-26px flex items-baseline justify-between ">
-            <h2 className="text-12px">비밀번호 변경</h2>
-            <div className="w-232px">
+          <li className="mt-[26px] flex items-baseline justify-between ">
+            <h2 className="text-xs">비밀번호 변경</h2>
+            <div className="w-[232px]">
               <InputFormSlim
                 ref={passwordRef}
                 type={passwordType}
@@ -400,9 +400,9 @@ const MypageEdit = () => {
               />
             </div>
           </li>
-          <li className="mt-16px flex items-baseline justify-between ">
-            <h2 className="text-12px">비밀번호 확인</h2>
-            <div className="w-232px">
+          <li className="mt-[16px] flex items-baseline justify-between ">
+            <h2 className="text-xs">비밀번호 확인</h2>
+            <div className="w-[232px]">
               <InputFormSlim
                 ref={passwordCheckRef}
                 type={passwordCheckType}
@@ -419,11 +419,11 @@ const MypageEdit = () => {
               />
             </div>
           </li>
-          <li className=" py-26px">
+          <li className=" py-[26px]">
             <Horizon lineBold="thin" lineWidth="short" />
           </li>
           <li className="flex items-baseline justify-between ">
-            <h2 className="text-12px">거주지역</h2>
+            <h2 className="text-xs">거주지역</h2>
             <ButtonSelectItem
               firstName={selectFirstItem || userSido}
               secondName={selectSecondItem || userGungu}
@@ -433,13 +433,13 @@ const MypageEdit = () => {
             />
           </li>
 
-          <li className=" py-26px">
+          <li className=" py-[26px]">
             <Horizon lineBold="thin" lineWidth="short" />
           </li>
           <li>
             <Link
               to="/mypagedelete"
-              className="flex items-center py-1 text-12px text-gray-500"
+              className="flex items-center py-1 text-xs text-gray-500"
             >
               회원탈퇴
             </Link>

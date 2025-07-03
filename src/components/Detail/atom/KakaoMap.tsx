@@ -35,7 +35,7 @@ const KakaoMap = ({ place, className }: KakaoMapProps) => {
           position: coords,
         });
 
-        const content = `<div class="flex bg-white text-black border border-black px-12px py-4px"><span class="text-12px">${place}</span></div>`;
+        const content = `<div class="flex bg-white text-black border border-black px-[12px] py-[4px]"><span class="text-xs">${place}</span></div>`;
 
         new window.kakao.maps.CustomOverlay({
           map: map,

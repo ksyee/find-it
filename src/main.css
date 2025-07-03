@@ -1,9 +1,30 @@
 @import 'tailwindcss';
+@import './custom-utilities.css';
+
+/* OAGothic 폰트 설정 */
+@font-face {
+  font-family: 'OAGothic';
+  src: url('./fonts/OAGothic-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'OAGothic';
+  src: url('./fonts/OAGothic-ExtraBold.woff') format('woff');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
 
 /* 테마 설정 */
 @theme {
   /* 폰트 패밀리 */
   --font-sans: 'OAGothic', 'noto-sans-kr', sans-serif;
+
+  /* 폰트 사이즈 */
+  --text-2xs: 10px;
 
   /* 색상 시스템 */
   --color-primary: #4785ff;

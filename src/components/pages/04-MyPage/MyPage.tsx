@@ -46,15 +46,15 @@ const showAlert = () => {
 // 마이페이지 마크업
 const Profile = () => {
   return (
-    <section className="my-30px flex items-center gap-4">
+    <section className="my-[30px] flex items-center gap-4">
       <img
         src={userAvatar !== '' ? getPbImgURL(userId, userAvatar) : profile}
         alt="나의 프로필 사진"
         className="size-66px rounded-full"
       />
-      <div className="flex flex-col gap-6px">
-        <div className="flex items-center gap-4px">
-          <h1 className="text-20px">{userNickname}</h1>
+      <div className="flex flex-col gap-[6px]">
+        <div className="flex items-center gap-[4px]">
+          <h1 className="text-xl">{userNickname}</h1>
           <Link
             to="/mypageedit"
             className="p-1.5 transition-all duration-300 hover:rounded hover:bg-gray-100"
@@ -62,7 +62,7 @@ const Profile = () => {
             <img src={icon_pencil} alt="프로필 수정하기" />
           </Link>
         </div>
-        <span className="text-12px text-gray-450">{userEmail}</span>
+        <span className="text-xs text-gray-450">{userEmail}</span>
       </div>
     </section>
   );
@@ -72,12 +72,12 @@ const List01 = () => {
   const [inboxAlert] = useState(false);
 
   return (
-    <section className="pb-26px">
-      <ul className="flex flex-col gap-10px">
+    <section className="pb-[26px]">
+      <ul className="flex flex-col gap-[10px]">
         <li className="transition-all duration-300 hover:rounded hover:bg-gray-100">
           <button
             onClick={showAlert}
-            className="flex items-center gap-10px py-4px"
+            className="flex items-center gap-[10px] py-[4px]"
           >
             <img src={icon_bookmark} alt="북마크 관리하기" />
             <span>북마크 관리</span>
@@ -86,7 +86,7 @@ const List01 = () => {
         <li className="transition-all duration-300 hover:rounded hover:bg-gray-100">
           <button
             onClick={showAlert}
-            className="flex items-center gap-10px py-4px"
+            className="flex items-center gap-[10px] py-[4px]"
           >
             <img src={icon_docs} alt="게시글 관리하기" />
             <span>게시글 관리</span>
@@ -95,13 +95,13 @@ const List01 = () => {
         <li className="transition-all duration-300 hover:rounded hover:bg-gray-100">
           <button
             onClick={showAlert}
-            className="flex items-center gap-10px py-4px"
+            className="flex items-center gap-[10px] py-[4px]"
           >
             <img src={icon_envelope} alt="받은 쪽지함 보기" />
-            <span className="flex gap-3px">
+            <span className="flex gap-[3px]">
               받은 쪽지함
               <p
-                className={`${inboxAlert ? 'h-7px w-7px rounded-full bg-primary' : ''} `}
+                className={`${inboxAlert ? 'h-[7px] w-[7px] rounded-full bg-primary' : ''} `}
               >
                 &nbsp;
               </p>
@@ -127,24 +127,24 @@ const List02 = () => {
   }, []);
 
   return (
-    <section className="py-26px">
-      <ul className="flex flex-col gap-10px">
+    <section className="py-[26px]">
+      <ul className="flex flex-col gap-[10px]">
         <li className="transition-all duration-300 hover:rounded hover:bg-gray-100">
           <button
             onClick={showAlert}
-            className="flex items-center gap-10px py-4px"
+            className="flex items-center gap-[10px] py-[4px]"
           >
             <img src={icon_search} alt="검색 범위 설정하기" />
             <span>검색 범위 설정</span>
           </button>
         </li>
         <li className="transition-all duration-300 hover:rounded hover:bg-gray-100">
-          <Link to="/notification" className="flex gap-10px py-4px">
+          <Link to="/notification" className="flex gap-[10px] py-[4px]">
             <img src={icon_bell} alt="키워드 알림 보기" />
-            <span className="flex gap-3px">
+            <span className="flex gap-[3px]">
               키워드 알림
               <p
-                className={`${voidAlarmIcon ? 'h-7px w-7px rounded-full bg-primary' : ''} `}
+                className={`${voidAlarmIcon ? 'h-[7px] w-[7px] rounded-full bg-primary' : ''} `}
               >
                 &nbsp;
               </p>
@@ -158,20 +158,20 @@ const List02 = () => {
 
 const Menu = () => {
   return (
-    <ul className="flex flex-col gap-8px py-26px">
+    <ul className="flex flex-col gap-[8px] py-[26px]">
       <li className="transition-all duration-300 hover:rounded hover:bg-gray-100">
         <Link to="/notice" className="flex items-center py-1">
-          <span className="text-12px text-gray-500">공지사항</span>
+          <span className="text-xs text-gray-500">공지사항</span>
         </Link>
       </li>
       <li className="transition-all duration-300 hover:rounded hover:bg-gray-100">
         <Link to="/credit" className="flex items-center py-1">
-          <span className="text-12px text-gray-500">만든 사람들</span>
+          <span className="text-xs text-gray-500">만든 사람들</span>
         </Link>
       </li>
       <li className="transition-all duration-300 hover:rounded hover:bg-gray-100">
         <button
-          className="flex items-center py-1 text-12px text-gray-500"
+          className="flex items-center py-1 text-xs text-gray-500"
           onClick={handleLogout}
         >
           로그아웃
@@ -213,9 +213,9 @@ const MyPage = () => {
   }, [location]);
 
   return (
-    <div className="flex w-full min-w-375px flex-col items-center">
+    <div className="flex w-full min-w-[375px] flex-col items-center">
       <Header isShowPrev={true} children="마이페이지" empty={true} />
-      <div className="px-30px">
+      <div className="px-[30px]">
         <Profile />
         <List01 />
         <Horizon lineBold="thin" lineWidth="short" />

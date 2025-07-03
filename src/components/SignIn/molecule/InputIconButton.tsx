@@ -89,7 +89,7 @@ export const InputIconButton = ({
   disabledDoubleCheck,
 }: InputIconButtonProps) => {
   return (
-    <div className="flex gap-10px pr-12px">
+    <div className="flex gap-[10px] pr-[12px]">
       <DoubleCheck
         isShow={iconDoubleCheck}
         onClickDoubleCheck={onClickDoubleCheck}

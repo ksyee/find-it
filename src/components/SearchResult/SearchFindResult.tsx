@@ -133,10 +133,10 @@ const SearchFindResult = () => {
         <Header isShowPrev={true} empty={true}>
           검색결과
         </Header>
-        <div className="w-375px">
+        <div className="w-[375px]">
           <div
             ref={scrollContainerRef}
-            className="h-[calc(100vh-66px-80px)] overflow-auto"
+            className="h-[calc(100vh-[66px]-80px)] overflow-auto"
           >
             <div className="flex flex-col items-center">
               <Skeleton />
@@ -162,10 +162,10 @@ const SearchFindResult = () => {
       <Header isShowPrev={true} empty={true}>
         검색결과
       </Header>
-      <div className="w-375px">
+      <div className="w-[375px]">
         <div
           ref={scrollContainerRef}
-          className="h-[calc(100vh-66px-80px)] overflow-auto"
+          className="h-[calc(100vh-[66px]-80px)] overflow-auto"
         >
           {/* {data.pages[0] === undefined ? (
             <span className="text-center">검색 결과가 없습니다.</span>
@@ -179,7 +179,7 @@ const SearchFindResult = () => {
                     </li>
                   ))
                 : pageIndex === data.pages.length - 1 && (
-                    <li key={pageIndex} className="mb-16px">
+                    <li key={pageIndex} className="mb-[16px]">
                       검색 결과가 없습니다.
                     </li>
                   )

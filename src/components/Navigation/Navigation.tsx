@@ -59,7 +59,7 @@ const Navigation = () => {
       className="fixed bottom-0 left-1/2 flex h-[80px] w-[375px] -translate-x-1/2 transform items-center justify-center rounded-t-2xl bg-white"
       aria-label="메인 네비게이션"
     >
-      <ul className="flex w-full justify-around">
+      <ul className="mx-3 flex w-full justify-around">
         {items.map((item, index) => (
           <li key={index}>
             <NavigationItem

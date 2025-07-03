@@ -23,22 +23,22 @@ const Categories = ({ onChangeCategory }) => {
   }, []);
 
   return (
-    <div className="flex w-375px">
+    <div className="flex w-[375px]">
       <button
-        className={`relative w-1/2 border-b-[1px] pb-12px pt-13px text-center text-14px transition-colors duration-300 ${activeButton === 'notice' ? 'border-black' : 'text-gray-400'}`}
+        className={`relative w-1/2 border-b-[1px] pb-[12px] pt-[13px] text-center text-sm transition-colors duration-300 ${activeButton === 'notice' ? 'border-black' : 'text-gray-400'}`}
         onClick={() => handleClick('notice')}
       >
         내 키워드 알림
         {voidAlarmIcon && (
           <p
-            className={`absolute right-37px top-13px h-7px w-7px rounded-full bg-primary ${activeButton === 'setting' ? 'opacity-70' : ''}`}
+            className={`absolute right-[37px] top-[13px] h-[7px] w-[7px] rounded-full bg-primary ${activeButton === 'setting' ? 'opacity-70' : ''}`}
           >
             &nbsp;
           </p>
         )}
       </button>
       <button
-        className={`w-1/2 border-b-[1px] pb-12px pt-13px text-center text-14px transition-colors duration-300 ${activeButton === 'setting' ? 'border-black' : 'text-gray-400'}`}
+        className={`w-1/2 border-b-[1px] pb-[12px] pt-[13px] text-center text-sm transition-colors duration-300 ${activeButton === 'setting' ? 'border-black' : 'text-gray-400'}`}
         onClick={() => handleClick('setting')}
       >
         키워드 설정
@@ -50,7 +50,7 @@ const Categories = ({ onChangeCategory }) => {
 const Notification = () => {
   const [activeCategory, setActiveCategory] = useState('notice');
   return (
-    <div className="flex w-full min-w-375px flex-col items-center">
+    <div className="flex w-full min-w-[375px] flex-col items-center">
       <Header isShowPrev={true} children="키워드 알림" empty={true} />
       <Categories onChangeCategory={setActiveCategory} />
       {activeCategory === 'notice' && <Notice />}

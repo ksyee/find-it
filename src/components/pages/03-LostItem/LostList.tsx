@@ -81,10 +81,10 @@ const LostList = () => {
           isShowSearch={true}
           link="/searchlost"
         />
-        <div className="w-375px">
+        <div className="w-[375px]">
           <div
             ref={scrollContainerRef}
-            className="h-[calc(100vh-66px-80px)] overflow-auto"
+            className="h-[calc(100vh-[66px]-80px)] overflow-auto"
           >
             <div className="flex flex-col items-center">
               <Skeleton />
@@ -113,10 +113,10 @@ const LostList = () => {
         isShowSearch={true}
         link="/searchlost"
       />
-      <div className="w-375px">
+      <div className="w-[375px]">
         <div
           ref={scrollContainerRef}
-          className="h-[calc(100vh-66px-80px)] overflow-auto"
+          className="h-[calc(100vh-[66px]-80px)] overflow-auto"
         >
           <ul className="flex flex-col items-center">
             {data.pages.map((page: AllData[]) =>

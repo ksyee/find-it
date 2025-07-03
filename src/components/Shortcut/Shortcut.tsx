@@ -10,7 +10,7 @@ interface ShortcutProps {
 const Shortcut = ({ link, text, alt }: ShortcutProps) => {
   return (
     <Link to={link} className="flex">
-      <span className="text-14px text-gray-700">{text}</span>
+      <span className="text-sm font-medium text-gray-700">{text}</span>
       <img src={icon_next} alt={alt} />
     </Link>
   );

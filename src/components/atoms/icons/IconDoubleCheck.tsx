@@ -16,7 +16,7 @@ const IconDoubleCheck: React.FC<IconDoubleCheckProps> = ({
 }) => {
   return (
     <span
-      className={`whitespace-nowrap text-10px leading-8 ${className}`}
+      className={`whitespace-nowrap text-[10px] leading-8 ${className}`}
       style={{ color }}
     >
       중복확인

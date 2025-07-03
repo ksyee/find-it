@@ -3,7 +3,7 @@ interface SearchParagraphProps {
 }
 
 const SearchParagraph = ({ children }: SearchParagraphProps) => {
-  return <p className="text-12px font-medium tracking-[-0.36px]">{children}</p>;
+  return <p className="text-xs font-medium tracking-[-0.36px]">{children}</p>;
 };
 
 export default SearchParagraph;

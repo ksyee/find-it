@@ -70,7 +70,9 @@ const App = () => {
   // 오류 발생 시 표시할 폴백 UI
   const errorFallback = (
     <div className="flex min-h-screen flex-col items-center justify-center rounded-lg bg-red-50 p-4 text-center text-red-700">
-      <h2 className="mb-2 text-xl font-bold">앱에서 오류가 발생했습니다</h2>
+      <h2 className="mb-2 text-xl font-extrabold">
+        앱에서 오류가 발생했습니다
+      </h2>
       <p className="mb-4">
         예기치 않은 문제가 발생했습니다. 페이지를 새로고침해 주세요.
       </p>

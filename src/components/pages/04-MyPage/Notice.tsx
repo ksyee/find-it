@@ -6,7 +6,7 @@ const Notice = () => {
     <>
       <div className="flex w-full flex-col items-center">
         <Header isShowPrev={true} children="공지사항" empty={true} />
-        <ul className="mx-auto my-0 flex w-315px flex-col">
+        <ul className="mx-auto my-0 flex w-[315px] flex-col">
           <NoticeItem
             title="찾아줘! 서비스가 오픈했습니다."
             date="2023.3.15"

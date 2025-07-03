@@ -109,8 +109,8 @@ const SignIn = () => {
       <div className="flex flex-col items-center ">
         <Header children="로그인" empty={true} isShowPrev={true} />
         <div className="flex flex-col items-center">
-          <form className="w-375px px-20px pt-30px" onSubmit={handleSignIn}>
-            <div className="flex flex-col gap-20px">
+          <form className="w-[375px] px-[20px] pt-[30px]" onSubmit={handleSignIn}>
+            <div className="flex flex-col gap-[20px]">
               <InputForm
                 ref={emailRef}
                 type="email"
@@ -136,7 +136,7 @@ const SignIn = () => {
                 alertCase={alertPassword}
               />
             </div>
-            <div className="box-border flex flex-col items-center gap-[1rem]	pt-80px">
+            <div className="box-border flex flex-col items-center gap-[1rem]	pt-[80px]">
               <ButtonVariable buttonText="로그인" variant={variant} />
               <ButtonVariable
                 buttonText="회원가입"
