@@ -2,11 +2,12 @@ import SwiperCore from 'swiper';
 import { useQuery } from '@tanstack/react-query';
 import ItemBox from './ItemBox';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { getAllData } from '@/lib/utils/getAPIData';
+import { getFoundItems } from '@/lib/utils/getFoundItems';
 import { Autoplay, Pagination, Keyboard } from 'swiper/modules';
 import 'swiper/swiper-bundle.css';
 import '@/main.css';
 import Skeleton from './Skeleton';
+import { AllData } from '@/types/types';
 
 // ItemBox에서 사용하는 아이템 타입과 동일한 타입 정의
 type ItemBoxType = {
@@ -26,7 +27,7 @@ const SwiperItem = () => {
   // API 데이터 가져오기
   const { data, isLoading } = useQuery({
     queryKey: ['swiperItems'],
-    queryFn: async () => await getAllData({ pageNo: 1, numOfRows: 3 })
+    queryFn: async () => await getFoundItems(0, 3)
   });
 
   // 로딩 중일 때 스켈레톤 표시
@@ -35,31 +36,19 @@ const SwiperItem = () => {
   }
 
   // API 응답이 없거나 배열이 아닌 경우 빈 배열로 처리
-  const apiItems = Array.isArray(data) ? data : [];
+  const apiItems: AllData[] = Array.isArray(data) ? (data as AllData[]) : [];
 
-  // 유효한 아이템만 필터링하고 타입 변환
-  const validItems: ItemBoxType[] = apiItems
-    .filter(
-      (item): item is Record<string, any> =>
-        item !== null &&
-        typeof item === 'object' &&
-        !Array.isArray(item) &&
-        'atcId' in item &&
-        'fdPrdtNm' in item &&
-        'fdYmd' in item &&
-        'depPlace' in item &&
-        'fdFilePathImg' in item
-    )
-    .map((item) => ({
-      atcId: String(item.atcId || ''),
-      fdPrdtNm: String(item.fdPrdtNm || ''),
-      lstPrdtNm: String(item.lstPrdtNm || ''),
-      fdYmd: String(item.fdYmd || ''),
-      lstYmd: String(item.lstYmd || ''),
-      depPlace: String(item.depPlace || ''),
-      lstPlace: String(item.lstPlace || ''),
-      fdFilePathImg: String(item.fdFilePathImg || '')
-    }));
+  // 타입 변환
+  const validItems: ItemBoxType[] = apiItems.map((item) => ({
+    atcId: item.atcId,
+    fdPrdtNm: item.fdPrdtNm,
+    lstPrdtNm: item.lstPrdtNm,
+    fdYmd: item.fdYmd,
+    lstYmd: item.lstYmd,
+    depPlace: item.depPlace,
+    lstPlace: item.lstPlace,
+    fdFilePathImg: item.fdFilePathImg
+  }));
 
   return (
     <Swiper

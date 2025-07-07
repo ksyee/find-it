@@ -2,7 +2,6 @@ import Header from '@/components/Header/Header';
 import PostDetailBody from '@/components/Community/PostDetailBody';
 import Horizon from '@/components/common/atom/Horizon';
 
-
 const PostDetail = () => {
   return (
     <div className="flex h-screen w-full flex-col items-center">
@@ -12,7 +11,6 @@ const PostDetail = () => {
         <div className="flex h-[calc(100vh-[66px]-80px)] w-full justify-center overflow-auto">
           <PostDetailBody />
         </div>
-
       </div>
     </div>
   );

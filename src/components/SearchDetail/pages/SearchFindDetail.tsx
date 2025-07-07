@@ -31,12 +31,12 @@ const SearchFindDetail = () => {
     selectedSubCategoryValue,
     setSelectedSubCategoryValue,
     selectedAreaValue,
-    setSelectedAreaValue,
+    setSelectedAreaValue
   } = useSearchStore();
 
   const navigate = useNavigate();
 
-  const sectionStyle = 'flex flex-col gap-[20px] justify-center pt-[20px]';
+  const sectionStyle = 'flex flex-col gap-5 justify-center pt-5';
 
   const handleMainCategoriesSelectChange = (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -84,7 +84,7 @@ const SearchFindDetail = () => {
               ? getFormattedDate(selectEndDate)
               : '',
           pageNo: 1,
-          numOfRows: 6,
+          numOfRows: 6
         });
 
         if (typeof searchData === 'object') {
@@ -102,7 +102,7 @@ const SearchFindDetail = () => {
     selectedSubCategoryValue,
     selectedAreaValue,
     selectStartDate,
-    selectEndDate,
+    selectEndDate
   ]);
 
   return (
@@ -131,7 +131,7 @@ const SearchFindDetail = () => {
                 <img
                   src={select}
                   alt="대분류 선택"
-                  className="pointer-events-none absolute bottom-0 right-[10px] top-[7px] h-[11px] w-[9px]"
+                  className="pointer-events-none absolute top-[7px] right-[10px] bottom-0 h-[11px] w-[9px]"
                 />
               </div>
               <div className="relative inline-block">
@@ -139,7 +139,7 @@ const SearchFindDetail = () => {
                   id="subCategory"
                   value={selectedSubCategoryValue}
                   onChange={handleSubCategoriesSelectChange}
-                  className="flex h-[25px] w-[87px] appearance-none items-center justify-center rounded-full border border-gray-350 bg-white px-[14px] text-[10px]"
+                  className="border-gray-350 flex h-[25px] w-[87px] appearance-none items-center justify-center rounded-full border bg-white px-[14px] text-[10px]"
                 >
                   {subCategories[selectedMainCategoryValue] &&
                     subCategories[selectedMainCategoryValue].map(
@@ -156,7 +156,7 @@ const SearchFindDetail = () => {
                 <img
                   src={select}
                   alt="소분류 선택"
-                  className="pointer-events-none absolute bottom-0 right-[10px] top-[7px] h-[11px] w-[9px]"
+                  className="pointer-events-none absolute top-[7px] right-[10px] bottom-0 h-[11px] w-[9px]"
                 />
               </div>
             </div>
@@ -183,7 +183,7 @@ const SearchFindDetail = () => {
                 <img
                   src={select}
                   alt="시/도 선택"
-                  className="pointer-events-none absolute bottom-0 right-[10px] top-[7px] h-[11px] w-[9px]"
+                  className="pointer-events-none absolute top-[7px] right-[10px] bottom-0 h-[11px] w-[9px]"
                 />
               </div>
             </div>

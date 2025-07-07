@@ -4,10 +4,10 @@ import ItemBox from '../../ItemBox/ItemBox';
 
 // import { JsonArray } from '@/types/types';
 // import { lostAllData } from '@/lib/utils/lostAPIData';
-import { useEffect, useRef, UIEvent, useCallback } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import Skeleton from '@/components/ItemBox/Skeleton';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { lostAllData } from '@/lib/utils/lostAPIData';
+import { getLostItems } from '@/lib/utils/getLostItems';
 import { AllData } from '@/types/types';
 
 const LostList = () => {
@@ -16,18 +16,18 @@ const LostList = () => {
   // const [fetching, setFetching] = useState(false);
   // const [isLoading, setIsLoading] = useState(true);
 
-  const scrollContainerRef = useRef(null);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
       queryKey: ['lostListItems'],
-      queryFn: async ({ pageParam }) =>
-        await lostAllData({ pageNo: pageParam, numOfRows: 10 }),
-      initialPageParam: 1,
-      getNextPageParam: (allPages) => {
-        if (Array.isArray(allPages)) {
-          return allPages.length + 1;
+      queryFn: async ({ pageParam = 0 }) => await getLostItems(pageParam, 10),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage, allPages) => {
+        if (!Array.isArray(lastPage) || lastPage.length < 10) {
+          return undefined;
         }
+        return allPages.length;
       },
     });
 
@@ -52,15 +52,14 @@ const LostList = () => {
   //   }
   // }, [fetching]);
 
-  const handleScroll = useCallback(
-    (event: UIEvent<HTMLDivElement>) => {
-      const { scrollTop, scrollHeight, clientHeight } = event.currentTarget;
-      if (scrollTop + clientHeight >= scrollHeight && hasNextPage) {
-        fetchNextPage();
-      }
-    },
-    [hasNextPage, fetchNextPage]
-  );
+  const handleScroll = useCallback(() => {
+    const el = scrollContainerRef.current as HTMLDivElement | null;
+    if (!el) return;
+    const { scrollTop, scrollHeight, clientHeight } = el;
+    if (scrollTop + clientHeight >= scrollHeight - 50 && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, fetchNextPage]);
 
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
@@ -84,7 +83,7 @@ const LostList = () => {
         <div className="w-[375px]">
           <div
             ref={scrollContainerRef}
-            className="h-[calc(100vh-[66px]-80px)] overflow-auto"
+            className="h-[calc(100vh-146px)] overflow-auto"
           >
             <div className="flex flex-col items-center">
               <Skeleton />
@@ -116,10 +115,10 @@ const LostList = () => {
       <div className="w-[375px]">
         <div
           ref={scrollContainerRef}
-          className="h-[calc(100vh-[66px]-80px)] overflow-auto"
+          className="h-[calc(100vh-146px)] overflow-auto"
         >
           <ul className="flex flex-col items-center">
-            {data.pages.map((page: AllData[]) =>
+            {data?.pages?.map((page: AllData[]) =>
               page.map((item, index) => (
                 <li key={index}>
                   <ItemBox item={item} itemType="lost" />

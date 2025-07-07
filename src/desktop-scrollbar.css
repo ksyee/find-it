@@ -1,0 +1,11 @@
+/* Desktop-only Scrollbar Stabilization (≥1280px)
+   -------------------------------------------------- */
+@media (min-width: 1280px) {
+  html {
+    /* Reserve space for vertical scrollbar to prevent layout shift */
+    scrollbar-gutter: stable;
+
+    /* Fallback for older browsers that don't support scrollbar-gutter */
+    overflow-y: scroll;
+  }
+}

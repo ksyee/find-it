@@ -1,12 +1,13 @@
 import { pb } from '@/lib/api/getPbData';
 
-export const getData = async (collection: string, options: object = {}) => {
+export const getData = async <T = Record<string, unknown>>(collection: string, options: object = {}): Promise<T[]> => {
   try {
-    const response = pb.collection(collection).getFullList(options);
-
+    // PocketBase returns RecordModel[] by default; let caller specify expected type
+    const response = (await pb.collection(collection).getFullList(options)) as unknown as T[];
     return response;
   } catch (error) {
     console.error('에러 발생: ', error);
+    return [] as T[]; // fallback on error, keeps return type consistent
   }
 };
 

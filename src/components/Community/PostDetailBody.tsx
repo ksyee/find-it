@@ -5,27 +5,47 @@ import { getTimeDiff } from '@/lib/utils/getTimeDiff';
 import getPbImgURL from '@/lib/utils/getPbImgURL';
 import profile from '@/assets/profile.svg';
 
-const PostDetailBody = () => {
+interface CommunityPost {
+  id: string;
+  title: string;
+  content: string;
+  tag: string;
+  nickname: string;
+  created: string; // ISO timestamp string
+}
+
+interface UserRecord {
+  id: string;
+  avatar?: string;
+}
+
+const PostDetailBody: React.FC = () => {
   const { id } = useParams();
-  const [thisData, setThisData] = useState(null);
-  const [userId, setUserId] = useState('');
-  const [userAvatar, setUserAvatar] = useState('');
+  const [thisData, setThisData] = useState<CommunityPost | null>(null);
+  const [userId, setUserId] = useState<string>('');
+  const [userAvatar, setUserAvatar] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
-        const records = await getData('community', { filter: `id="${id}"` });
-        setThisData(records[0]);
+        const records = await getData<CommunityPost>('community', {
+          filter: `id="${id}"`
+        });
+        if (records && records.length > 0) {
+          setThisData(records[0]);
 
-        if (records[0]) {
-          const userRecords = await getData('users', {
-            filter: `nickname="${records[0].nickname}"`,
+          const userRecords = await getData<UserRecord>('users', {
+            filter: `nickname="${records[0].nickname}"`
           });
 
           const realData = userRecords && userRecords[0];
-          setUserId(realData.id);
-          setUserAvatar(realData.avatar);
+          if (realData) {
+            setUserId(realData.id);
+            setUserAvatar(realData.avatar ?? '');
+          }
+        } else {
+          setThisData(null);
         }
       } catch (error) {
         console.error('자유게시판 pb > id 검색 에러', error);
@@ -35,19 +55,22 @@ const PostDetailBody = () => {
     })();
   }, [id]);
 
-  if (isLoading) return <div>로딩중...</div>;
+  if (isLoading) return <div className="pt-5">로딩중...</div>;
+
+  // 데이터가 없을 경우 예외 처리
+  if (!thisData) return <div>게시글이 존재하지 않습니다.</div>;
 
   const { title, content: bodyText, tag, nickname, created } = thisData;
 
   return (
     <div className="w-[315px]">
-      <section className="flex items-center gap-[8px] pt-[20px]">
+      <section className="flex items-center gap-2 pt-5">
         <img
           src={
             (userAvatar !== '' && getPbImgURL(userId, userAvatar)) || profile
           }
           alt="글쓴이 프로필 사진"
-          className="size-34px rounded-full"
+          className="size-8.5 rounded-full"
         />
         <div className="flex flex-col text-xs">
           <span className="text-sm">{nickname}</span>
@@ -55,12 +78,12 @@ const PostDetailBody = () => {
         </div>
       </section>
 
-      <section className="flex flex-col pt-[18px]">
+      <section className="flex flex-col pt-5">
         <h1 className="text-2xl tracking-tight text-black">{title}</h1>
-        <p className="w-full	whitespace-normal break-keep pt-[10px]	text-base leading-28px tracking-tight	text-gray-700">
+        <p className="w-full pt-2.5 text-base leading-7 tracking-tight break-keep whitespace-normal text-gray-700">
           {bodyText}
         </p>
-        <span className="block pt-[30px] text-sm tracking-tight text-primary">
+        <span className="text-primary block pt-7.5 text-sm tracking-tight">
           #{tag}
         </span>
       </section>
