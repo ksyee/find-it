@@ -2,7 +2,7 @@ import { pb } from '@/lib/utils/pb';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllData } from '@/lib/utils/getAPIData';
-import { GetDetailData, JsonType } from '@/types/types';
+import { GetDetailData } from '@/types/types';
 import none_alarm from '@/assets/none_alarm.svg';
 import icon_next from '@/assets/icons/icon_next.svg';
 interface KeywordType {
@@ -53,9 +53,7 @@ const Notice = () => {
         const data = await getAllData({ numOfRows: 100 });
 
         // 최근 습득물 데이터 중 키워드와 일치하는 데이터 (물품명, ID) 추출
-        const recentItemData = (data as JsonType).map(
-          (item: GetDetailData) => `${item.fdPrdtNm}^${item.atcId}`
-        );
+        const recentItemData = (data as GetDetailData[] | null)?.map((item) => `${item.fdPrdtNm}^${item.atcId}`) ?? [];
 
         // 추출한 데이터 중 랜덤으로 추천하기
         const newRecommendations = keywordsArray

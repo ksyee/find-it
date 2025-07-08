@@ -1,5 +1,14 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
+
+interface CommunityPost {
+  id: string;
+  created: string;
+  title: string;
+  content: string;
+  tag: string;
+}
+
 import { getData } from '@/lib/utils/crud';
 import { getTimeDiff } from '@/lib/utils/getTimeDiff';
 import Header from '@/components/Header/Header';
@@ -8,12 +17,12 @@ import Horizon from '@/components/common/atom/Horizon';
 
 const SearchPost = () => {
   const [inputValue, setInputValue] = useState('');
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<CommunityPost[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const [showNoResult, setShowNoResult] = useState(false);
 
   useEffect(() => {
-    inputRef.current.focus();
+    inputRef.current?.focus();
   }, []);
 
   // 인풋 값 잡기
@@ -28,7 +37,7 @@ const SearchPost = () => {
     try {
       e.preventDefault();
       if (inputValue.trim() !== '') {
-        const data = await getData('community', {
+        const data = await getData<CommunityPost>('community', {
           filter: `content ~ "${inputValue}"`,
         });
         setData(data);
@@ -45,7 +54,7 @@ const SearchPost = () => {
   };
   const SearchResult = (
     <>
-      {data.map((item, index) => (
+      {data.map((item: CommunityPost, index: number) => (
         <div key={item.id} className="w-full">
           <Link to={`/postdetail/${item.id}`}>
             <section className="relative mx-auto my-0 h-[160px] w-[335px] px-[10px] pt-[10px]">

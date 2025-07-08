@@ -281,12 +281,14 @@ const MypageEdit = () => {
         .update(userId, formData);
 
       // 업로드한거 화면 반영
-      const avatarUrl = (avatarRef.current.src = pb.files.getUrl(
+      if (avatarRef.current) {
+        const avatarUrl = pb.files.getUrl(
         updatedUserInfo,
         updatedUserInfo.avatar,
         { thumb: '88x88' }
-      ));
-      avatarRef.current.src = avatarUrl;
+      );
+        avatarRef.current.src = avatarUrl;
+      }
 
       window.location.reload();
     } catch (error) {

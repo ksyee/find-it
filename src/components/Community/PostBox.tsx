@@ -2,13 +2,22 @@ import { Link } from "react-router-dom";
 import { getData } from "@/lib/utils/crud";
 import { getTimeDiff } from "@/lib/utils/getTimeDiff";
 
+// 커뮤니티 글 타입 정의
+interface CommunityPost {
+  id: string;
+  created: string;
+  title: string;
+  content: string;
+  tag: string;
+}
+
 // pb 데이터 뿌리기
-const data = await getData("community", { sort: "-created" });
+const data: CommunityPost[] = await getData<CommunityPost>("community", { sort: "-created" });
 
 const PostBox = () => {
   return (
     <>
-      {data.map((item, index) => (
+      {data.map((item: CommunityPost, index: number) => (
         <div key={item.id} className="w-full">
           <Link to={`/postdetail/${item.id}`}>
             <section className="relative mx-auto my-0 h-[160px] w-[335px] bg-white px-[10px] pt-[10px]">

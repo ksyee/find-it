@@ -61,7 +61,7 @@ const SignIn = () => {
   };
   /* -------------------------------------------------------------------------- */
   // 회원가입 버튼
-  const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignUp = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     window.location.href = '/signup';
   };

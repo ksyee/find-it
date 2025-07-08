@@ -1,6 +1,7 @@
 import Header from '../Header/Header';
+import Navigation from '@/components/Navigation/Navigation';
 import useSearchStore from '@/store/search/searchStore';
-import { useEffect, useRef, UIEvent, useCallback } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import loading from '@/assets/loading.svg';
 import { AllData } from '@/types/types';
 import ItemBox from '@/components/ItemBox/ItemBox';
@@ -25,7 +26,7 @@ const SearchFindResult = () => {
   // const [fetching, setFetching] = useState(false);
   // const [isLoading, setIsLoading] = useState(true);
 
-  const scrollContainerRef = useRef(null);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
   const navigate = useNavigate();
 
@@ -101,8 +102,10 @@ const SearchFindResult = () => {
   // }, [fetching]);
 
   const handleScroll = useCallback(
-    (event: UIEvent<HTMLDivElement>) => {
-      const { scrollTop, scrollHeight, clientHeight } = event.currentTarget;
+    (event: Event) => {
+      const target = event.target as HTMLDivElement;
+      const { scrollTop, scrollHeight, clientHeight } = target;
+      
       if (scrollTop + clientHeight >= scrollHeight && hasNextPage) {
         // fetchMoreItems();
         fetchNextPage();
@@ -114,9 +117,9 @@ const SearchFindResult = () => {
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
     if (scrollContainer) {
-      scrollContainer.addEventListener('scroll', handleScroll);
+      scrollContainer.addEventListener('scroll', handleScroll as EventListener);
       return () => {
-        scrollContainer.removeEventListener('scroll', handleScroll);
+        scrollContainer.removeEventListener('scroll', handleScroll as EventListener);
       };
     }
   }, [handleScroll]);
@@ -167,18 +170,15 @@ const SearchFindResult = () => {
           ref={scrollContainerRef}
           className="h-[calc(100vh-[66px]-80px)] overflow-auto"
         >
-          {/* {data.pages[0] === undefined ? (
-            <span className="text-center">검색 결과가 없습니다.</span>
-          ) : ( */}
           <ul className="flex flex-col items-center">
-            {data.pages.map((page: AllData[], pageIndex: number) =>
-              page
+            {(data?.pages as AllData[][] | undefined)?.map((page: AllData[] | undefined, pageIndex: number) =>
+              page && page.length > 0
                 ? page.map((item, itemIndex) => (
                     <li key={itemIndex}>
                       <ItemBox item={item} itemType="get" />
                     </li>
                   ))
-                : pageIndex === data.pages.length - 1 && (
+                : data && pageIndex === data.pages.length - 1 && (
                     <li key={pageIndex} className="mb-[16px]">
                       검색 결과가 없습니다.
                     </li>

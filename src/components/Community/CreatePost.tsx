@@ -21,18 +21,25 @@ const CreatePost = () => {
   const [bodyValue, setBodyValue] = useState("");
 
   // 값 입력
-  const receiveTitleValue = (value) => {
+  const receiveTitleValue = (value: string) => {
     setTitleValue(value);
   };
-  const receiveTagValue = (value) => {
+  const receiveTagValue = (value: string) => {
     setTagValue(value);
   };
-  const receiveBodyValue = (value) => {
+  const receiveBodyValue = (value: string) => {
     setBodyValue(value);
   };
 
   // 글 데이터
-  const newPostData = {
+  interface NewPostData {
+  nickname?: string;
+  title: string;
+  content: string;
+  tag: string;
+}
+
+const newPostData: NewPostData = {
     nickname: userNickname,
     title: titleValue,
     content: bodyValue,

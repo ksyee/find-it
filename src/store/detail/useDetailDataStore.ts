@@ -3,7 +3,7 @@ import { DetailData } from '@/types/types';
 
 interface DetailDataStore {
   detail: DetailData | null;
-  setDetail: (detail: DetailData) => void;
+  setDetail: (detail: DetailData | null) => void;
 }
 
 const useDetailDataStore = create<DetailDataStore>((set) => ({

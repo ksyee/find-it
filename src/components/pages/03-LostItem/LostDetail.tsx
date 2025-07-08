@@ -8,13 +8,14 @@ import Header from '@/components/Header/Header';
 const GetDetail = () => {
   const setDetail = useDetailDataStore((state) => state.setDetail);
   const detail = useDetailDataStore((state) => state.detail);
-  const { id } = useParams();
+  const { id } = useParams<{ id?: string }>();
 
   useEffect(() => {
     (async () => {
-      const data = await lostSearchId(id);
+      if(!id) return;
+        const data = await lostSearchId(id);
 
-      setDetail(data);
+      setDetail(data ?? null);
     })();
   }, [id, setDetail]);
 

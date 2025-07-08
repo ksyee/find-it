@@ -1,4 +1,4 @@
-import { DetailData, AllData, JsonValue, JsonObject, JsonArray } from '@/types/types';
+import { JsonValue, JsonObject } from '@/types/types';
 
 export const raiseValue = (item: JsonValue): JsonValue => {
   // 객체 또는 배열인지 확인하고, 아니라면 직접 반환

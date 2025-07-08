@@ -3,7 +3,11 @@ import Header from '@/components/Header/Header';
 import Notice from '@/components/pages/06-Notification/Notice';
 import Setting from '@/components/pages/06-Notification/Setting';
 
-const Categories = ({ onChangeCategory }) => {
+interface CategoriesProps {
+  onChangeCategory: React.Dispatch<SetStateAction<string>>;
+}
+
+const Categories = ({ onChangeCategory }: CategoriesProps) => {
   const [voidAlarmIcon, setVoidAlarmIcon] = useState(false);
   const [activeButton, setActiveButton] = useState('notice');
   const handleClick = (button: SetStateAction<string>) => {

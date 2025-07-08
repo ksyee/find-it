@@ -1,10 +1,9 @@
-import { ReactNode } from 'react';
-import { JSX } from 'react/jsx-runtime';
+import { ReactNode, JSX } from 'react';
 
 interface ModalProps {
   cancelText?: string;
   confirmText: string;
-  children: string;
+  children: ReactNode;
   onClickCancel?: () => void;
   onClickConfirm?: () => void;
 }

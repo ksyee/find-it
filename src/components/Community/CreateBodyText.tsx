@@ -1,5 +1,14 @@
 import { useState } from "react";
 
+interface CreateBodyTextProps {
+  titleValue: string;
+  onChangeTitle: (value: string) => void;
+  tagValue: string;
+  onChangeTag: (value: string) => void;
+  bodyValue: string;
+  onChangeBody: (value: string) => void;
+}
+
 const CreateBodyText = ({
   titleValue,
   onChangeTitle,
@@ -7,8 +16,8 @@ const CreateBodyText = ({
   onChangeTag,
   bodyValue,
   onChangeBody,
-}) => {
-  const [height, setHeight] = useState("200px");
+}: CreateBodyTextProps) => {
+  const [height, setHeight] = useState<string>("200px");
   const handleTitleValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     onChangeTitle(e.target.value);
