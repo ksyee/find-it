@@ -52,7 +52,7 @@
 /* 기본 스타일 */
 @layer base {
   html {
-    font-family: var(--font-sans);
+    font-family: var(--font-sans), serif;
     line-height: 1.5;
   }
 

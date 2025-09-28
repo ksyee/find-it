@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 // 행정동 API 토큰 발급 & 유효시간(4시간) 업데이트
 const MAX_AUTH_ATTEMPTS = 2000;
 const TOKEN_REFRESH_INTERVAL = 3.6e6; //3시간마다 재발급
-// eslint-disable-next-line react-refresh/only-export-components
 const URL = `${import.meta.env.VITE_AUTH_API_URL}?consumer_key=${import.meta.env.VITE_CONSUMERKEY}&consumer_secret=${import.meta.env.VITE_CONSUMERSECRET}`;
 
 const useGetToken = () => {
