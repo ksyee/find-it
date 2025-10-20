@@ -54,6 +54,11 @@ export const getLostItems = async (
     };
   }
 
+  console.log('[getLostItems] request', {
+    url: `${API_BASE_URL}/lost-items?page=${page}&size=${size}`,
+    headers: requestOptions.headers ?? null
+  });
+
   const response = await fetch(
     `${API_BASE_URL}/lost-items?page=${page}&size=${size}`,
     requestOptions
@@ -64,6 +69,8 @@ export const getLostItems = async (
   }
 
   const json = (await response.json()) as GetLostItemsResponse;
+
+  console.log('[getLostItems] response', json);
 
   if (!json.success || !Array.isArray(json.data)) {
     throw new Error(json.message || '분실물 데이터 형식이 올바르지 않습니다.');

@@ -21,11 +21,13 @@ export interface GetFoundItemsResponse {
 }
 
 const resolveApiBaseUrl = () => {
-  const envValue = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(
-    /\/$/,
-    ''
-  );
-  const base = envValue && envValue.length > 0 ? envValue : 'http://52.79.241.212:8080/api';
+  const envValue = (
+    import.meta.env.VITE_API_BASE_URL as string | undefined
+  )?.replace(/\/$/, '');
+  const base =
+    envValue && envValue.length > 0
+      ? envValue
+      : 'http://52.79.241.212:8080/api';
 
   if (
     typeof window !== 'undefined' &&
@@ -57,6 +59,11 @@ export const getFoundItems = async (
     };
   }
 
+  console.log('[getFoundItems] request', {
+    url: `${API_BASE_URL}/found-items?page=${page}&size=${size}`,
+    headers: requestOptions.headers ?? null
+  });
+
   const response = await fetch(
     `${API_BASE_URL}/found-items?page=${page}&size=${size}`,
     requestOptions
@@ -67,6 +74,8 @@ export const getFoundItems = async (
   }
 
   const json = (await response.json()) as GetFoundItemsResponse;
+
+  console.log('[getFoundItems] response', json);
 
   if (!json.success || !Array.isArray(json.data)) {
     throw new Error(json.message || '습득물 데이터 형식이 올바르지 않습니다.');
