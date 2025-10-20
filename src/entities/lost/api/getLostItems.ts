@@ -6,21 +6,42 @@ const DEFAULT_IMAGE =
 export interface GetLostItemsResponse {
   success: boolean;
   message?: string;
-  data: Array<{
-    atcId: string;
-    prdtClNm: string;
-    lstYmd: string;
-    lstPlace: string;
-    rnum?: string;
-  } & Record<string, unknown>>;
+  data: Array<
+    {
+      atcId: string;
+      prdtClNm: string;
+      lstYmd: string;
+      lstPlace: string;
+      rnum?: string;
+    } & Record<string, unknown>
+  >;
 }
+
+const API_BASE_URL =
+  (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(
+    /\/$/,
+    ''
+  ) ?? 'http://52.79.241.212:8080/api';
+
+const API_SECURITY_KEY = import.meta.env.VITE_API_SECURITY_KEY as
+  | string
+  | undefined;
 
 export const getLostItems = async (
   page: number = 0,
   size: number = 10
 ): Promise<AllData[]> => {
+  const requestOptions: RequestInit = {};
+
+  if (API_SECURITY_KEY) {
+    requestOptions.headers = {
+      'X-API-KEY': API_SECURITY_KEY
+    };
+  }
+
   const response = await fetch(
-    `https://findit-server.ksyee.dev/api/lost-items?page=${page}&size=${size}`
+    `${API_BASE_URL}/lost-items?page=${page}&size=${size}`,
+    requestOptions
   );
 
   if (!response.ok) {

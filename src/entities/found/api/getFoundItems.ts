@@ -6,24 +6,45 @@ const DEFAULT_IMAGE =
 export interface GetFoundItemsResponse {
   success: boolean;
   message?: string;
-  data: Array<{
-    atcId: string;
-    depPlace: string;
-    fdFilePathImg?: string;
-    fdPrdtNm: string;
-    fdSbjt?: string;
-    fdSn?: string;
-    fdYmd: string;
-    prdtClNm: string;
-  } & Record<string, unknown>>;
+  data: Array<
+    {
+      atcId: string;
+      depPlace: string;
+      fdFilePathImg?: string;
+      fdPrdtNm: string;
+      fdSbjt?: string;
+      fdSn?: string;
+      fdYmd: string;
+      prdtClNm: string;
+    } & Record<string, unknown>
+  >;
 }
+
+const API_BASE_URL =
+  (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(
+    /\/$/,
+    ''
+  ) ?? 'http://52.79.241.212:8080/api';
+
+const API_SECURITY_KEY = import.meta.env.VITE_API_SECURITY_KEY as
+  | string
+  | undefined;
 
 export const getFoundItems = async (
   page: number = 0,
   size: number = 10
 ): Promise<AllData[]> => {
+  const requestOptions: RequestInit = {};
+
+  if (API_SECURITY_KEY) {
+    requestOptions.headers = {
+      'X-API-KEY': API_SECURITY_KEY
+    };
+  }
+
   const response = await fetch(
-    `https://findit-server.ksyee.dev/api/found-items?page=${page}&size=${size}`
+    `${API_BASE_URL}/found-items?page=${page}&size=${size}`,
+    requestOptions
   );
 
   if (!response.ok) {
