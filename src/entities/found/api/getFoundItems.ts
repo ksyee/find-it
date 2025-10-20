@@ -20,11 +20,26 @@ export interface GetFoundItemsResponse {
   >;
 }
 
-const API_BASE_URL =
-  (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(
+const resolveApiBaseUrl = () => {
+  const envValue = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(
     /\/$/,
     ''
-  ) ?? 'http://52.79.241.212:8080/api';
+  );
+  const base = envValue && envValue.length > 0 ? envValue : 'http://52.79.241.212:8080/api';
+
+  if (
+    typeof window !== 'undefined' &&
+    window.location.protocol === 'https:' &&
+    base.startsWith('http://')
+  ) {
+    // When served over HTTPS, go through the Netlify proxy to avoid mixed content.
+    return `${window.location.origin}/api`;
+  }
+
+  return base;
+};
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 const API_SECURITY_KEY = import.meta.env.VITE_API_SECURITY_KEY as
   | string
