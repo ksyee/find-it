@@ -64,3 +64,11 @@ declare namespace kakao.maps {
 
   function load(callback: () => void): void;
 }
+
+declare global {
+  interface Window {
+    kakao?: typeof kakao;
+  }
+}
+
+export {};
