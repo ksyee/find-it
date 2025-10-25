@@ -3,6 +3,10 @@ import { Helmet } from 'react-helmet-async';
 import Navigation from '@/widgets/navigation/ui/Navigation';
 
 const AppLayout = () => {
+  const appUrl =
+    (import.meta.env.VITE_APP_BASE_URL as string | undefined)?.trim() ||
+    'https://find-it.vercel.app/';
+
   return (
     <>
       <Helmet>
@@ -25,7 +29,7 @@ const AppLayout = () => {
         <meta property="og:image" content="./img_og.jpg" />
         <meta
           property="og:url"
-          content="https://findmyitem.netlify.app/"
+          content={appUrl}
         />
       </Helmet>
       <Outlet />

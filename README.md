@@ -12,7 +12,7 @@
 
 📅 프로젝트 기간: 2024.02.19(월) ~ 2024.03.14(목)
 
-<a href="https://find-item.netlify.app" target="_blank">🖥 배포 URL 바로가기</a>
+<a href="https://find-it.vercel.app" target="_blank">🖥 배포 URL 바로가기</a>
 
 ![qrcode_findmyitem](https://github.com/bellori729/bellori729/assets/145115283/2a9633ab-e7b2-4755-b318-3169ca184271)
 

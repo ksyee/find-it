@@ -29,7 +29,7 @@ const resolveApiBaseUrl = () => {
     window.location.protocol === 'https:' &&
     base.startsWith('http://')
   ) {
-    // When served over HTTPS, go through the Netlify proxy to avoid mixed content.
+    // When served over HTTPS, go through the Vercel rewrite to avoid mixed content.
     return `${window.location.origin}/api`;
   }
 
