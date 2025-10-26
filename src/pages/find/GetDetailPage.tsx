@@ -11,12 +11,14 @@ const GetDetail = () => {
   const { id } = useParams<{ id?: string }>();
 
   useEffect(() => {
-    (async () => {
-      if (!id) return;
-        const data = await getSearchId(id);
-
+    if (!id) return;
+    setDetail(null);
+    const searchId = async () => {
+      const data = await getSearchId(id);
       setDetail(data);
-    })();
+    };
+
+    searchId();
   }, [id, setDetail]);
 
   return (

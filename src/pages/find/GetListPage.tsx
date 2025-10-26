@@ -6,6 +6,7 @@ import Skeleton from '@/entities/item/ui/Skeleton';
 import QueryState from '@/shared/ui/QueryState';
 import EmptyState from '@/shared/ui/EmptyState';
 import { useFoundItemsInfinite } from '@/entities/found/model/useFoundItemsInfinite';
+import useScrollRestoration from '@/shared/hooks/useScrollRestoration';
 
 const GetList = () => {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -24,6 +25,7 @@ const GetList = () => {
   });
 
   const items = data?.pages?.flatMap((page) => page) ?? [];
+  useScrollRestoration(scrollContainerRef, 'getlist');
 
   const handleScroll = useCallback(() => {
     const el = scrollContainerRef.current;
