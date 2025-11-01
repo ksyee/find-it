@@ -2,48 +2,68 @@ import { xmlToJson } from '@/lib/utils/xmlToJson';
 import { raiseValue } from '@/lib/utils/raiseValue';
 import { JsonObject, DetailData, JsonValue } from '@/types/types';
 
+const DEFAULT_IMAGE =
+  'https://www.lost112.go.kr/lostnfs/images/sub/img02_no_img.gif';
+
+const resolveApiBaseUrl = () => {
+  const envValue = (
+    import.meta.env.VITE_API_BASE_URL as string | undefined
+  )?.replace(/\/$/, '');
+  const base =
+    envValue && envValue.length > 0
+      ? envValue
+      : 'http://52.79.241.212:8080/api';
+
+  if (
+    typeof window !== 'undefined' &&
+    window.location.protocol === 'https:' &&
+    base.startsWith('http://')
+  ) {
+    return `${window.location.origin}/api`;
+  }
+
+  return base;
+};
+
+const API_BASE_URL = resolveApiBaseUrl();
+
+const API_SECURITY_KEY = import.meta.env.VITE_API_SECURITY_KEY as
+  | string
+  | undefined;
+
+const createAuthorizedRequestOptions = (): RequestInit => {
+  if (!API_SECURITY_KEY) {
+    return {};
+  }
+
+  return {
+    headers: {
+      'X-API-KEY': API_SECURITY_KEY,
+    },
+  };
+};
+
+interface FoundItemDetailResponse {
+  success: boolean;
+  message?: string;
+  data?:
+    | {
+        atcId?: string;
+        fdPrdtNm?: string;
+        prdtClNm?: string;
+        depPlace?: string;
+        fdPlace?: string;
+        fdYmd?: string;
+        fdSbjt?: string;
+        fdFilePathImg?: string;
+        fndKeepOrgnSeNm?: string;
+        tel?: string;
+      }
+    | null;
+}
+
 const isJsonObject = (value: unknown): value is JsonObject => {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
-};
-
-const parseDetailData = (json: JsonObject): Partial<DetailData> | null => {
-  const detailKeys: Array<keyof DetailData> = [
-    'id',
-    'item_name',
-    'image',
-    'place',
-    'date',
-    'item_type',
-    'description',
-    'storage',
-    'contact',
-  ];
-
-  const result: Partial<DetailData> = {};
-
-  detailKeys.forEach((key) => {
-    const value = json[key];
-    if (typeof value === 'string') {
-      result[key] = value;
-    }
-  });
-
-  return Object.keys(result).length > 0 ? result : null;
-};
-
-// Partial: 모든 속성을 선택적으로 만듦
-const isDetailData = (object: Partial<DetailData>): object is DetailData => {
-  return (
-    typeof object.id === 'string' &&
-    typeof object.item_name === 'string' &&
-    typeof object.image === 'string' &&
-    typeof object.place === 'string' &&
-    typeof object.date === 'string' &&
-    typeof object.item_type === 'string' &&
-    typeof object.description === 'string' &&
-    typeof object.storage === 'string' &&
-    typeof object.contact === 'string'
-  );
 };
 
 export const getAllData = async (options = {}) => {
@@ -129,56 +149,38 @@ export const getSearchData = async (query: string, options = {}) => {
 export const getSearchId = async (id: string): Promise<DetailData | null> => {
   try {
     const response = await fetch(
-      `${import.meta.env.VITE_GETITEMS_DETAIL_API}?serviceKey=${import.meta.env.VITE_PUBLICINFO_API_KEY_INC}&ATC_ID=${id}&FD_SN=1`
+      `${API_BASE_URL}/found-items/${id}`,
+      createAuthorizedRequestOptions()
     );
 
     if (!response.ok) {
       throw new Error('네트워크 응답 없음');
     }
 
-    const data = await response.text();
-    const parser = new DOMParser();
-    const xml = parser.parseFromString(data, 'text/xml');
-    const json = xmlToJson(xml);
+    const json = (await response.json()) as FoundItemDetailResponse;
 
-    if (typeof json === 'string') {
-      throw new Error('json이 문자열입니다.');
+    if (!json.success || !json.data) {
+      throw new Error(json.message || '습득물 상세 정보를 불러오지 못했습니다.');
     }
 
-    if (
-      isJsonObject(json) &&
-      isJsonObject(json.response) &&
-      isJsonObject(json.response.body)
-    ) {
-      const item = raiseValue(json.response?.body.item as JsonValue);
+    const item = json.data;
 
-      if (isJsonObject(item)) {
-        const result = {
-          id: item.atcId,
-          item_name: item.fdPrdtNm,
-          image: item.fdFilePathImg,
-          place: item.fdPlace,
-          date: item.fdYmd,
-          item_type: item.prdtClNm,
-          description: item.fndKeepOrgnSeNm,
-          contact: item.tel,
-          storage: item.depPlace,
-        };
+    const detailData: DetailData = {
+      id: item.atcId ?? '',
+      item_name: item.fdPrdtNm ?? '',
+      image:
+        item.fdFilePathImg && item.fdFilePathImg !== ''
+          ? item.fdFilePathImg
+          : DEFAULT_IMAGE,
+      place: item.fdPlace ?? item.depPlace ?? '',
+      date: item.fdYmd ?? '',
+      item_type: item.prdtClNm ?? '',
+      description: item.fdSbjt ?? item.fndKeepOrgnSeNm ?? '',
+      storage: item.depPlace ?? '',
+      contact: item.tel ?? '',
+    };
 
-        if (isJsonObject(result)) {
-          const jsonObject: JsonObject = result;
-
-          const detailData = parseDetailData(jsonObject);
-
-          if (detailData !== null && isDetailData(detailData)) {
-            return detailData;
-          }
-
-          return null;
-        }
-      }
-    }
-    return null;
+    return detailData;
   } catch (error) {
     console.error('error: ' + error);
     return null;
