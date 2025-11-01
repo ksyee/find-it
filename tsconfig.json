@@ -10,7 +10,7 @@
     "paths": { "@/*": ["src/*"] },
 
     // 번들러 모드
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
