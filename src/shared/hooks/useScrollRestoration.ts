@@ -59,12 +59,6 @@ const useScrollRestoration = (
       }
     }
 
-    const handleBeforeUnload = () => {
-      sessionStorage.removeItem(storageKey);
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
     return () => {
       if (frameId !== null) {
         window.cancelAnimationFrame(frameId);
@@ -73,7 +67,6 @@ const useScrollRestoration = (
       if (intervalId !== null) {
         window.clearInterval(intervalId);
       }
-      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [containerRef, key]);
 
