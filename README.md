@@ -2,7 +2,7 @@
 
 경찰청 유실물 공개 API와 PocketBase를 결합해 전국의 분실·습득물 데이터를 한 번에 탐색할 수 있는 반응형 웹 애플리케이션입니다. 잃어버린 물품을 찾는 시민과 현장에서 돕고 싶은 커뮤니티를 하나의 경험으로 잇습니다.
 
-<a href="https://find-it-alpha.vercel.app/" target="_blank" rel="noopener noreferrer">🔗 라이브 데모</a> · [📄 API 명세](API_SPEC.md) · [🗒 프로젝트 노트](find-it.md)
+[🔗 라이브 데모](https://find-it-alpha.vercel.app/) · [📄 API 명세](API_SPEC.md) · [🗒 프로젝트 노트](find-it.md)
 
 ## About
 
