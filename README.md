@@ -98,4 +98,4 @@ PocketBase ──────→ Auth / Community / Keyword 알림
 ## Links
 
 - GitHub (팀 저장소): https://github.com/FRONTENDSCHOOL8/find-it
-- API 명세: API_SPEC.md
+- API 명세: [API_SPEC.md](API_SPEC.md)
