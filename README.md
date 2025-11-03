@@ -2,14 +2,14 @@
 
 경찰청 유실물 공개 API와 PocketBase를 결합해 전국의 분실·습득물 데이터를 한 번에 탐색할 수 있는 반응형 웹 애플리케이션입니다. 잃어버린 물품을 찾는 시민과 현장에서 돕고 싶은 커뮤니티를 하나의 경험으로 잇습니다.
 
-[🔗 라이브 데모](https://find-it.vercel.app) · [📄 API 명세](API_SPEC.md) · [🗒 프로젝트 노트](find-it.md)
+[🔗 라이브 데모](https://find-it-alpha.vercel.app/) · [📄 API 명세](API_SPEC.md) · [🗒 프로젝트 노트](find-it.md)
 
 ## About
 
 - 기간: 2024.02.19 ~ 2024.03.14 (팀 프로젝트) + 2025.05 ~ 현재 개인 리팩토링
 - 형태: FE School 8기 7조, 프론트엔드 4인 협업
 - 역할: 프론트엔드 리드 / 인터랙션 설계 / 공공 데이터 연동 / 배포 운영
-- 배포: https://find-it.vercel.app
+- 배포: https://find-it-alpha.vercel.app/
 
 ## 내 역할 한눈에 보기
 
