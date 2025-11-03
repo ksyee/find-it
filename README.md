@@ -9,7 +9,7 @@
 - 기간: 2024.02.19 ~ 2024.03.14 (팀 프로젝트) + 2025.05 ~ 현재 개인 리팩토링
 - 형태: FE School 8기 7조, 프론트엔드 4인 협업
 - 역할: 프론트엔드 리드 / 인터랙션 설계 / 공공 데이터 연동 / 배포 운영
-- 배포: https://find-it-alpha.vercel.app/
+- 배포: Vercel (상단 라이브 데모 링크 참고)
 
 ## 내 역할 한눈에 보기
 
@@ -98,5 +98,4 @@ PocketBase ──────→ Auth / Community / Keyword 알림
 ## Links
 
 - GitHub (팀 저장소): https://github.com/FRONTENDSCHOOL8/find-it
-- 배포: https://find-it.vercel.app
 - API 명세: API_SPEC.md
