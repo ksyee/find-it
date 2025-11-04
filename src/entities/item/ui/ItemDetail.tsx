@@ -75,7 +75,7 @@ const ItemDetail = ({ detail }: ItemDetailProps) => {
             </dl>
           </li>
         </ul>
-        <div className="mt-[28px] h-[375px] bg-slate-500 text-center text-2xl text-white">
+        <div className="relative z-0 mt-[28px] h-[375px] bg-slate-500 text-center text-2xl text-white">
           <KakaoMap place={detail.storage} className="h-full w-full" />
         </div>
 

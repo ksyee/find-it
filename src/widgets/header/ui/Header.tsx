@@ -50,7 +50,8 @@ const Header = ({
   let submitButton: ElementType = null;
   let emptyBox: ElementType = null;
 
-  const defaultStyle = 'h-[26px] flex w-[375px] items-center justify-around';
+  const defaultStyle =
+    'mx-auto flex h-[26px] w-[375px] items-center justify-around';
 
   const navigate = useNavigate();
 
@@ -150,13 +151,16 @@ const Header = ({
 
   return (
     <>
-      <a 
-        href="#main-content" 
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:px-4 focus:py-2"
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[10000] focus:bg-white focus:px-4 focus:py-2"
       >
         메인 콘텐츠로 건너뛰기
       </a>
-      <header className="py-[20px]" role="banner">
+      <header
+        className="fixed left-1/2 top-0 z-[9999] w-full max-w-[375px] -translate-x-1/2 transform bg-white py-[20px]"
+        role="banner"
+      >
         <div className={`${defaultStyle} ${customStyle || ''}`}>
           {prevIcon}
           {symbolLogo}
@@ -167,6 +171,7 @@ const Header = ({
           {emptyBox}
         </div>
       </header>
+      <div aria-hidden className="mx-auto h-[66px] w-full max-w-[375px]" />
     </>
   );
 };
