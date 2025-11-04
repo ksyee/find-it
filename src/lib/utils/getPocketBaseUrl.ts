@@ -19,4 +19,3 @@ export const getPocketBaseUrl = () => {
 
   return ensureHttpsUrl(rawUrl);
 };
-

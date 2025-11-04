@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Navigation from '@/widgets/navigation/ui/Navigation';
+import Sidebar from '@/widgets/sidebar/ui/Sidebar';
 
 const AppLayout = () => {
   const appUrl =
@@ -32,10 +33,15 @@ const AppLayout = () => {
           content={appUrl}
         />
       </Helmet>
-      <div className="pb-[80px] lg:pb-0 lg:pt-[72px]">
-        <Outlet />
-      </div>
       <Navigation />
+      <div className="lg:flex lg:pt-[72px]">
+        {/* 메인 콘텐츠 영역 */}
+        <div className="flex-1 pb-[80px] lg:pb-0">
+          <Outlet />
+        </div>
+        {/* 사이드바 (데스크탑만) */}
+        <Sidebar />
+      </div>
     </>
   );
 };

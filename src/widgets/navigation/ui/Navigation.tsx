@@ -56,10 +56,10 @@ const Navigation = () => {
   return (
     <nav
       style={{ boxShadow: '0px 0px 10px 0px rgba(0, 0, 0, 0.06)' }}
-      className="fixed bottom-0 left-1/2 flex h-[80px] w-full max-w-[375px] -translate-x-1/2 transform items-center justify-center rounded-t-2xl bg-white md:max-w-[768px] lg:top-0 lg:bottom-auto lg:h-auto lg:max-w-full lg:rounded-none lg:py-4"
+      className="fixed bottom-0 left-1/2 flex h-[80px] w-full -translate-x-1/2 transform items-center justify-center rounded-t-2xl bg-white lg:top-0 lg:bottom-auto lg:h-auto lg:rounded-none lg:py-4 z-50"
       aria-label="메인 네비게이션"
     >
-      <ul className="mx-3 flex w-full justify-around lg:mx-auto lg:max-w-[1280px] lg:gap-8 lg:px-5">
+      <ul className="mx-3 flex w-full justify-around lg:mx-auto lg:max-w-[1280px] lg:gap-8 lg:px-8">
         {items.map((item, index) => (
           <li key={index}>
             <NavigationItem

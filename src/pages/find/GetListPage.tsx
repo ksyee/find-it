@@ -49,19 +49,19 @@ const GetList = () => {
   }, [handleScroll]);
 
   const loadingFallback = (
-    <div className="flex h-screen w-full flex-col items-center bg-gray-200">
+    <div className="flex h-screen w-full flex-col items-center bg-white pt-[66px]">
       <Header
         isShowSymbol
         isShowSearch
         link="/searchfind"
         children="습득물 찾기"
       />
-      <div className="w-full max-w-[375px] md:max-w-[768px] lg:max-w-[1280px]">
+      <div className="w-full lg:max-w-[1280px]">
         <div
           ref={scrollContainerRef}
           className="h-[calc(100vh-146px)] overflow-auto lg:h-[calc(100vh-138px)]"
         >
-          <div className="flex flex-col items-center lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-4 lg:p-5">
+          <div className="flex flex-col items-center lg:grid lg:grid-cols-2 lg:gap-4 md:p-5 lg:p-5">
             {Array.from({ length: 10 }).map((_, index) => (
               <Skeleton key={index} />
             ))}
@@ -77,20 +77,20 @@ const GetList = () => {
       isError={isError}
       loadingFallback={loadingFallback}
     >
-      <div className="flex h-screen w-full flex-col items-center bg-gray-200">
+      <div className="flex h-screen w-full flex-col items-center bg-white pt-[66px]">
         <Header
           isShowSymbol
           isShowSearch
           link="/searchfind"
           children="습득물 찾기"
         />
-        <div className="w-full max-w-[375px] md:max-w-[768px] lg:max-w-[1280px]">
+        <div className="w-full lg:max-w-[1280px]">
           <div
             ref={scrollContainerRef}
             className="h-[calc(100vh-146px)] overflow-auto lg:h-[calc(100vh-138px)]"
           >
             {items.length > 0 ? (
-              <ul className="flex flex-col items-center lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-4 lg:p-5">
+              <ul className="flex flex-col items-center lg:grid lg:grid-cols-2 lg:gap-4 md:p-5 lg:p-5">
                 {items.map((item, index) => (
                   <li key={`${item.atcId}-${index}`} className="flex justify-center lg:justify-stretch">
                     <ItemBox item={item} itemType="get" />

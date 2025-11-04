@@ -151,28 +151,26 @@ const CommunityBox: React.FC = () => {
 /* -------------------------------------------------------------------------- */
 const Main = () => {
   return (
-    <>
-      <div className="flex w-full flex-col items-center">
-        <Header isShowLogo={true} />
-        <main id="main-content" className="w-full">
-          <div className="mx-auto w-full max-w-[375px] md:max-w-[768px] lg:max-w-[1280px] px-5">
-            <div className="flex gap-4 lg:gap-6">
-              <ProfileBox />
-              <FindItemBox />
-            </div>
-            <div className="pt-3 pb-[5px] pl-[10px] lg:pt-6 lg:pb-4">
-              <Shortcut
-                link="/getlist"
-                text="주인을 찾아요!"
-                alt="습득물 페이지 바로가기"
-              />
-            </div>
-            <SwiperItem />
-            <CommunityBox />
+    <div className="flex w-full flex-col items-center bg-white min-h-screen pt-[66px]">
+      <Header isShowLogo={true} />
+      <main id="main-content" className="w-full lg:max-w-[1280px]">
+        <div className="px-5 md:px-8 lg:px-8 xl:px-12">
+          <div className="flex gap-4 lg:gap-6">
+            <ProfileBox />
+            <FindItemBox />
           </div>
-        </main>
-      </div>
-    </>
+          <div className="pt-3 pb-[5px] pl-[10px] lg:pt-6 lg:pb-4">
+            <Shortcut
+              link="/getlist"
+              text="주인을 찾아요!"
+              alt="습득물 페이지 바로가기"
+            />
+          </div>
+          <SwiperItem />
+          <CommunityBox />
+        </div>
+      </main>
+    </div>
   );
 };
 

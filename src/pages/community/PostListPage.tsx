@@ -9,7 +9,7 @@ const PostList = () => {
   const loginUserData = localStorage.getItem('pocketbase_auth');
 
   return (
-    <div className="flex h-screen w-full flex-col items-center">
+    <div className="flex h-screen w-full flex-col items-center bg-white pt-[66px]">
       <Header
         isShowSymbol={true}
         children="자유게시판"
@@ -17,7 +17,7 @@ const PostList = () => {
         link="/searchpost"
       />
       <Horizon lineBold="bold" lineWidth="long" />
-      <div className="relative w-full max-w-[375px] md:max-w-[768px] lg:max-w-[1280px]">
+      <div className="relative w-full lg:max-w-[1280px]">
         <div className="h-[calc(100vh-[66px]-80px)] overflow-auto lg:h-[calc(100vh-138px)]">
           <PostBox />
         </div>

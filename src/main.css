@@ -47,6 +47,12 @@
   --breakpoint-mobile: 375px;
   --breakpoint-tablet: 768px;
   --breakpoint-desktop: 1280px;
+
+  /* Tailwind breakpoints 재정의 */
+  --breakpoint-sm: 375px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
 }
 
 /* 기본 스타일 */
@@ -107,5 +113,25 @@
     z-index: 100;
     border-radius: 0.25rem;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* 사이드바 반응형 표시 */
+  .sidebar-desktop {
+    display: none;
+    width: 0;
+    flex-shrink: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .sidebar-desktop {
+      display: block;
+      width: 320px;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .sidebar-desktop {
+      width: 360px;
+    }
   }
 }
