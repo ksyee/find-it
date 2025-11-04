@@ -42,11 +42,11 @@ const ProfileBox = ({
         aria-label={`${profileName}님의 마이페이지로 이동`}
       >
         <p className="text-[17px] font-medium">
-          <div className="flex items-baseline">
+          <span className="flex items-baseline">
             <strong className="text-[24px] font-medium">{profileName}</strong>
             <span className="ml-0.5">님</span>
-          </div>
-          안녕하세요!
+          </span>
+          <span className="block">안녕하세요!</span>
         </p>
       </Link>
     </article>
