@@ -35,15 +35,15 @@ const ProfileBox = ({
   }
 
   return (
-    <article className="bg-skyblue-300 h-[140px] w-[180px] rounded-2xl transition-all duration-300 hover:shadow-lg">
+    <article className="bg-skyblue-300 h-[140px] w-[180px] rounded-2xl transition-all duration-300 hover:shadow-lg md:w-[240px] md:h-[160px] lg:w-[320px] lg:h-[180px]">
       <Link
         to="/mypageentry"
-        className="block h-full p-5"
+        className="block h-full p-5 md:p-6 lg:p-8"
         aria-label={`${profileName}님의 마이페이지로 이동`}
       >
-        <p className="text-[17px] font-medium">
+        <p className="text-[17px] font-medium md:text-[20px] lg:text-[24px]">
           <span className="flex items-baseline">
-            <strong className="text-[24px] font-medium">{profileName}</strong>
+            <strong className="text-[24px] font-medium md:text-[28px] lg:text-[32px]">{profileName}</strong>
             <span className="ml-0.5">님</span>
           </span>
           <span className="block">안녕하세요!</span>
@@ -58,16 +58,16 @@ const ProfileBox = ({
 /* -------------------------------------------------------------------------- */
 const FindItemBox = () => {
   return (
-    <div className="relative h-[140px] w-[140px] rounded-2xl bg-gray-200 p-5 transition-all duration-300 hover:shadow-lg">
+    <div className="relative h-[140px] w-[140px] rounded-2xl bg-gray-200 p-5 transition-all duration-300 hover:shadow-lg md:w-[180px] md:h-[160px] lg:w-[240px] lg:h-[180px]">
       <Link
         to="/searchfind"
         className="flex h-full w-full flex-col"
         aria-label="물품 찾기 페이지로 이동"
       >
-        <span className="text-xl font-medium">물품 찾기</span>
+        <span className="text-xl font-medium md:text-2xl lg:text-3xl">물품 찾기</span>
         <img
           src={icon_search}
-          className="absolute right-5 bottom-5 h-9 w-9"
+          className="absolute right-5 bottom-5 h-9 w-9 md:h-11 md:w-11 lg:h-12 lg:w-12"
           alt=""
           aria-hidden="true"
         />
@@ -155,12 +155,12 @@ const Main = () => {
       <div className="flex w-full flex-col items-center">
         <Header isShowLogo={true} />
         <main id="main-content" className="w-full">
-          <div className="mx-auto w-[375px] px-5">
-            <div className="flex gap-4">
+          <div className="mx-auto w-full max-w-[375px] md:max-w-[768px] lg:max-w-[1280px] px-5">
+            <div className="flex gap-4 lg:gap-6">
               <ProfileBox />
               <FindItemBox />
             </div>
-            <div className="pt-3 pb-[5px] pl-[10px]">
+            <div className="pt-3 pb-[5px] pl-[10px] lg:pt-6 lg:pb-4">
               <Shortcut
                 link="/getlist"
                 text="주인을 찾아요!"

@@ -51,7 +51,7 @@ const Header = ({
   let emptyBox: ElementType = null;
 
   const defaultStyle =
-    'mx-auto flex h-[26px] w-[375px] items-center justify-around';
+    'mx-auto flex h-[26px] w-full max-w-[375px] md:max-w-[768px] lg:max-w-[1280px] items-center justify-around px-5';
 
   const navigate = useNavigate();
 
@@ -158,7 +158,7 @@ const Header = ({
         메인 콘텐츠로 건너뛰기
       </a>
       <header
-        className="fixed left-1/2 top-0 z-[9999] w-full max-w-[375px] -translate-x-1/2 transform bg-white py-[20px]"
+        className="fixed left-1/2 top-0 z-[9999] w-full max-w-[375px] md:max-w-[768px] lg:max-w-[1280px] -translate-x-1/2 transform bg-white py-[20px]"
         role="banner"
       >
         <div className={`${defaultStyle} ${customStyle || ''}`}>
@@ -171,7 +171,7 @@ const Header = ({
           {emptyBox}
         </div>
       </header>
-      <div aria-hidden className="mx-auto h-[66px] w-full max-w-[375px]" />
+      <div aria-hidden className="mx-auto h-[66px] w-full max-w-[375px] md:max-w-[768px] lg:max-w-[1280px]" />
     </>
   );
 };

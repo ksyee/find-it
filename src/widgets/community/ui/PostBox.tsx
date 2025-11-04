@@ -16,16 +16,16 @@ const data: CommunityPost[] = await getData<CommunityPost>("community", { sort: 
 
 const PostBox = () => {
   return (
-    <>
+    <div className="lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-4 lg:p-5">
       {data.map((item: CommunityPost, index: number) => (
         <div key={item.id} className="w-full">
           <Link to={`/postdetail/${item.id}`}>
-            <section className="relative mx-auto my-0 h-[160px] w-[335px] bg-white px-[10px] pt-[10px]">
+            <section className="relative mx-auto my-0 h-[160px] w-[335px] bg-white px-[10px] pt-[10px] lg:w-full lg:h-[180px] lg:rounded-2xl hover:shadow-lg transition-all duration-300">
               {getTimeDiff({ createdAt: data[index].created })}
-              <h1 className="truncate pt-[8px] text-base text-black">
+              <h1 className="truncate pt-[8px] text-base text-black lg:text-lg">
                 {item.title}
               </h1>
-              <span className="w-full	 whitespace-normal pt-[8px] text-xs text-gray-700">
+              <span className="w-full whitespace-normal pt-[8px] text-xs text-gray-700 lg:text-sm">
                 {(item.content.length > 64 &&
                   item.content.slice(0, 64) + "...") ||
                   item.content}
@@ -35,10 +35,10 @@ const PostBox = () => {
               </span>
             </section>
           </Link>
-          <div className="mx-auto my-0 h-[10px] w-full max-w-[400px] border-t border-t-gray-300 bg-gray-200" />
+          <div className="mx-auto my-0 h-[10px] w-full max-w-[400px] border-t border-t-gray-300 bg-gray-200 lg:hidden" />
         </div>
       ))}
-    </>
+    </div>
   );
 };
 

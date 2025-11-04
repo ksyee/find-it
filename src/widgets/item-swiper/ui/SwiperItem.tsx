@@ -55,7 +55,14 @@ const SwiperItem = () => {
       autoplay
       keyboard
       loop
-      spaceBetween={50}
+      spaceBetween={20}
+      slidesPerView={1}
+      breakpoints={{
+        1024: {
+          slidesPerView: 2,
+          spaceBetween: 30
+        }
+      }}
       pagination={{
         bulletActiveClass: 'custom-bullet-active',
         bulletClass: 'custom-bullet'

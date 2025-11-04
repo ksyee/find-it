@@ -32,7 +32,9 @@ const AppLayout = () => {
           content={appUrl}
         />
       </Helmet>
-      <Outlet />
+      <div className="pb-[80px] lg:pb-0 lg:pt-[72px]">
+        <Outlet />
+      </div>
       <Navigation />
     </>
   );

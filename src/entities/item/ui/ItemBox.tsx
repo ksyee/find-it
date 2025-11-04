@@ -75,7 +75,7 @@ const ItemBox = ({ itemType, item }: itemTypeProps) => {
           className="block"
           onClick={() => item && handleClickedItem(item.atcId)}
         >
-          <div className="mb-3 flex h-[140px] w-[335px] justify-between rounded-[20px] bg-white transition-all duration-300 hover:cursor-pointer hover:shadow-lg">
+          <div className="mb-3 flex h-[140px] w-[335px] justify-between rounded-[20px] bg-white transition-all duration-300 hover:cursor-pointer hover:shadow-lg lg:w-full lg:h-[160px]">
             <div className="flex flex-col items-start py-[18px] pl-5">
               <h1 className="pb-2 text-xl leading-[1.3] font-medium tracking-tighter">
                 {getItemData.get_item_name.length > 10
@@ -118,7 +118,7 @@ const ItemBox = ({ itemType, item }: itemTypeProps) => {
           className="block"
           onClick={() => item && handleClickedItem(item.atcId)}
         >
-          <div className="mb-3 flex h-[140px] w-[335px] justify-between rounded-[20px] bg-white transition-all duration-300 hover:cursor-pointer hover:shadow-lg">
+          <div className="mb-3 flex h-[140px] w-[335px] justify-between rounded-[20px] bg-white transition-all duration-300 hover:cursor-pointer hover:shadow-lg lg:w-full lg:h-[160px]">
             <div className="flex flex-col items-start py-[18px] pl-5">
               <h1 className="pb-2 text-xl leading-[1.3] font-medium tracking-tighter">
                 {lostItemData.lost_item_name.length > 10
@@ -156,7 +156,7 @@ const ItemBox = ({ itemType, item }: itemTypeProps) => {
           className="block"
           onClick={() => item && handleClickedItem(item.atcId)}
         >
-          <div className="bg-primary mb-3 flex h-[140px] w-[335px] justify-between rounded-[20px] transition-all duration-300 hover:cursor-pointer hover:shadow-lg">
+          <div className="bg-primary mb-3 flex h-[140px] w-[335px] justify-between rounded-[20px] transition-all duration-300 hover:cursor-pointer hover:shadow-lg lg:w-full lg:h-[160px]">
             <div className="flex flex-col items-start py-[18px] pl-5">
               <h1 className="pb-2 text-xl leading-[1.3] font-medium tracking-tighter text-white">
                 {getItemData.get_item_name.length > 10
