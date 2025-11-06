@@ -16,6 +16,7 @@
     "@tanstack/react-query": "^5.27.5",
     "autoprefixer": "^10.4.17",
     "lodash": "^4.17.21",
+    "lucide-react": "^0.552.0",
     "pnpm": "^9.10.0",
     "pocketbase": "^0.21.1",
     "postcss": "^8.4.35",

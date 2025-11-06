@@ -1,9 +1,12 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Navigation from '@/widgets/navigation/ui/Navigation';
 import Sidebar from '@/widgets/sidebar/ui/Sidebar';
 
 const AppLayout = () => {
+  const location = useLocation();
+  const isMainPage = location.pathname === '/';
+
   const appUrl =
     (import.meta.env.VITE_APP_BASE_URL as string | undefined)?.trim() ||
     'https://find-it.vercel.app/';
@@ -33,14 +36,15 @@ const AppLayout = () => {
           content={appUrl}
         />
       </Helmet>
-      <Navigation />
-      <div className="lg:flex lg:pt-[72px]">
+      {/* 메인 페이지가 아닐 때만 기존 Navigation 표시 */}
+      {!isMainPage && <Navigation />}
+      <div className={!isMainPage ? "lg:flex lg:pt-[72px]" : ""}>
         {/* 메인 콘텐츠 영역 */}
-        <div className="flex-1 pb-[80px] lg:pb-0">
+        <div className={!isMainPage ? "flex-1 pb-[80px] lg:pb-0" : "w-full"}>
           <Outlet />
         </div>
-        {/* 사이드바 (데스크탑만) */}
-        <Sidebar />
+        {/* 사이드바 (데스크탑만, 메인 페이지가 아닐 때만) */}
+        {!isMainPage && <Sidebar />}
       </div>
     </>
   );
