@@ -37,7 +37,7 @@ const Header = ({
   empty,
   link,
   customStyle,
-  children,
+  children
 }: HeaderProps) => {
   const queryClient = useQueryClient();
   const location = useLocation();
@@ -63,12 +63,12 @@ const Header = ({
     ) {
       queryClient.removeQueries({
         queryKey: ['searchFindResult'],
-        exact: true,
+        exact: true
       });
 
       queryClient.removeQueries({
         queryKey: ['searchLostResult'],
-        exact: true,
+        exact: true
       });
     }
   };
@@ -158,7 +158,7 @@ const Header = ({
         메인 콘텐츠로 건너뛰기
       </a>
       <header
-        className="fixed left-1/2 top-0 z-[9999] w-full lg:max-w-[1280px] -translate-x-1/2 transform bg-white py-[20px]"
+        className="fixed top-0 left-1/2 z-[9999] w-full -translate-x-1/2 transform bg-white py-[20px] lg:max-w-[1280px] md:hidden"
         role="banner"
       >
         <div className={`${defaultStyle} ${customStyle || ''}`}>
@@ -171,7 +171,6 @@ const Header = ({
           {emptyBox}
         </div>
       </header>
-      <div aria-hidden className="mx-auto h-[66px] w-full lg:max-w-[1280px]" />
     </>
   );
 };

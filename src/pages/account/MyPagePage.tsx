@@ -22,20 +22,12 @@ declare global {
   }
 }
 
-/* -------------------------------------------------------------------------- */
-// 로그인 유저 정보 가져오기
-const loginUserData = localStorage.getItem('pocketbase_auth');
-const localData = loginUserData && JSON.parse(loginUserData);
-const userNickname = localData?.model?.nickname;
-const userEmail = localData?.model?.email;
-const userId = localData?.model?.id;
-const userAvatar = localData?.model?.avatar;
-
-// 로그아웃 기능
-const handleLogout = () => {
-  pb.authStore.clear();
-  window.location.href = '/';
-};
+interface AuthUserInfo {
+  id: string;
+  nickname: string;
+  email: string;
+  avatar?: string;
+}
 
 /* -------------------------------------------------------------------------- */
 // 서비스 준비 알럿
@@ -44,17 +36,20 @@ const showAlert = () => {
 };
 /* -------------------------------------------------------------------------- */
 // 마이페이지 마크업
-const Profile = () => {
+const Profile = ({ user }: { user: AuthUserInfo }) => {
+  const avatarSrc =
+    user.avatar && user.id ? getPbImgURL(user.id, user.avatar) : profile;
+
   return (
     <section className="my-[30px] flex items-center gap-4">
       <img
-        src={userAvatar !== '' ? getPbImgURL(userId, userAvatar) : profile}
+        src={avatarSrc}
         alt="나의 프로필 사진"
         className="size-66px rounded-full"
       />
       <div className="flex flex-col gap-[6px]">
         <div className="flex items-center gap-[4px]">
-          <h1 className="text-xl">{userNickname}</h1>
+          <h1 className="text-xl">{user.nickname || '사용자'}</h1>
           <Link
             to="/mypageedit"
             className="p-1.5 transition-all duration-300 hover:rounded hover:bg-gray-100"
@@ -62,7 +57,7 @@ const Profile = () => {
             <img src={icon_pencil} alt="프로필 수정하기" />
           </Link>
         </div>
-        <span className="text-xs text-gray-450">{userEmail}</span>
+        <span className="text-xs text-gray-450">{user.email || '-'}</span>
       </div>
     </section>
   );
@@ -117,12 +112,23 @@ const List02 = () => {
   const [voidAlarmIcon, setVoidAlarmIcon] = useState(false);
 
   useEffect(() => {
-    const savedRecommendations = localStorage.getItem('recommendations');
+    if (typeof window === 'undefined') return;
 
-    if (savedRecommendations === '[]') {
+    try {
+      const savedRecommendations = window.localStorage.getItem('recommendations');
+      if (!savedRecommendations) {
+        setVoidAlarmIcon(false);
+        return;
+      }
+
+      if (savedRecommendations === '[]') {
+        setVoidAlarmIcon(false);
+      } else {
+        setVoidAlarmIcon(true);
+      }
+    } catch (error) {
+      console.warn('Failed to read recommendations', error);
       setVoidAlarmIcon(false);
-    } else {
-      setVoidAlarmIcon(true);
     }
   }, []);
 
@@ -156,7 +162,7 @@ const List02 = () => {
   );
 };
 
-const Menu = () => {
+const Menu = ({ onLogout }: { onLogout: () => void }) => {
   return (
     <ul className="flex flex-col gap-[8px] py-[26px]">
       <li className="transition-all duration-300 hover:rounded hover:bg-gray-100">
@@ -172,7 +178,7 @@ const Menu = () => {
       <li className="transition-all duration-300 hover:rounded hover:bg-gray-100">
         <button
           className="flex items-center py-1 text-xs text-gray-500"
-          onClick={handleLogout}
+          onClick={onLogout}
         >
           로그아웃
         </button>
@@ -183,6 +189,27 @@ const Menu = () => {
 
 const MyPage = () => {
   const location = useLocation();
+  const [userInfo, setUserInfo] = useState<AuthUserInfo | null>(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    try {
+      const loginUserData = window.localStorage.getItem('pocketbase_auth');
+      if (!loginUserData) return;
+
+      const localData = JSON.parse(loginUserData);
+      setUserInfo({
+        id: localData?.model?.id ?? '',
+        nickname: localData?.model?.nickname ?? '',
+        email: localData?.model?.email ?? '',
+        avatar: localData?.model?.avatar ?? ''
+      });
+    } catch (error) {
+      console.warn('Failed to read auth data', error);
+    }
+  }, []);
+
   useEffect(() => {
     const script = document.createElement('script');
     script.async = true;
@@ -212,16 +239,29 @@ const MyPage = () => {
     return hideTawkToWidget;
   }, [location]);
 
+  const handleLogout = () => {
+    pb.authStore.clear();
+    window.location.href = '/';
+  };
+
+  if (!userInfo) {
+    return (
+      <div className="flex min-h-nav-safe items-center justify-center text-sm text-gray-500">
+        사용자 정보를 불러오는 중입니다...
+      </div>
+    );
+  }
+
   return (
     <div className="flex w-full min-w-[375px] flex-col items-center">
       <Header isShowPrev={true} children="마이페이지" empty={true} />
       <div className="px-[30px]">
-        <Profile />
+        <Profile user={userInfo} />
         <List01 />
         <Horizon lineBold="thin" lineWidth="short" />
         <List02 />
         <Horizon lineBold="thin" lineWidth="short" />
-        <Menu />
+        <Menu onLogout={handleLogout} />
       </div>
     </div>
   );

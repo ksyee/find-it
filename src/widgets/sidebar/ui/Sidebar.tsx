@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { pb } from '@/lib/utils/pb';
+import { pb } from '@/lib/api/getPbData';
 import { getTimeDiff } from '@/lib/utils/getTimeDiff';
 
 interface CommunityPost {

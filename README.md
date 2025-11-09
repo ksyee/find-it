@@ -28,7 +28,7 @@
 - 전국 습득물/분실물 통합 탐색: React Query `useInfiniteQuery`와 사용자 스크롤 상태 복원을 결합해 끊김 없는 탐색을 제공합니다 (`src/pages/find/GetListPage.tsx:12`, `src/entities/found/model/useFoundItemsInfinite.ts:20`, `src/shared/hooks/useScrollRestoration.ts:5`).
 - 조건 검색 & 행정동 필터: Zustand 스토어와 행정표준코드 API 토큰 관리 훅으로 지역·기간·카테고리 필터를 페이지 간 공유합니다 (`src/features/search/model/searchStore.ts:18`, `src/hooks/location/useLocationList.ts:15`, `src/lib/utils/useGetToken.tsx:8`).
 - 키워드 알림과 추천: PocketBase 사용자 데이터와 로컬 스토리지를 연동해 키워드 최대 10개 제한, 중복 방지, 추천 목록을 제공합니다 (`src/pages/notification/SettingPage.tsx:35`, `src/pages/notification/NoticePage.tsx:48`).
-- 커뮤니티 & 마이페이지: PocketBase SDK로 인증과 게시글 CRUD를 처리하고 메인에서 최신 글을 노출합니다 (`src/lib/utils/pb.tsx:1`, `src/pages/main/MainPage.tsx:83`).
+- 커뮤니티 & 마이페이지: PocketBase SDK로 인증과 게시글 CRUD를 처리하고 메인에서 최신 글을 노출합니다 (`src/lib/api/getPbData.ts:1`, `src/pages/main/MainPage.tsx:83`).
 - 상세 보기 + 지도 안내: Kakao 지도 SDK를 비동기로 로드해 보관 장소와 연락처를 시각화합니다 (`src/entities/item/ui/ItemDetail.tsx:1`, `src/shared/ui/KakaoMap.tsx:1`).
 
 ## 아키텍처
@@ -86,7 +86,7 @@ PocketBase ──────→ Auth / Community / Keyword 알림
 
 - Frontend: React 18, TypeScript, Vite, TailwindCSS v4 (`src/main.css:1`)
 - State & Async: TanStack Query, React Router, Zustand (`src/app/providers/AppProviders.tsx:7`, `src/features/search/model/searchStore.ts:18`)
-- BaaS & External: PocketBase, Police Open API, 행정표준코드 API, Kakao Maps (`src/lib/utils/pb.tsx:1`, `src/shared/ui/KakaoMap.tsx:1`)
+- BaaS & External: PocketBase, Police Open API, 행정표준코드 API, Kakao Maps (`src/lib/api/getPbData.ts:1`, `src/shared/ui/KakaoMap.tsx:1`)
 - Tooling & Infra: Vercel, pnpm, ESLint, Prettier, PostCSS (`package.json:6`)
 
 ## Roadmap

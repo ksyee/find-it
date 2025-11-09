@@ -1,14 +1,8 @@
-import { useEffect, useState } from "react";
-import { createData } from "@/lib/utils/crud";
-import Header from "@/widgets/header/ui/Header";
-import CreateBodyText from "@/widgets/community/ui/CreateBodyText";
-import Horizon from "@/shared/ui/layout/Horizon";
-
-/* -------------------------------------------------------------------------- */
-//로컬 데이터 가져오기
-const loginUserData = localStorage.getItem("pocketbase_auth");
-const localData = loginUserData && JSON.parse(loginUserData);
-const userNickname = localData?.model?.nickname;
+import { useEffect, useState } from 'react';
+import { createData } from '@/lib/utils/crud';
+import Header from '@/widgets/header/ui/Header';
+import CreateBodyText from '@/widgets/community/ui/CreateBodyText';
+import Horizon from '@/shared/ui/layout/Horizon';
 
 // 1. 유저 닉네임 전달
 // 2 제목, 시간, 내용 ,해시태그 전달
@@ -16,9 +10,27 @@ const userNickname = localData?.model?.nickname;
 /* -------------------------------------------------------------------------- */
 const CreatePost = () => {
   const [submit, setSubmit] = useState(false);
-  const [titleValue, setTitleValue] = useState("");
-  const [tagValue, setTagValue] = useState("");
-  const [bodyValue, setBodyValue] = useState("");
+  const [titleValue, setTitleValue] = useState('');
+  const [tagValue, setTagValue] = useState('');
+  const [bodyValue, setBodyValue] = useState('');
+  const [userNickname, setUserNickname] = useState<string>('');
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    try {
+      const loginUserData = window.localStorage.getItem('pocketbase_auth');
+      if (!loginUserData) return;
+
+      const localData = JSON.parse(loginUserData);
+      const nickname = localData?.model?.nickname;
+      if (typeof nickname === 'string') {
+        setUserNickname(nickname);
+      }
+    } catch (error) {
+      console.warn('Failed to read user data', error);
+    }
+  }, []);
 
   // 값 입력
   const receiveTitleValue = (value: string) => {
@@ -33,22 +45,22 @@ const CreatePost = () => {
 
   // 글 데이터
   interface NewPostData {
-  nickname?: string;
-  title: string;
-  content: string;
-  tag: string;
-}
+    nickname?: string;
+    title: string;
+    content: string;
+    tag: string;
+  }
 
-const newPostData: NewPostData = {
-    nickname: userNickname,
+  const newPostData: NewPostData = {
+    nickname: userNickname || undefined,
     title: titleValue,
     content: bodyValue,
-    tag: tagValue,
+    tag: tagValue
   };
 
   // 완료 조건
   useEffect(() => {
-    if (titleValue !== "" && bodyValue !== "" && tagValue !== "") {
+    if (titleValue !== '' && bodyValue !== '' && tagValue !== '') {
       setSubmit(true);
     } else {
       setSubmit(false);
@@ -58,8 +70,8 @@ const newPostData: NewPostData = {
   //완료 버튼
   const buttonSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await createData("community", newPostData);
-    window.location.href = "/postlist";
+    await createData('community', newPostData);
+    window.location.href = '/postlist';
   };
 
   return (

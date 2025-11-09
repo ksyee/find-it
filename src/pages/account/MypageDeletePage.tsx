@@ -18,12 +18,23 @@ type AlertProps =
   | '';
 
 const MypageDelete = () => {
-  /* -------------------------------------------------------------------------- */
-  //로컬 데이터 가져오기
-  const loginUserData = localStorage.getItem('pocketbase_auth');
-  const localData = loginUserData && JSON.parse(loginUserData);
-  const userEmail = localData?.model?.email;
-  const userId = localData?.model?.id;
+  const [userEmail, setUserEmail] = useState('');
+  const [userId, setUserId] = useState('');
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    try {
+      const loginUserData = window.localStorage.getItem('pocketbase_auth');
+      if (!loginUserData) return;
+
+      const localData = JSON.parse(loginUserData);
+      setUserEmail(localData?.model?.email ?? '');
+      setUserId(localData?.model?.id ?? '');
+    } catch (error) {
+      console.warn('Failed to read auth data', error);
+    }
+  }, []);
 
   // 이메일 변수
   const [emailValue, setEmailValue] = useState('');
@@ -74,6 +85,7 @@ const MypageDelete = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const deleteData = async () => {
+    if (!userId) return;
     try {
       await pb.collection('users').delete(userId);
     } catch (error) {

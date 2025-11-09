@@ -45,7 +45,7 @@ const SignIn = () => {
     setAlertPassword('');
   };
 
-  // 비번 눈 보이기
+  // 비밀번호 눈 보이기
   const handleEyePassword = () => {
     setPasswordType((passwordType === 'password' && 'text') || 'password');
   };
@@ -82,7 +82,7 @@ const SignIn = () => {
     (async () => {
       // 이메일 있는지 확인
       const records = await getData('users', {
-        filter: `email="${emailValue}"`, //pb 에서 조건 충족 리스트 가져옴(객체 1개배열)
+        filter: `email="${emailValue}"` //pb 에서 조건 충족 리스트 가져옴(객체 1개배열)
       });
       const realdata = records && records[0];
       const emailData = realdata && realdata.email;
@@ -105,12 +105,12 @@ const SignIn = () => {
   /* -------------------------------------------------------------------------- */
   // 마크업
   return (
-    <>
-      <div className="flex flex-col items-center ">
-        <Header children="로그인" empty={true} isShowPrev={true} />
+    <div className="min-h-nav-safe flex w-full flex-col items-center bg-white md:mt-5">
+      <Header children="로그인" empty={true} isShowPrev={true} />
+      <div className="flex w-full flex-col items-center pt-[66px] md:pt-0">
         <div className="flex flex-col items-center">
-          <form className="w-[375px] px-[20px] pt-[30px]" onSubmit={handleSignIn}>
-            <div className="flex flex-col gap-[20px]">
+          <form className="w-[375px] px-5 pb-10" onSubmit={handleSignIn}>
+            <div className="flex flex-col gap-5">
               <InputForm
                 ref={emailRef}
                 type="email"
@@ -136,7 +136,7 @@ const SignIn = () => {
                 alertCase={alertPassword}
               />
             </div>
-            <div className="box-border flex flex-col items-center gap-[1rem]	pt-[80px]">
+            <div className="box-border flex flex-col items-center gap-4 pt-20">
               <ButtonVariable buttonText="로그인" variant={variant} />
               <ButtonVariable
                 buttonText="회원가입"
@@ -147,7 +147,7 @@ const SignIn = () => {
           </form>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

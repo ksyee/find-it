@@ -13,11 +13,11 @@ export const getData = async <T = Record<string, unknown>>(collection: string, o
 
 export const createData = async (collection: string, data: object) => {
   try {
-    const response = pb.collection(collection).create(data);
-
+    const response = await pb.collection(collection).create(data);
     return response;
   } catch (error) {
     console.error('에러 발생: ', error);
+    throw error;
   }
 };
 
@@ -27,20 +27,20 @@ export const updateData = async (
   data: object
 ) => {
   try {
-    const response = pb.collection(collection).update(id, data);
-
+    const response = await pb.collection(collection).update(id, data);
     return response;
   } catch (error) {
     console.error('에러 발생: ', error);
+    throw error;
   }
 };
 
 export const deleteData = async (collection: string, id: string) => {
   try {
-    const response = pb.collection(collection).delete(id);
-
+    const response = await pb.collection(collection).delete(id);
     return response;
   } catch (error) {
     console.error('에러 발생: ', error);
+    throw error;
   }
 };

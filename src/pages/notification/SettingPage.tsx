@@ -1,10 +1,13 @@
-import { pb } from '@/lib/utils/pb';
+import { pb } from '@/lib/api/getPbData';
 import { useState, useEffect } from 'react';
 import Horizon from '@/shared/ui/layout/Horizon';
 import icon_delete from '@/assets/icons/icon_delete.svg';
 import ModalComp from '@/shared/ui/modal/ModalComp';
 
-const pocketAuth = localStorage.getItem('pocketbase_auth');
+const pocketAuth =
+  typeof window !== 'undefined'
+    ? window.localStorage.getItem('pocketbase_auth')
+    : null;
 const pocketData = pocketAuth ? JSON.parse(pocketAuth) : null;
 
 interface KeywordType {
@@ -109,7 +112,9 @@ const Setting = () => {
     });
 
     // 로컬 스토리지에서 키워드 삭제
-    localStorage.removeItem(keywordToDelete);
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem(keywordToDelete);
+    }
   };
 
   const noKeywordMessage = (

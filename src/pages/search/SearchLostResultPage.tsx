@@ -79,14 +79,17 @@ const SearchLostResult = () => {
   }, [navigate, queryEnabled]);
 
   const loadingFallback = (
-    <div className="flex h-screen w-full flex-col items-center bg-gray-200">
+    <div className="flex h-nav-safe w-full flex-col items-center bg-gray-200">
       <Header isShowPrev empty>
         검색결과
       </Header>
       <div className="w-[375px]">
         <div
           ref={scrollContainerRef}
-          className="h-[calc(100vh-[66px]-80px)] overflow-auto"
+          className="overflow-auto"
+          style={{
+            height: 'calc(100dvh - 66px - var(--app-nav-bottom) - 16px)'
+          }}
         >
           <div className="flex flex-col items-center">
             {Array.from({ length: 10 }).map((_, index) => (
@@ -104,14 +107,17 @@ const SearchLostResult = () => {
       isError={isError}
       loadingFallback={loadingFallback}
     >
-      <div className="flex h-screen w-full flex-col items-center bg-gray-200">
+      <div className="flex h-nav-safe w-full flex-col items-center bg-gray-200">
         <Header isShowPrev empty>
           검색결과
         </Header>
         <div className="w-[375px]">
           <div
             ref={scrollContainerRef}
-            className="h-[calc(100vh-[66px]-80px)] overflow-auto"
+            className="overflow-auto"
+            style={{
+              height: 'calc(100dvh - 66px - var(--app-nav-bottom) - 16px)'
+            }}
           >
             {items.length > 0 ? (
               <ul className="flex flex-col items-center">

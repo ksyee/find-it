@@ -55,12 +55,6 @@ const ItemDetail = ({ detail }: ItemDetailProps) => {
       <div className="mb-[33px] mt-[28px] h-[10px] border-t border-t-gray-300 bg-gray-200" />
 
       <div className="relative">
-        <button
-          type="button"
-          className="absolute -top-[4px] right-[30px] rounded-full border border-primary px-[12px] py-[4px] text-[10px] text-primary"
-        >
-          전화하기
-        </button>
         <ul className="flex flex-col gap-[8px] px-[30px] text-xs">
           <li>
             <dl className="flex gap-[22px]">

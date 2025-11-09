@@ -4,11 +4,16 @@ import Horizon from '@/shared/ui/layout/Horizon';
 
 const PostDetail = () => {
   return (
-    <div className="flex h-screen w-full flex-col items-center">
+    <div className="flex h-nav-safe w-full flex-col items-center">
       <Header isShowPrev={true} children="자유게시판" empty={true} />
       <Horizon lineBold="thin" lineWidth="long" />
       <div className="w-[375px]">
-        <div className="flex h-[calc(100vh-[66px]-80px)] w-full justify-center overflow-auto">
+        <div
+          className="flex w-full justify-center overflow-auto"
+          style={{
+            height: 'calc(100dvh - 66px - var(--app-nav-bottom) - 16px)'
+          }}
+        >
           <PostDetailBody />
         </div>
       </div>

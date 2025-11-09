@@ -35,15 +35,29 @@ const MypageEdit = () => {
   const regex = {
     pwRegex: /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,}$/,
   };
-  /* -------------------------------------------------------------------------- */
-  //로컬 데이터 가져오기
-  const loginUserData = localStorage.getItem('pocketbase_auth');
-  const localData = loginUserData && JSON.parse(loginUserData);
-  const userNickname = localData?.model?.nickname;
-  const userId = localData?.model?.id;
-  const userAvatar = localData?.model?.avatar;
-  const userSido = localData?.model?.state;
-  const userGungu = localData?.model?.city;
+  const [userNickname, setUserNickname] = useState('');
+  const [userId, setUserId] = useState('');
+  const [userAvatar, setUserAvatar] = useState('');
+  const [userSido, setUserSido] = useState('');
+  const [userGungu, setUserGungu] = useState('');
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    try {
+      const loginUserData = window.localStorage.getItem('pocketbase_auth');
+      if (!loginUserData) return;
+
+      const localData = JSON.parse(loginUserData);
+      setUserNickname(localData?.model?.nickname ?? '');
+      setUserId(localData?.model?.id ?? '');
+      setUserAvatar(localData?.model?.avatar ?? '');
+      setUserSido(localData?.model?.state ?? '');
+      setUserGungu(localData?.model?.city ?? '');
+    } catch (error) {
+      console.warn('Failed to read auth data', error);
+    }
+  }, []);
 
   /* -------------------------------------------------------------------------- */
   // 입력값
@@ -192,7 +206,7 @@ const MypageEdit = () => {
   // 뿌릴 데이터 종류 전달
   const LOCAL_CODE = GetCode(selectFirstItem);
   const firstItemList = GetSidoList(); // 문자열로 된 배열 반환
-  const secondItemList = GetGunguList(`${LOCAL_CODE}`);
+  const secondItemList = GetGunguList(LOCAL_CODE || selectFirstItem);
 
   /* -------------------------------------------------------------------------- */
   /* -------------------------------------------------------------------------- */
@@ -235,6 +249,10 @@ const MypageEdit = () => {
 
   const buttonSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!userId) {
+      console.warn('사용자 정보를 찾을 수 없어 프로필을 수정할 수 없습니다.');
+      return;
+    }
     try {
       await updateData('users', userId, updateUserData);
       setIsModalOpen(true);
@@ -275,6 +293,11 @@ const MypageEdit = () => {
       }
       console.log('폼데이터에 심은 업로드한 이미지:', formData.get('avatar'));
 
+      if (!userId) {
+        console.warn('사용자 정보를 찾을 수 없어 프로필을 변경할 수 없습니다.');
+        return;
+      }
+
       // pb 업로드
       const updatedUserInfo = await pb
         .collection('users')
@@ -305,6 +328,9 @@ const MypageEdit = () => {
 
   /* -------------------------------------------------------------------------- */
   /* -------------------------------------------------------------------------- */
+  const avatarSrc =
+    userAvatar && userId ? getPbImgURL(userId, userAvatar) : profile;
+
   // 마크업
   return (
     <>
@@ -331,7 +357,7 @@ const MypageEdit = () => {
           <img
             ref={avatarRef}
             className="size-88px rounded-full"
-            src={userAvatar !== '' ? getPbImgURL(userId, userAvatar) : profile}
+            src={avatarSrc}
             alt="나의 프로필 사진"
           />
           <img

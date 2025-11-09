@@ -17,12 +17,18 @@ const Categories = ({ onChangeCategory }: CategoriesProps) => {
 
   // 추천 알림이 있으면 스타일 표시
   useEffect(() => {
-    const savedRecommendations = localStorage.getItem('recommendations');
+    if (typeof window === 'undefined') return;
 
-    if (savedRecommendations === '[]') {
+    try {
+      const savedRecommendations = window.localStorage.getItem('recommendations');
+      if (!savedRecommendations || savedRecommendations === '[]') {
+        setVoidAlarmIcon(false);
+      } else {
+        setVoidAlarmIcon(true);
+      }
+    } catch (error) {
+      console.warn('Failed to read recommendations', error);
       setVoidAlarmIcon(false);
-    } else {
-      setVoidAlarmIcon(true);
     }
   }, []);
 

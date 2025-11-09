@@ -1,4 +1,4 @@
-import { pb } from '@/lib/utils/pb';
+import { pb } from '@/lib/api/getPbData';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllData } from '@/lib/utils/getAPIData';
@@ -19,14 +19,21 @@ const Notice = () => {
   const [userKeyword, setUserKeyword] = useState<KeywordType | null>(null);
   const [recommendations, setRecommendations] = useState<RecommendationType[]>(
     () => {
-      const savedRecommendations = localStorage.getItem('recommendations');
+      if (typeof window === 'undefined') {
+        return [];
+      }
+      const savedRecommendations = window.localStorage.getItem('recommendations');
       return savedRecommendations ? JSON.parse(savedRecommendations) : [];
     }
   );
 
   useEffect(() => {
     const fetchUserKeyword = async () => {
-      const pocketAuth = localStorage.getItem('pocketbase_auth');
+      if (typeof window === 'undefined') {
+        return;
+      }
+
+      const pocketAuth = window.localStorage.getItem('pocketbase_auth');
       const pocketData = pocketAuth ? JSON.parse(pocketAuth) : null;
 
       // 로그인 유저의 키워드 데이터 가져오기
@@ -79,10 +86,12 @@ const Notice = () => {
               ...prevRecommendations,
               ...newRecommendations,
             ];
-            localStorage.setItem(
-              'recommendations',
-              JSON.stringify(updatedRecommendations)
-            );
+            if (typeof window !== 'undefined') {
+              window.localStorage.setItem(
+                'recommendations',
+                JSON.stringify(updatedRecommendations)
+              );
+            }
             return updatedRecommendations;
           });
         }
@@ -104,10 +113,12 @@ const Notice = () => {
     const updatedRecommendations = recommendations.filter(
       (_, i) => i !== index
     );
-    localStorage.setItem(
-      'recommendations',
-      JSON.stringify(updatedRecommendations)
-    );
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(
+        'recommendations',
+        JSON.stringify(updatedRecommendations)
+      );
+    }
     setRecommendations(updatedRecommendations);
   };
 

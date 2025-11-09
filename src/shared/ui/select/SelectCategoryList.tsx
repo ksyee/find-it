@@ -47,6 +47,7 @@ const SelectCategoryList = ({
     event?.preventDefault();
     setSelectedItem(item);
     getSelectItem(item);
+    onClose();
   };
 
   /* -------------------------------------------------------------------------- */
@@ -54,7 +55,6 @@ const SelectCategoryList = ({
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
-        selectedItem &&
         ulRef.current &&
         !ulRef.current.contains(e.target as Node)
       ) {
@@ -65,7 +65,7 @@ const SelectCategoryList = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [onClose, selectedItem]);
+  }, [onClose]);
 
   /* -------------------------------------------------------------------------- */
   // jsx 반환
