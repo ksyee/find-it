@@ -42,30 +42,49 @@ const PostDetailBody: React.FC = () => {
   if (!thisData) return <div>게시글이 존재하지 않습니다.</div>;
 
   const { title, content: bodyText, tag, author_nickname, created_at } = thisData;
+  const hashtags =
+    tag
+      ?.split(/\s+/)
+      .filter(Boolean)
+      .map((hash) => (hash.startsWith('#') ? hash : `#${hash}`)) ?? [];
 
   return (
-    <div className="w-[315px]">
-      <section className="flex items-center gap-2 pt-5">
-        <img
-          src={authorAvatar || profile}
-          alt="글쓴이 프로필 사진"
-          className="size-8.5 rounded-full"
-        />
-        <div className="flex flex-col text-xs">
-          <span className="text-sm">{author_nickname}</span>
-          {getTimeDiff({ createdAt: created_at })}
+    <div className="mx-auto w-full max-w-[430px] px-4 py-6 md:max-w-4xl md:py-8">
+      <div className="rounded-3xl bg-white p-4 shadow-sm md:p-8">
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 overflow-hidden rounded-full border-2 border-gray-100 bg-white">
+              <img
+                src={authorAvatar || profile}
+                alt="작성자"
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-[#1a1a1a]">{author_nickname}</p>
+              <div className="text-xs text-[#999]">
+                {getTimeDiff({ createdAt: created_at })}
+              </div>
+            </div>
+          </div>
         </div>
-      </section>
 
-      <section className="flex flex-col pt-5">
-        <h1 className="text-2xl tracking-tight text-black">{title}</h1>
-        <p className="w-full pt-2.5 text-base leading-7 tracking-tight break-keep whitespace-normal text-gray-700">
+        <h2 className="mb-4 text-base font-semibold text-[#1a1a1a] md:text-xl">{title}</h2>
+
+        <div className="mb-6 whitespace-pre-wrap text-sm leading-6 text-[#1a1a1a] md:text-base">
           {bodyText}
-        </p>
-        <span className="text-primary block pt-7.5 text-sm tracking-tight">
-          #{tag ?? ''}
-        </span>
-      </section>
+        </div>
+
+        {hashtags.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {hashtags.map((hashTag, index) => (
+              <span key={`${hashTag}-${index}`} className="text-sm text-[#4F7EFF]">
+                {hashTag}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -43,7 +43,7 @@ const ButtonVariable = ({
       background = 'white';
       color = '#4785ff';
       borderColor = '#4785ff';
-      width = '334px';
+      width = '100%';
       height = '66px';
       break;
     case 'blackSolidThin':
