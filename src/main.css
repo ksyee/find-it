@@ -47,6 +47,12 @@
   --breakpoint-mobile: 375px;
   --breakpoint-tablet: 768px;
   --breakpoint-desktop: 1280px;
+
+  /* Tailwind breakpoints 재정의 */
+  --breakpoint-sm: 375px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
 }
 
 /* 기본 스타일 */
@@ -59,6 +65,19 @@
   body {
     margin: 0;
     padding: 0;
+    --app-nav-top: 0px;
+    --app-nav-bottom: 0px;
+  }
+
+  body.has-navigation {
+    --app-nav-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  }
+
+  @media (min-width: 768px) {
+    body.has-navigation {
+      --app-nav-top: 64px;
+      --app-nav-bottom: 0px;
+    }
   }
 
   /* 포커스 스타일 */
@@ -107,5 +126,39 @@
     z-index: 100;
     border-radius: 0.25rem;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Swiper 커스텀 스타일 */
+  .swiper-pagination {
+    position: relative !important;
+    margin-top: 1rem;
+  }
+
+  .swiper-pagination-bullet {
+    width: 8px !important;
+    height: 8px !important;
+    opacity: 0.5 !important;
+  }
+
+  .swiper-pagination-bullet-active {
+    opacity: 1 !important;
+  }
+}
+
+@layer utilities {
+  .pt-nav-safe {
+    padding-top: var(--app-nav-top);
+  }
+
+  .pb-nav-safe {
+    padding-bottom: var(--app-nav-bottom);
+  }
+
+  .min-h-nav-safe {
+    min-height: calc(100dvh - var(--app-nav-top) - var(--app-nav-bottom));
+  }
+
+  .h-nav-safe {
+    height: calc(100dvh - var(--app-nav-top) - var(--app-nav-bottom));
   }
 }

@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { pb } from '@/lib/api/getPbData';
-import { getData } from '@/lib/utils/crud';
-import Header from '@/widgets/header/ui/Header';
+import { AuthError, type User } from '@supabase/supabase-js';
+import { supabase } from '@/lib/api/supabaseClient';
+import { fetchProfileById, upsertProfile } from '@/lib/api/profile';
 import InputForm from '@/features/auth/sign-in/ui/InputForm';
 import ButtonVariable from '@/shared/ui/buttons/ButtonVariable';
+import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
 
 /* -------------------------------------------------------------------------- */
 //알럿창 타입 정의
@@ -45,7 +46,7 @@ const SignIn = () => {
     setAlertPassword('');
   };
 
-  // 비번 눈 보이기
+  // 비밀번호 눈 보이기
   const handleEyePassword = () => {
     setPasswordType((passwordType === 'password' && 'text') || 'password');
   };
@@ -69,7 +70,7 @@ const SignIn = () => {
   // 로그인 버튼 활성화 조건 : 빈문자열만 아니면 됨
   const [variant, setVariant] = useState<'submit' | 'disabled'>('disabled');
   useEffect(() => {
-    if (emailValue !== '' && passwordValue !== '') {
+    if (emailValue.trim() !== '' && passwordValue !== '') {
       setVariant('submit');
     } else {
       setVariant('disabled');
@@ -77,40 +78,95 @@ const SignIn = () => {
   }, [emailValue, passwordValue]);
 
   // 최종 로그인 버튼
-  const handleSignIn = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    (async () => {
-      // 이메일 있는지 확인
-      const records = await getData('users', {
-        filter: `email="${emailValue}"`, //pb 에서 조건 충족 리스트 가져옴(객체 1개배열)
-      });
-      const realdata = records && records[0];
-      const emailData = realdata && realdata.email;
-      if (emailData === emailValue) {
-        /// 이메일 같을 경우 권한 db 전송
-        try {
-          await pb
-            .collection('users')
-            .authWithPassword(emailValue, passwordValue);
-          window.location.href = '/';
-        } catch (error) {
-          setAlertPassword('invalidValue');
-        }
-      } else {
-        setAlertEmail('userEmail');
+    setAlertEmail('');
+    setAlertPassword('');
+
+    const ensureProfileExists = async (authUser: User | null) => {
+      if (!authUser) {
+        return;
       }
-    })();
+
+      try {
+        const existingProfile = await fetchProfileById(authUser.id);
+        if (existingProfile) {
+          return;
+        }
+
+        await upsertProfile(authUser.id, {
+          email: authUser.email,
+          nickname:
+            typeof authUser.user_metadata?.nickname === 'string'
+              ? authUser.user_metadata.nickname
+              : authUser.email?.split('@')[0] ?? '',
+          state:
+            typeof authUser.user_metadata?.state === 'string'
+              ? authUser.user_metadata.state
+              : null,
+          city:
+            typeof authUser.user_metadata?.city === 'string'
+              ? authUser.user_metadata.city
+              : null,
+          keywords: ''
+        });
+      } catch (profileError) {
+        // 최초 로그인 시점에만 일시적으로 실패할 수 있으므로 사용자 흐름을 막지 않는다.
+        console.warn('로그인 중 프로필 동기화 실패:', profileError);
+      }
+    };
+
+    const normalizedEmail = emailValue.trim();
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: normalizedEmail,
+        password: passwordValue
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      await ensureProfileExists(data.user);
+
+      window.location.href = '/';
+    } catch (error) {
+      if (error instanceof AuthError) {
+        const message = error.message.toLowerCase();
+        if (message.includes('invalid login credentials')) {
+          setAlertPassword('invalidValue');
+          return;
+        }
+        if (message.includes('email')) {
+          setAlertEmail('userEmail');
+          return;
+        }
+
+        setAlertPassword('invalidValue');
+      } else {
+        setAlertPassword('invalidValue');
+      }
+    }
   };
   /* -------------------------------------------------------------------------- */
   /* -------------------------------------------------------------------------- */
   // 마크업
+  useHeaderConfig(
+    () => ({
+      children: '로그인',
+      empty: true,
+      isShowPrev: true
+    }),
+    []
+  );
+
   return (
-    <>
-      <div className="flex flex-col items-center ">
-        <Header children="로그인" empty={true} isShowPrev={true} />
-        <div className="flex flex-col items-center">
-          <form className="w-[375px] px-[20px] pt-[30px]" onSubmit={handleSignIn}>
-            <div className="flex flex-col gap-[20px]">
+    <div className="min-h-nav-safe flex w-full flex-col items-center bg-white md:mt-5">
+      <div className="flex w-full flex-col items-center pt-[66px] md:pt-0">
+        <div className="flex w-full justify-center">
+          <form className="w-full max-w-[430px] px-5 pb-10" onSubmit={handleSignIn}>
+            <div className="flex flex-col gap-5">
               <InputForm
                 ref={emailRef}
                 type="email"
@@ -136,7 +192,7 @@ const SignIn = () => {
                 alertCase={alertPassword}
               />
             </div>
-            <div className="box-border flex flex-col items-center gap-[1rem]	pt-[80px]">
+            <div className="box-border flex flex-col items-center gap-4 pt-20">
               <ButtonVariable buttonText="로그인" variant={variant} />
               <ButtonVariable
                 buttonText="회원가입"
@@ -147,7 +203,7 @@ const SignIn = () => {
           </form>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

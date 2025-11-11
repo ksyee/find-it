@@ -1,11 +1,8 @@
-import { pb } from '@/lib/utils/pb';
 import { useState, useEffect } from 'react';
 import Horizon from '@/shared/ui/layout/Horizon';
 import icon_delete from '@/assets/icons/icon_delete.svg';
 import ModalComp from '@/shared/ui/modal/ModalComp';
-
-const pocketAuth = localStorage.getItem('pocketbase_auth');
-const pocketData = pocketAuth ? JSON.parse(pocketAuth) : null;
+import { supabase } from '@/lib/api/supabaseClient';
 
 interface KeywordType {
   keywords: string;
@@ -34,6 +31,7 @@ const Keyword = ({ keyword, onDelete }: KeywordProps) => {
 
 const Setting = () => {
   const [userKeyword, setUserKeyword] = useState<KeywordType>({ keywords: '' });
+  const [userId, setUserId] = useState<string | null>(null);
   const keywordsArray = userKeyword.keywords.split(', ').filter((k) => k);
   const [isCountModal, setIsCountModal] = useState(false);
   const [isDuplicate, setIsDuplicate] = useState(false);
@@ -45,17 +43,29 @@ const Setting = () => {
 
   useEffect(() => {
     (async () => {
-      if (pocketData) {
-        const userKeyword: KeywordType = await pb
-          .collection('users')
-          .getOne(pocketData.model.id, {
-            fields: 'keywords',
-            headers: {
-              'Access-Control-Allow-Origin': '*',
-            },
-          });
+      try {
+        const { data } = await supabase.auth.getUser();
+        const user = data.user;
+        if (!user) return;
+        setUserId(user.id);
 
-        setUserKeyword(userKeyword);
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('keywords')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        if (error) {
+          throw error;
+        }
+
+        if (profile) {
+          setUserKeyword({
+            keywords: profile.keywords ?? '',
+          });
+        }
+      } catch (error) {
+        console.error('사용자 키워드를 불러오지 못했습니다.', error);
       }
     })();
   }, []);
@@ -81,7 +91,7 @@ const Setting = () => {
     }
 
     // pb에 키워드 업데이트
-    if (newKeyword) {
+    if (newKeyword && userId) {
       const updateKeyword = userKeyword.keywords
         ? `${userKeyword.keywords}, ${newKeyword}`
         : newKeyword;
@@ -89,10 +99,12 @@ const Setting = () => {
       const data = {
         keywords: updateKeyword,
       };
-      await pb.collection('users').update(pocketData.model.id, data);
+      await supabase.from('profiles').update(data).eq('id', userId);
 
       setUserKeyword({ keywords: updateKeyword });
       keywordInput.value = '';
+    } else if (!userId) {
+      alert('로그인 후 이용해주세요.');
     }
   };
 
@@ -103,13 +115,19 @@ const Setting = () => {
       .join(', ');
 
     setUserKeyword({ keywords: updatedKeywords });
-
-    pb.collection('users').update(pocketData.model.id, {
-      keywords: updatedKeywords,
-    });
+    if (userId) {
+      void supabase
+        .from('profiles')
+        .update({
+          keywords: updatedKeywords,
+        })
+        .eq('id', userId);
+    }
 
     // 로컬 스토리지에서 키워드 삭제
-    localStorage.removeItem(keywordToDelete);
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem(keywordToDelete);
+    }
   };
 
   const noKeywordMessage = (

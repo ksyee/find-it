@@ -1,11 +1,49 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Navigation from '@/widgets/navigation/ui/Navigation';
+import Header from '@/widgets/header/ui/Header';
+import {
+  HeaderConfigProvider,
+  useHeaderState
+} from '@/widgets/header/model/HeaderConfigContext';
 
-const AppLayout = () => {
+const AppLayoutInner = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const appUrl =
     (import.meta.env.VITE_APP_BASE_URL as string | undefined)?.trim() ||
     'https://find-it.vercel.app/';
+  const headerConfig = useHeaderState();
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const hash = window.location.hash;
+    if (!hash || hash.length <= 1) {
+      return;
+    }
+
+    const normalized = hash.startsWith('#') ? hash.slice(1) : hash;
+    const shouldRedirect = /type=recovery/.test(normalized) || /error=/.test(normalized);
+    if (!shouldRedirect) {
+      return;
+    }
+
+    const search = `?${normalized}`;
+    if (location.pathname === '/reset-password' && location.search !== search) {
+      navigate(`/reset-password${search}`, { replace: true });
+      return;
+    }
+
+    if (location.pathname !== '/reset-password') {
+      navigate(`/reset-password${search}`, { replace: true });
+    }
+  }, [location.pathname, location.search, navigate]);
+
+  const { visible, ...headerProps } = headerConfig;
 
   return (
     <>
@@ -32,9 +70,25 @@ const AppLayout = () => {
           content={appUrl}
         />
       </Helmet>
-      <Outlet />
+
+      {visible && <Header {...headerProps} />}
+
+      {/* 네비게이션 */}
       <Navigation />
+
+      {/* 메인 콘텐츠 영역 */}
+      <div className="w-full min-h-nav-safe pt-nav-safe pb-nav-safe">
+        <Outlet />
+      </div>
     </>
+  );
+};
+
+const AppLayout = () => {
+  return (
+    <HeaderConfigProvider>
+      <AppLayoutInner />
+    </HeaderConfigProvider>
   );
 };
 

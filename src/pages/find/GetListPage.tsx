@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef } from 'react';
-import Header from '@/widgets/header/ui/Header';
 import loading from '@/assets/loading.svg';
 import ItemBox from '@/entities/item/ui/ItemBox';
 import Skeleton from '@/entities/item/ui/Skeleton';
@@ -7,6 +6,7 @@ import QueryState from '@/shared/ui/QueryState';
 import EmptyState from '@/shared/ui/EmptyState';
 import { useFoundItemsInfinite } from '@/entities/found/model/useFoundItemsInfinite';
 import useScrollRestoration from '@/shared/hooks/useScrollRestoration';
+import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
 
 const GetList = () => {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -26,6 +26,26 @@ const GetList = () => {
 
   const items = data?.pages?.flatMap((page) => page) ?? [];
   useScrollRestoration(scrollContainerRef, 'getlist');
+
+  // 데스크탑에서 스크롤이 부족할 경우 자동으로 다음 페이지 로드
+  useEffect(() => {
+    const checkAndLoadMore = () => {
+      const el = scrollContainerRef.current;
+      if (!el || !hasNextPage || isFetchingNextPage) return;
+
+      const { scrollHeight, clientHeight } = el;
+      // 스크롤 가능한 콘텐츠가 뷰포트보다 작거나 거의 같으면 다음 페이지 로드
+      if (scrollHeight <= clientHeight + 100) {
+        void fetchNextPage();
+      }
+    };
+
+    // 아이템이 로드된 후 체크
+    if (items.length > 0) {
+      // DOM 업데이트 후 체크하기 위해 setTimeout 사용
+      setTimeout(checkAndLoadMore, 100);
+    }
+  }, [items.length, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const handleScroll = useCallback(() => {
     const el = scrollContainerRef.current;
@@ -48,22 +68,31 @@ const GetList = () => {
     };
   }, [handleScroll]);
 
+  useHeaderConfig(
+    () => ({
+      isShowSymbol: true,
+      isShowSearch: true,
+      link: '/searchfind',
+      children: '습득물 찾기'
+    }),
+    []
+  );
+
   const loadingFallback = (
-    <div className="flex h-screen w-full flex-col items-center bg-gray-200">
-      <Header
-        isShowSymbol
-        isShowSearch
-        link="/searchfind"
-        children="습득물 찾기"
-      />
-      <div className="w-[375px]">
+    <div className="flex h-nav-safe w-full flex-col items-center bg-white">
+      <div className="mx-auto w-full max-w-7xl pt-[66px] md:pt-0">
         <div
           ref={scrollContainerRef}
-          className="h-[calc(100vh-146px)] overflow-auto"
+          className="overflow-auto"
+          style={{
+            height: 'calc(100dvh - 66px - var(--app-nav-bottom))'
+          }}
         >
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center lg:grid lg:grid-cols-2 lg:gap-4 md:px-5 lg:px-5">
             {Array.from({ length: 10 }).map((_, index) => (
-              <Skeleton key={index} />
+              <div key={index} className="w-full">
+                <Skeleton />
+              </div>
             ))}
           </div>
         </div>
@@ -77,22 +106,19 @@ const GetList = () => {
       isError={isError}
       loadingFallback={loadingFallback}
     >
-      <div className="flex h-screen w-full flex-col items-center bg-gray-200">
-        <Header
-          isShowSymbol
-          isShowSearch
-          link="/searchfind"
-          children="습득물 찾기"
-        />
-        <div className="w-[375px]">
+      <div className="flex h-nav-safe w-full flex-col items-center bg-white">
+        <div className="mx-auto w-full max-w-7xl pt-[66px] md:pt-0">
           <div
             ref={scrollContainerRef}
-            className="h-[calc(100vh-146px)] overflow-auto"
+            className="overflow-auto"
+            style={{
+              height: 'calc(100dvh - 66px - var(--app-nav-bottom))'
+            }}
           >
             {items.length > 0 ? (
-              <ul className="flex flex-col items-center">
+              <ul className="flex flex-col items-center lg:grid lg:grid-cols-2 lg:gap-4 md:px-5 lg:px-5">
                 {items.map((item, index) => (
-                  <li key={`${item.atcId}-${index}`} className="flex justify-center">
+                  <li key={`${item.atcId}-${index}`} className="w-full">
                     <ItemBox item={item} itemType="get" />
                   </li>
                 ))}

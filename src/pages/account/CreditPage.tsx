@@ -1,4 +1,4 @@
-import Header from '@/widgets/header/ui/Header';
+import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
 
 const Main = () => {
   return (
@@ -46,9 +46,17 @@ const Main = () => {
 };
 
 const Credit = () => {
+  useHeaderConfig(
+    () => ({
+      isShowPrev: true,
+      children: '만든 사람들',
+      empty: true
+    }),
+    []
+  );
+
   return (
-    <div className="flex w-full flex-col items-center">
-      <Header isShowPrev={true} children="만든 사람들" empty={true} />
+    <div className="flex w-full flex-col items-center pt-[66px]">
       <Main />
     </div>
   );

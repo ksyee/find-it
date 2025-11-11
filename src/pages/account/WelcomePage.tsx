@@ -6,7 +6,7 @@ const Welcome = () => {
     window.location.href = '/';
   };
   return (
-    <div className="flex h-screen flex-col items-center justify-center ">
+    <div className="flex h-nav-safe flex-col items-center justify-center ">
       <h1 className="text-22px">환영합니다!</h1>
       <img className="mt-[30px] w-[300px]" src={welcomeImg} alt="가입환영 이미지" />
       <div className="mt-[60px] w-[334px]">

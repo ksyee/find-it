@@ -1,11 +1,19 @@
-import Header from '@/widgets/header/ui/Header';
 import NoticeItem from '@/features/notice/ui/NoticeItem';
+import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
 
 const Notice = () => {
+  useHeaderConfig(
+    () => ({
+      isShowPrev: true,
+      children: '공지사항',
+      empty: true
+    }),
+    []
+  );
+
   return (
     <>
-      <div className="flex w-full flex-col items-center">
-        <Header isShowPrev={true} children="공지사항" empty={true} />
+      <div className="flex w-full flex-col items-center pt-[66px]">
         <ul className="mx-auto my-0 flex w-[315px] flex-col">
           <NoticeItem
             title="찾아줘! 서비스가 오픈했습니다."

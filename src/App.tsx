@@ -21,26 +21,47 @@ const errorFallback = (
   </div>
 );
 
-const App = () => {
-  const [showSplash, setShowSplash] = useState(() => {
+const getInitialSplashState = () => {
+  if (typeof window === 'undefined') {
+    return true;
+  }
+
+  try {
     const alreadyVisited = JSON.parse(
-      localStorage.getItem(SPLASH_KEY) || 'false'
+      window.localStorage.getItem(SPLASH_KEY) || 'false'
     );
     return !alreadyVisited;
-  });
+  } catch (error) {
+    console.warn('Failed to read splash state from localStorage', error);
+    return true;
+  }
+};
+
+const App = () => {
+  const [showSplash, setShowSplash] = useState(getInitialSplashState);
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
 
+    if (typeof window === 'undefined') {
+      return () => {
+        if (timeout) clearTimeout(timeout);
+      };
+    }
+
     if (showSplash) {
-      timeout = setTimeout(() => {
+      timeout = window.setTimeout(() => {
         setShowSplash(false);
-        localStorage.setItem(SPLASH_KEY, JSON.stringify(true));
+        try {
+          window.localStorage.setItem(SPLASH_KEY, JSON.stringify(true));
+        } catch (error) {
+          console.warn('Failed to persist splash state', error);
+        }
       }, 3500);
     }
 
     return () => {
-      if (timeout) clearTimeout(timeout);
+      if (timeout) window.clearTimeout(timeout);
     };
   }, [showSplash]);
 

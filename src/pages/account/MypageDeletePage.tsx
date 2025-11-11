@@ -1,9 +1,9 @@
-import { pb } from '@/lib/api/getPbData';
+import { supabase } from '@/lib/api/supabaseClient';
 import { useEffect, useRef, useState } from 'react';
-import Header from '@/widgets/header/ui/Header';
 import InputFormSlim from '@/features/auth/sign-in/ui/InputFormSlim';
 import ButtonVariable from '@/shared/ui/buttons/ButtonVariable';
 import ModalComp from '@/shared/ui/modal/ModalComp';
+import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
 
 // 타입 정의
 type AlertProps =
@@ -18,12 +18,22 @@ type AlertProps =
   | '';
 
 const MypageDelete = () => {
-  /* -------------------------------------------------------------------------- */
-  //로컬 데이터 가져오기
-  const loginUserData = localStorage.getItem('pocketbase_auth');
-  const localData = loginUserData && JSON.parse(loginUserData);
-  const userEmail = localData?.model?.email;
-  const userId = localData?.model?.id;
+  const [userEmail, setUserEmail] = useState('');
+  const [userId, setUserId] = useState('');
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const loadUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      const user = data.user;
+      if (!user) return;
+      setUserEmail(user.email ?? '');
+      setUserId(user.id);
+    };
+
+    void loadUser();
+  }, []);
 
   // 이메일 변수
   const [emailValue, setEmailValue] = useState('');
@@ -74,10 +84,12 @@ const MypageDelete = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const deleteData = async () => {
+    if (!userId) return;
     try {
-      await pb.collection('users').delete(userId);
+      await supabase.from('profiles').delete().eq('id', userId);
+      await supabase.auth.signOut();
     } catch (error) {
-      console.error('pb 유저 데이터 삭제 오류', error);
+      console.error('사용자 데이터 삭제 오류', error);
     }
   };
 
@@ -92,16 +104,23 @@ const MypageDelete = () => {
     }
   };
   const onClickConfirm = () => {
-    pb.authStore.clear();
-    window.location.href = '/';
     setIsModalOpen(false);
+    window.location.href = '/';
   };
 
   /* -------------------------------------------------------------------------- */
   /* -------------------------------------------------------------------------- */
+  useHeaderConfig(
+    () => ({
+      isShowPrev: true,
+      children: '',
+      empty: true
+    }),
+    []
+  );
+
   return (
-    <div className="mx-auto my-0 flex w-[375px] flex-col">
-      <Header isShowPrev={true} children={''} empty={true} />
+    <div className="mx-auto my-0 flex w-full max-w-[430px] flex-col px-6 pt-[66px]">
       <form className="stext-left mx-[30px] mt-[20px]" onSubmit={isComplete}>
         <h1 className="leading-7.5 text-xl">
           회원 확인을 위해

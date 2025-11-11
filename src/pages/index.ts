@@ -14,6 +14,7 @@ export { default as MypageEdit } from '@/pages/account/MypageEditPage';
 export { default as MypageDelete } from '@/pages/account/MypageDeletePage';
 export { default as SignIn } from '@/pages/account/SignInPage';
 export { default as SignUp } from '@/pages/account/SignUpPage';
+export { default as ResetPassword } from '@/pages/account/ResetPasswordPage';
 export { default as Welcome } from '@/pages/account/WelcomePage';
 export { default as Credit } from '@/pages/account/CreditPage';
 export { default as Notice } from '@/pages/account/NoticePage';

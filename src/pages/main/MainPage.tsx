@@ -1,22 +1,21 @@
-import { pb } from '@/lib/utils/pb';
 import { Link } from 'react-router-dom';
 import { getTimeDiff } from '@/lib/utils/getTimeDiff';
-import Header from '@/widgets/header/ui/Header';
-import Shortcut from '@/widgets/shortcut/ui/Shortcut';
-import SwiperItem from '@/widgets/item-swiper/ui/SwiperItem';
-import icon_right from '@/assets/icons/icon_right.svg';
-import icon_search from '@/assets/icons/icon_search_36.svg';
+import { Search, ChevronRight } from 'lucide-react';
 import * as React from 'react';
+import { useFoundItemsInfinite } from '@/entities/found/model/useFoundItemsInfinite';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination, Autoplay } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import { supabase } from '@/lib/api/supabaseClient';
+import { fetchProfileById } from '@/lib/api/profile';
+import { fetchRecentCommunityPosts } from '@/lib/api/community';
+import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
 const { useState, useEffect } = React;
 
 /* -------------------------------------------------------------------------- */
 /*                                  유저 이름 렌더링                              */
 /* -------------------------------------------------------------------------- */
-
-// 로그인시 로컬 스토리지에 저장된 유저 닉네임 가져오기
-const loginUserData = localStorage.getItem('pocketbase_auth');
-const localData = loginUserData && JSON.parse(loginUserData);
-const userNickname = localData?.model?.nickname;
 
 // 타입 지정
 interface ProfileBoxProps {
@@ -24,32 +23,24 @@ interface ProfileBoxProps {
 }
 
 // 프로필 영역
-const ProfileBox = ({
-  userName = userNickname || '방문자'
-}: ProfileBoxProps) => {
-  let profileName: string;
-  if (userNickname?.length > 5) {
-    profileName = `${userName.slice(0, 4)}...`;
-  } else {
-    profileName = userName;
-  }
+const ProfileBox = ({ userName = '방문자' }: ProfileBoxProps) => {
+  const targetName = userName || '방문자';
+  const profileName =
+    targetName.length > 5 ? `${targetName.slice(0, 4)}...` : targetName;
 
   return (
-    <article className="bg-skyblue-300 h-[140px] w-[180px] rounded-2xl transition-all duration-300 hover:shadow-lg">
+    <button className="flex-1 rounded-2xl bg-[#E3EFFF] p-6 text-left transition-colors hover:bg-[#d5e5ff] md:p-8">
       <Link
         to="/mypageentry"
-        className="block h-full p-5"
+        className="block"
         aria-label={`${profileName}님의 마이페이지로 이동`}
       >
-        <p className="text-[17px] font-medium">
-          <div className="flex items-baseline">
-            <strong className="text-[24px] font-medium">{profileName}</strong>
-            <span className="ml-0.5">님</span>
-          </div>
-          안녕하세요!
-        </p>
+        <div className="space-y-1">
+          <h3 className="text-[#1a1a1a]">{profileName}님</h3>
+          <p className="text-sm text-[#666]">안녕하세요!</p>
+        </div>
       </Link>
-    </article>
+    </button>
   );
 };
 
@@ -58,21 +49,16 @@ const ProfileBox = ({
 /* -------------------------------------------------------------------------- */
 const FindItemBox = () => {
   return (
-    <div className="relative h-[140px] w-[140px] rounded-2xl bg-gray-200 p-5 transition-all duration-300 hover:shadow-lg">
+    <button className="flex flex-1 flex-col items-center justify-center rounded-2xl bg-white p-6 transition-colors hover:bg-gray-50 md:p-8">
       <Link
         to="/searchfind"
-        className="flex h-full w-full flex-col"
+        className="w-full space-y-2 text-center"
         aria-label="물품 찾기 페이지로 이동"
       >
-        <span className="text-xl font-medium">물품 찾기</span>
-        <img
-          src={icon_search}
-          className="absolute right-5 bottom-5 h-9 w-9"
-          alt=""
-          aria-hidden="true"
-        />
+        <h3 className="text-[#1a1a1a]">물품 찾기</h3>
+        <Search className="mx-auto h-8 w-8 text-[#1a1a1a]" />
       </Link>
-    </div>
+    </button>
   );
 };
 
@@ -87,62 +73,168 @@ const CommunityBox: React.FC = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await pb
-          .collection('community')
-          .getList(1, 2, { sort: '-created' });
+        const data = await fetchRecentCommunityPosts(2);
         setPosts(
-          res.items.map((item) => ({
+          data.map((item) => ({
             title: item.title,
-            created: item.created
+            created: item.created_at
           }))
         );
       } catch (error) {
-        console.error(error);
+        console.error('자유게시판 데이터를 불러오지 못했습니다.', error);
       } finally {
         setLoading(false);
       }
     };
-    fetchPosts();
+    void fetchPosts();
   }, []);
 
   if (loading) {
     return (
-      <div role="status" aria-live="polite">
-        게시물을 불러오는 중입니다...
+      <div className="rounded-3xl border border-gray-200 bg-white p-6 md:p-8">
+        <p className="text-[#666]">게시물을 불러오는 중입니다...</p>
       </div>
     );
   }
-  if (posts.length === 0) {
-    return <div role="status">표시할 게시물이 없습니다.</div>;
+
+  return (
+    <div className="rounded-3xl border border-gray-200 bg-white p-6 md:mt-8 md:p-8">
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="text-[#1a1a1a]">자유게시판</h3>
+        <Link to="/postlist" aria-label="자유게시판 전체보기">
+          <ChevronRight className="h-5 w-5 text-[#1a1a1a]" />
+        </Link>
+      </div>
+      <div className="space-y-4">
+        {posts.length === 0 ? (
+          <p className="text-sm text-[#999]">표시할 게시물이 없습니다.</p>
+        ) : (
+          posts.map((post, idx) => (
+            <div
+              key={idx}
+              className="-mx-2 flex items-center justify-between rounded-lg border-b border-gray-100 px-2 py-2 transition-colors hover:bg-gray-50"
+            >
+              <div className="flex-1">
+                <p className="text-[#1a1a1a]">{post.title || '–'}</p>
+              </div>
+              <span className="text-sm text-[#999]">
+                {getTimeDiff({ createdAt: post.created })}
+              </span>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+};
+
+/* -------------------------------------------------------------------------- */
+/*                             추천 습득물 섹션                                  */
+/* -------------------------------------------------------------------------- */
+const RecommendedItems: React.FC = () => {
+  const { data, isLoading } = useFoundItemsInfinite({
+    pageSize: 5,
+    query: {
+      staleTime: 1000 * 60 * 5,
+      gcTime: 1000 * 60 * 30
+    }
+  });
+
+  const items = data?.pages?.flatMap((page) => page) ?? [];
+
+  if (isLoading) {
+    return (
+      <div>
+        <div className="mb-3 flex items-center justify-between">
+          <span className="text-sm text-[#666]">추천을 찾아요!</span>
+          <Link
+            to="/getlist"
+            className="flex items-center transition-colors hover:text-[#4F7EFF]"
+          >
+            <span className="text-xs text-[#999]">전체보기</span>
+            <ChevronRight className="ml-1 h-4 w-4 text-[#999]" />
+          </Link>
+        </div>
+        <div className="mb-6 animate-pulse rounded-3xl bg-gradient-to-br from-[#4F7EFF] to-[#3B63E3] p-6 md:mb-8 md:p-8">
+          <div className="h-48"></div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <section aria-labelledby="community-section-title">
-      <Link to="/postlist" className="block" aria-label="자유게시판 전체보기">
-        <div className="mb-5 flex flex-col gap-5 rounded-2xl border border-black p-5 transition-all duration-300 hover:cursor-pointer hover:shadow-lg">
-          <div className="flex items-center justify-between">
-            <h2 id="community-section-title" className="text-xl">
-              자유게시판
-            </h2>
-            <img
-              src={icon_right}
-              alt="자유게시판 전체보기"
-              aria-hidden="true"
-            />
-          </div>
-          <ul>
-            {posts.map((post, idx) => (
-              <li key={idx} className="flex items-baseline gap-2 pb-1">
-                <span className="text-sm">{post.title || '–'}</span>
-                <span className="text-2xs text-gray-500">
-                  {getTimeDiff({ createdAt: post.created })}
-                </span>
-              </li>
-            ))}
-          </ul>
+    <div>
+      {/* Recommendations Section Header */}
+      <div className="mb-3 flex items-center justify-between">
+        <span className="text-sm text-[#666]">추천을 찾아요!</span>
+        <Link
+          to="/getlist"
+          className="flex items-center transition-colors hover:text-[#4F7EFF]"
+        >
+          <span className="text-xs text-[#999]">전체보기</span>
+          <ChevronRight className="ml-1 h-4 w-4 text-[#999]" />
+        </Link>
+      </div>
+
+      {/* Carousel */}
+      {items.length > 0 ? (
+        <Swiper
+          modules={[Pagination, Autoplay]}
+          spaceBetween={16}
+          slidesPerView={1}
+          pagination={{
+            clickable: true,
+            bulletClass: 'swiper-pagination-bullet !bg-white/50',
+            bulletActiveClass: 'swiper-pagination-bullet-active !bg-white'
+          }}
+          autoplay={{
+            delay: 5000,
+            disableOnInteraction: false
+          }}
+          loop={items.length > 1}
+          className="mb-6 md:mb-8"
+        >
+          {items.map((item) => (
+            <SwiperSlide key={item.atcId}>
+              <Link to={`/getlist/detail/${item.atcId}`} className="block">
+                <div className="rounded-3xl bg-linear-to-br from-[#5B82FF] to-[#4F7EFF] p-6 transition-shadow hover:shadow-lg md:p-8">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h2 className="mb-3 text-xl font-semibold text-white md:text-2xl">
+                        {item.fdPrdtNm.length > 12
+                          ? item.fdPrdtNm.slice(0, 12) + '...'
+                          : item.fdPrdtNm}
+                      </h2>
+                      <div className="mb-4 inline-block rounded-full bg-white/30 px-3 py-1 backdrop-blur-sm">
+                        <span className="text-xs font-medium text-white">
+                          {item.depPlace}
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-sm text-white/80">습득일자</p>
+                        <p className="font-medium text-white">{item.fdYmd}</p>
+                      </div>
+                    </div>
+                    <div className="ml-4 flex h-24 w-24 items-center justify-center overflow-hidden rounded-2xl bg-white/20 backdrop-blur-sm">
+                      <img
+                        src={item.fdFilePathImg}
+                        alt={item.fdPrdtNm}
+                        className="h-full w-full rounded-2xl object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      ) : (
+        <div className="mb-6 rounded-3xl bg-gradient-to-br from-[#5B82FF] to-[#4F7EFF] p-6 md:mb-8 md:p-8">
+          <p className="text-center text-white">등록된 습득물이 없습니다.</p>
         </div>
-      </Link>
-    </section>
+      )}
+    </div>
   );
 };
 
@@ -150,29 +242,63 @@ const CommunityBox: React.FC = () => {
 /*                                메인페이지 렌더링                              */
 /* -------------------------------------------------------------------------- */
 const Main = () => {
+  const [userNickname, setUserNickname] = useState('방문자');
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      const { data } = await supabase.auth.getUser();
+      const user = data.user;
+      if (!user) return;
+
+      try {
+        const profileData = await fetchProfileById(user.id);
+        if (profileData?.nickname) {
+          setUserNickname(profileData.nickname);
+        } else if (user.email) {
+          setUserNickname(user.email);
+        }
+      } catch (error) {
+        console.error('사용자 정보를 불러오지 못했습니다.', error);
+      }
+    };
+
+    void loadProfile();
+  }, []);
+
+  useHeaderConfig(
+    () => ({
+      isShowLogo: true
+    }),
+    []
+  );
+
   return (
-    <>
-      <div className="flex w-full flex-col items-center">
-        <Header isShowLogo={true} />
-        <main id="main-content" className="w-full">
-          <div className="mx-auto w-[375px] px-5">
-            <div className="flex gap-4">
-              <ProfileBox />
-              <FindItemBox />
+    <div className="min-h-nav-safe flex flex-col bg-[#f8f8f8]">
+      {/* Top Padding for Mobile */}
+      <div className="h-[66px] md:hidden"></div>
+
+      {/* Main Content */}
+      <main className="flex-1 pb-20 md:pb-8">
+        <div className="mx-auto max-w-7xl px-4 py-6 md:py-8">
+          {/* Main Grid Layout */}
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
+            {/* Top Left - Profile */}
+            <ProfileBox userName={userNickname} />
+
+            {/* Top Right - Find Item */}
+            <FindItemBox />
+
+            {/* Bottom Left - Recommendations */}
+            <RecommendedItems />
+
+            {/* Bottom Right - Community Board */}
+            <div className="space-y-6 md:space-y-8">
+              <CommunityBox />
             </div>
-            <div className="pt-3 pb-[5px] pl-[10px]">
-              <Shortcut
-                link="/getlist"
-                text="주인을 찾아요!"
-                alt="습득물 페이지 바로가기"
-              />
-            </div>
-            <SwiperItem />
-            <CommunityBox />
           </div>
-        </main>
-      </div>
-    </>
+        </div>
+      </main>
+    </div>
   );
 };
 

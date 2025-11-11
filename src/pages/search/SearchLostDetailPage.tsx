@@ -1,4 +1,4 @@
-import Header from '@/widgets/header/ui/Header';
+import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
 import SearchDate from '@/features/search/ui/SearchDate';
 import Horizon from '@/shared/ui/layout/Horizon';
 import SearchParagraph from '@/features/search/ui/SearchParagraph';
@@ -106,11 +106,17 @@ const SearchLostDetail = () => {
     selectEndDate,
   ]);
 
+  useHeaderConfig(
+    () => ({
+      isShowPrev: true,
+      empty: true,
+      children: '분실물 상세검색'
+    }),
+    []
+  );
+
   return (
     <div className="flex flex-col items-center">
-      <Header isShowPrev={true} empty={true}>
-        분실물 상세검색
-      </Header>
       <form>
         <section className={sectionStyle}>
           <div className="flex items-center justify-between">

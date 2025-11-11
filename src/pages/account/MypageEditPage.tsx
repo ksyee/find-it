@@ -1,10 +1,12 @@
-import { pb } from '@/lib/api/getPbData';
-// import PocketBase from 'pocketbase';
-
-// const pb = new PocketBase('https://findit.pockethost.io');
+import { supabase } from '@/lib/api/supabaseClient';
+import {
+  fetchProfileById,
+  fetchProfileByNickname,
+  updateProfile,
+  type Profile
+} from '@/lib/api/profile';
 import { Link } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
-import { updateData, getData } from '@/lib/utils/crud';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   GetSidoList,
   GetGunguList,
@@ -12,13 +14,12 @@ import {
 } from '@/features/auth/sign-in/ui/GetLocalList';
 import profile from '@/assets/profile.svg';
 import profileIcon from '@/assets/icons/icon_camera.svg';
-import Header from '@/widgets/header/ui/Header';
-import getPbImgURL from '@/lib/utils/getPbImgURL';
 import Horizon from '@/shared/ui/layout/Horizon';
 import InputFormSlim from '@/features/auth/sign-in/ui/InputFormSlim';
 import ButtonSelectItem from '@/shared/ui/select/ButtonSelectItem';
 import SelectCategoryList from '@/shared/ui/select/SelectCategoryList';
 import ModalComp from '@/shared/ui/modal/ModalComp';
+import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
 
 // 타입 정의
 type AlertProps =
@@ -32,69 +33,51 @@ type ConfirmProps = 'doubleCheckEmail' | 'doubleCheckNickname' | '';
 const MypageEdit = () => {
   /* -------------------------------------------------------------------------- */
   // 유효성 검사
-  const regex = {
-    pwRegex: /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,}$/,
-  };
-  /* -------------------------------------------------------------------------- */
-  //로컬 데이터 가져오기
-  const loginUserData = localStorage.getItem('pocketbase_auth');
-  const localData = loginUserData && JSON.parse(loginUserData);
-  const userNickname = localData?.model?.nickname;
-  const userId = localData?.model?.id;
-  const userAvatar = localData?.model?.avatar;
-  const userSido = localData?.model?.state;
-  const userGungu = localData?.model?.city;
+  const [userNickname, setUserNickname] = useState('');
+  const [userId, setUserId] = useState('');
+  const [userAvatar, setUserAvatar] = useState('');
+  const [userSido, setUserSido] = useState('');
+  const [userGungu, setUserGungu] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      const { data } = await supabase.auth.getUser();
+      const authUser = data.user;
+      if (!authUser) return;
+
+      setUserId(authUser.id);
+      setUserEmail(authUser.email ?? '');
+
+      try {
+        const profileData = await fetchProfileById(authUser.id);
+        if (profileData) {
+          setUserNickname(profileData.nickname ?? '');
+          setUserAvatar(profileData.avatar_url ?? '');
+          setUserSido(profileData.state ?? '');
+          setUserGungu(profileData.city ?? '');
+        }
+      } catch (error) {
+        console.error('프로필 정보를 불러오지 못했습니다.', error);
+      }
+    };
+
+    void loadProfile();
+  }, []);
 
   /* -------------------------------------------------------------------------- */
   // 입력값
-
-  const [passwordValue, setPasswordValue] = useState('');
-  const [passwordDefaultValue, setPasswordDefaultValue] = useState('');
-  const [valiPasswordForm, setValiPasswordForm] = useState(false);
-  const [passwordType, setPasswordType] = useState('password');
-  const [passwordDefaultType, setPasswordDefaultType] = useState('password');
-  const [passwordCheckValue, setPasswordCheckValue] = useState('');
-  const [passwordCheckType, setPasswordCheckType] = useState('password');
-  const [alertPassword, setAlertPassword] = useState<AlertProps>();
-  const [alertPasswordCheck, setAlertPasswordCheck] = useState<AlertProps>();
 
   const [nicknameValue, setNicknameValue] = useState('');
   const [valiNickDouble, setValiNickDouble] = useState(false);
   const [alertNickname, setAlertNickname] = useState<AlertProps>();
   const [confirmNickname, setConfirmNickname] = useState<ConfirmProps>();
+  const [isSendingPasswordReset, setIsSendingPasswordReset] = useState(false);
+  const [passwordResetMessage, setPasswordResetMessage] = useState<string | null>(null);
 
   const nicknameRef = useRef(null);
-  const passwordRef = useRef(null);
-  const passwordDefaultRef = useRef(null);
-  const passwordCheckRef = useRef(null);
+  const formRef = useRef<HTMLFormElement | null>(null);
 
-  // 비밀번호1 입력 & 정규식 검사
-  const handlePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setPasswordValue(newValue);
-    if (!newValue.match(regex.pwRegex)) {
-      setAlertPassword('invalidPassword');
-      setValiPasswordForm(false);
-    } else {
-      setAlertPassword('');
-      setValiPasswordForm(true);
-    }
-  };
-  // 비밀번호 기존 입력
-  const handlePasswordDefault = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setPasswordDefaultValue(newValue);
-  };
-  // 비밀번호2 입력 & 동일 검사
-  const handlePasswordCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setPasswordCheckValue(newValue);
-    if (newValue !== passwordValue) {
-      setAlertPasswordCheck('doubleCheckPassword');
-    } else {
-      setAlertPasswordCheck('');
-    }
-  };
   //닉네임 입력 & 중복검사 문구 지우기, 중복검사 상태 지우기
   const handleNickname = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -107,36 +90,29 @@ const MypageEdit = () => {
   // 닉네임 중복확인
   const handleDoubleCheckNickname = async () => {
     try {
-      const records = await getData('users', {
-        filter: `nickname="${nicknameValue}"`,
-      });
-      const realdata = records && records[0];
-      const nicknameData = realdata && realdata.nickname;
-      if (nicknameData === nicknameValue) {
-        setAlertNickname('doubleCheckNickname');
+      const trimmed = nicknameValue.trim();
+      if (trimmed === '') {
+        setAlertNickname('invalidValue');
         setValiNickDouble(false);
-      } else {
-        setAlertNickname('');
-        setConfirmNickname('doubleCheckNickname');
-        setValiNickDouble(true);
+        return;
       }
+
+      const records = await fetchProfileByNickname(trimmed);
+      const hasDuplicate = records.some((record) => record.id !== userId);
+
+      if (hasDuplicate) {
+        setAlertNickname('doubleCheckNickname');
+        setConfirmNickname('');
+        setValiNickDouble(false);
+        return;
+      }
+
+      setAlertNickname('');
+      setConfirmNickname('doubleCheckNickname');
+      setValiNickDouble(true);
     } catch (error) {
       console.log(error);
     }
-  };
-  // 비번 보이기 눈 버튼 : 인풋 타입을 텍스트로 바꿈
-  const handleEyePassword = () => {
-    setPasswordType((passwordType === 'password' && 'text') || 'password');
-  };
-  const handleEyePasswordDefault = () => {
-    setPasswordDefaultType(
-      (passwordDefaultType === 'password' && 'text') || 'password'
-    );
-  };
-  const handleEyePasswordCheck = () => {
-    setPasswordCheckType(
-      (passwordCheckType === 'password' && 'text') || 'password'
-    );
   };
   // 삭제 버튼
   const handleDeleteNickname = () => {
@@ -147,20 +123,38 @@ const MypageEdit = () => {
     setSubmit(false);
   };
 
-  const handleDeletePassword = () => {
-    setPasswordValue('');
-    setAlertPassword('');
-    setSubmit(false);
+  const handleSendPasswordReset = () => {
+    if (!userEmail) {
+      alert('계정 이메일 정보를 찾을 수 없습니다.');
+      return;
+    }
+
+    setPasswordResetMessage(null);
+    setIsSendingPasswordReset(true);
+
+    void (async () => {
+      try {
+        const redirectTo = `${window.location.origin}/reset-password`;
+        const { error } = await supabase.auth.resetPasswordForEmail(userEmail, {
+          redirectTo,
+        });
+
+        if (error) {
+          throw error;
+        }
+
+        setPasswordResetMessage(
+          '비밀번호 재설정 메일을 전송했습니다. 메일함을 확인해주세요.'
+        );
+      } catch (error) {
+        console.error('비밀번호 재설정 메일 전송 실패:', error);
+        setPasswordResetMessage('메일을 보내지 못했습니다. 잠시 후 다시 시도해주세요.');
+      } finally {
+        setIsSendingPasswordReset(false);
+      }
+    })();
   };
-  const handleDeletePasswordDefault = () => {
-    setPasswordDefaultValue('');
-    setSubmit(false);
-  };
-  const handleDeletePasswordCheck = () => {
-    setPasswordCheckValue('');
-    setAlertPasswordCheck('');
-    setSubmit(false);
-  };
+
   /* -------------------------------------------------------------------------- */
   // 지역 선택 버튼
 
@@ -192,134 +186,128 @@ const MypageEdit = () => {
   // 뿌릴 데이터 종류 전달
   const LOCAL_CODE = GetCode(selectFirstItem);
   const firstItemList = GetSidoList(); // 문자열로 된 배열 반환
-  const secondItemList = GetGunguList(`${LOCAL_CODE}`);
+  const secondItemList = GetGunguList(LOCAL_CODE || selectFirstItem);
 
-  /* -------------------------------------------------------------------------- */
-  /* -------------------------------------------------------------------------- */
-  // 업데이트 데이터
-  const updateUserData = {
-    nickname: `${nicknameValue}` || `${userNickname}`,
-    oldPassword: `${passwordDefaultValue}`,
-    password: `${passwordValue}`,
-    passwordConfirm: `${passwordCheckValue}`,
-    state: `${selectFirstItem}` || `${userSido}`,
-    city: `${selectSecondItem}` || `${userGungu}`,
-  };
   // 완료 조건
   const [submit, setSubmit] = useState(false);
 
   useEffect(() => {
-    if (
-      valiNickDouble ||
-      (selectFirstItem && selectSecondItem) ||
-      (passwordDefaultValue !== '' &&
-        passwordValue === passwordCheckValue &&
-        valiPasswordForm === true)
-    ) {
-      setSubmit(true);
-    } else {
-      setSubmit(false);
-    }
-  }, [
-    valiNickDouble,
-    selectFirstItem,
-    selectSecondItem,
-    valiPasswordForm,
-    passwordDefaultValue,
-    passwordValue,
-    passwordCheckValue,
-  ]);
+    const hasNicknameChange = nicknameValue.trim() !== '' && valiNickDouble;
+    const hasLocationChange =
+      selectFirstItem.trim() !== '' && selectSecondItem.trim() !== '';
+
+    setSubmit(hasNicknameChange || hasLocationChange);
+  }, [nicknameValue, valiNickDouble, selectFirstItem, selectSecondItem]);
   //완료 버튼 & 서버 보내고 모달창 뜨우기
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [PWModalOpen, setPWModalOpen] = useState(false);
 
   const buttonSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!userId) {
+      console.warn('사용자 정보를 찾을 수 없어 프로필을 수정할 수 없습니다.');
+      return;
+    }
+
+    const profileUpdates: Partial<Omit<Profile, 'id'>> = {};
+    if (nicknameValue.trim() && valiNickDouble) {
+      profileUpdates.nickname = nicknameValue.trim();
+    }
+    if (selectFirstItem && selectSecondItem) {
+      profileUpdates.state = selectFirstItem;
+      profileUpdates.city = selectSecondItem;
+    }
+
     try {
-      await updateData('users', userId, updateUserData);
+      if (Object.keys(profileUpdates).length > 0) {
+        await updateProfile(userId, profileUpdates);
+      }
+
       setIsModalOpen(true);
     } catch (error) {
-      setPWModalOpen(true);
       console.error('프로필 수정 페이지 통신 오류:', error);
+      setPWModalOpen(true);
     }
   };
   const onClickConfirm = () => {
     setPWModalOpen(false);
-    window.location.href = '/mypage ';
-
-    if (isModalOpen === true) {
-      window.location.reload();
-      setIsModalOpen(false);
-    }
+    setIsModalOpen(false);
+    window.location.href = '/mypage';
   };
 
   /* -------------------------------------------------------------------------- */
   // 프로필 사진 변경
-  // 파일 선택
-  const avatarRef = useRef<HTMLImageElement>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const AVATAR_BUCKET = 'avatars';
 
-  const [fileInput, setFileInput] = useState<HTMLInputElement | null>(null);
-  const formData = new FormData();
-  useEffect(() => {
-    const input = document.getElementById('fileInput') as HTMLInputElement;
-    setFileInput(input);
-  }, []);
-
-  // 포켓베이스 파일 업로드 부분
-  const handleFileInput = async () => {
+  const handleFileInput = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     try {
-      if (fileInput && fileInput.files && fileInput.files.length > 0) {
-        const file = fileInput.files[0];
-        console.log('업로드한 이미지:', file);
-        formData.append('avatar', file);
-      }
-      console.log('폼데이터에 심은 업로드한 이미지:', formData.get('avatar'));
+      const files = event.target.files;
+      if (!files || files.length === 0 || !userId) return;
 
-      // pb 업로드
-      const updatedUserInfo = await pb
-        .collection('users')
-        .update(userId, formData);
+      const file = files[0];
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${userId}/${Date.now()}.${fileExt}`;
 
-      // 업로드한거 화면 반영
-      if (avatarRef.current) {
-        const avatarUrl = pb.files.getUrl(
-        updatedUserInfo,
-        updatedUserInfo.avatar,
-        { thumb: '88x88' }
-      );
-        avatarRef.current.src = avatarUrl;
+      const { error: uploadError } = await supabase.storage
+        .from(AVATAR_BUCKET)
+        .upload(filePath, file, {
+          upsert: true,
+          cacheControl: '3600',
+        });
+
+      if (uploadError) {
+        throw uploadError;
       }
 
-      window.location.reload();
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from(AVATAR_BUCKET).getPublicUrl(filePath);
+
+      await updateProfile(userId, { avatar_url: publicUrl });
+      setUserAvatar(publicUrl);
     } catch (error) {
       console.error('프로필 변경 데이터 통신 오류:', error);
-      alert('서버가 불안정하여 재로그인이 필요합니다.');
+      alert('프로필 이미지를 업로드하지 못했습니다. 잠시 후 다시 시도해주세요.');
     }
   };
   //프로필 버튼 클릭시 파일 선택창 열기
   const handleProfileChange = () => {
-    if (fileInput) {
-      fileInput.click();
-    }
+    fileInputRef.current?.click();
   };
 
   /* -------------------------------------------------------------------------- */
   /* -------------------------------------------------------------------------- */
+  const avatarSrc = userAvatar || profile;
+
+  const handleHeaderSubmit = useCallback(() => {
+    formRef.current?.requestSubmit();
+  }, []);
+
+  useHeaderConfig(
+    () => ({
+      isShowPrev: true,
+      children: '프로필 수정',
+      isShowSubmit: submit,
+      onSubmitClick: handleHeaderSubmit
+    }),
+    [submit, handleHeaderSubmit]
+  );
+
   // 마크업
   return (
     <>
       <form
-        className="mx-auto my-0 flex w-[375px] flex-col "
+        ref={formRef}
+        className="mx-auto my-0 flex w-full max-w-[430px] flex-col gap-6 px-6 pt-[66px]"
         onSubmit={buttonSubmit}
       >
-        <Header
-          isShowPrev={true}
-          children={'프로필 수정'}
-          isShowSubmit={!!submit}
-        />
         <input
           id="fileInput"
           type="file"
+          ref={fileInputRef}
           onChange={handleFileInput}
           className="hidden"
         />
@@ -329,13 +317,11 @@ const MypageEdit = () => {
           className="relative mx-auto mb-[30px] mt-[20px]"
         >
           <img
-            ref={avatarRef}
             className="size-88px rounded-full"
-            src={userAvatar !== '' ? getPbImgURL(userId, userAvatar) : profile}
+            src={avatarSrc}
             alt="나의 프로필 사진"
           />
           <img
-            ref={avatarRef}
             className="absolute	bottom-0 right-0 z-10 size-32px translate-x-4px translate-y-4px "
             src={profileIcon}
             alt="프로필 사진 변경 버튼"
@@ -365,61 +351,26 @@ const MypageEdit = () => {
           <li className=" py-[26px]">
             <Horizon lineBold="thin" lineWidth="short" />
           </li>
-          <li className="flex items-baseline justify-between ">
-            <h2 className="text-xs">기존 비밀번호</h2>
-            <div className="w-[232px]">
-              <InputFormSlim
-                ref={passwordDefaultRef}
-                type={passwordDefaultType}
-                title="userpassword"
-                placeholder="기존 비밀번호를 입력해주세요."
-                value={passwordDefaultValue}
-                onChange={handlePasswordDefault}
-                iconDoubleCheck={false}
-                iconDelete={!!passwordDefaultValue}
-                iconEyeToggle={true}
-                onClickDelete={handleDeletePasswordDefault}
-                onClickEye={handleEyePasswordDefault}
-              />
+          <li className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xs">비밀번호</h2>
+              <button
+                type="button"
+                onClick={handleSendPasswordReset}
+                disabled={isSendingPasswordReset}
+                className="rounded-full border border-primary px-4 py-1.5 text-xs text-primary transition-colors duration-200 disabled:border-gray-300 disabled:text-gray-300"
+              >
+                {isSendingPasswordReset
+                  ? '전송 중...'
+                  : '비밀번호 재설정 메일 보내기'}
+              </button>
             </div>
-          </li>
-          <li className="mt-[26px] flex items-baseline justify-between ">
-            <h2 className="text-xs">비밀번호 변경</h2>
-            <div className="w-[232px]">
-              <InputFormSlim
-                ref={passwordRef}
-                type={passwordType}
-                title="userpassword"
-                placeholder="변경할 비밀번호를 입력해주세요."
-                value={passwordValue}
-                onChange={handlePassword}
-                iconDoubleCheck={false}
-                iconDelete={!!passwordValue}
-                iconEyeToggle={true}
-                onClickDelete={handleDeletePassword}
-                onClickEye={handleEyePassword}
-                alertCase={alertPassword}
-              />
-            </div>
-          </li>
-          <li className="mt-[16px] flex items-baseline justify-between ">
-            <h2 className="text-xs">비밀번호 확인</h2>
-            <div className="w-[232px]">
-              <InputFormSlim
-                ref={passwordCheckRef}
-                type={passwordCheckType}
-                title="userpasswordCheck"
-                placeholder="한번 더 입력해주세요."
-                value={passwordCheckValue}
-                onChange={handlePasswordCheck}
-                iconDoubleCheck={false}
-                iconDelete={!!passwordCheckValue}
-                iconEyeToggle={true}
-                onClickDelete={handleDeletePasswordCheck}
-                onClickEye={handleEyePasswordCheck}
-                alertCase={alertPasswordCheck}
-              />
-            </div>
+            <p className="text-xs text-gray-500">
+              비밀번호는 등록된 이메일로 전송되는 재설정 링크를 통해 변경할 수 있습니다.
+            </p>
+            {passwordResetMessage && (
+              <p className="text-xs text-primary">{passwordResetMessage}</p>
+            )}
           </li>
           <li className=" py-[26px]">
             <Horizon lineBold="thin" lineWidth="short" />

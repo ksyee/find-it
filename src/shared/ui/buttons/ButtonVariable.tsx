@@ -9,18 +9,20 @@ interface ButtonVariableProps {
     | 'blackLineThin'
     | 'primarySolidThin';
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  type?: 'button' | 'reset' | 'submit';
 }
 const ButtonVariable = ({
   buttonText = '확인',
   variant = 'normal',
   onClick,
+  type: overrideType,
   ...restProps
 }: ButtonVariableProps) => {
-  let buttonType: 'button' | 'reset' | 'submit' | undefined;
+  let buttonType: 'button' | 'reset' | 'submit' | undefined = overrideType;
   let background, color, borderColor, width, height;
   switch (variant) {
     case 'submit':
-      buttonType = 'submit';
+      buttonType = buttonType ?? 'submit';
       background = '#4785ff';
       color = 'white';
       borderColor = '#4785ff';
@@ -28,7 +30,7 @@ const ButtonVariable = ({
       height = '66px';
       break;
     case 'disabled':
-      buttonType = 'button';
+      buttonType = buttonType ?? 'button';
       background = '#666666';
       color = '#BCBCBC';
       borderColor = '#666666';
@@ -37,7 +39,7 @@ const ButtonVariable = ({
 
       break;
     case 'lineStyle':
-      buttonType = 'button';
+      buttonType = buttonType ?? 'button';
       background = 'white';
       color = '#4785ff';
       borderColor = '#4785ff';
@@ -45,7 +47,7 @@ const ButtonVariable = ({
       height = '66px';
       break;
     case 'blackSolidThin':
-      buttonType = 'button';
+      buttonType = buttonType ?? 'button';
       background = 'black';
       color = 'white';
       borderColor = 'black';
@@ -53,7 +55,7 @@ const ButtonVariable = ({
       height = '53px';
       break;
     case 'blackLineThin':
-      buttonType = 'button';
+      buttonType = buttonType ?? 'button';
       background = 'white';
       color = 'black';
       borderColor = 'black';
@@ -61,7 +63,7 @@ const ButtonVariable = ({
       height = '53px';
       break;
     case 'primarySolidThin':
-      buttonType = 'button';
+      buttonType = buttonType ?? 'button';
       background = '#4785ff';
       color = 'white';
       borderColor = '#4785ff';
