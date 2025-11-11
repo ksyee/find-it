@@ -1,4 +1,3 @@
-import { pb } from '@/lib/api/getPbData';
 import { Link } from 'react-router-dom';
 import { getTimeDiff } from '@/lib/utils/getTimeDiff';
 import { Search, ChevronRight } from 'lucide-react';
@@ -6,9 +5,12 @@ import * as React from 'react';
 import { useFoundItemsInfinite } from '@/entities/found/model/useFoundItemsInfinite';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
-import Header from '@/widgets/header/ui/Header';
 import 'swiper/css';
 import 'swiper/css/pagination';
+import { supabase } from '@/lib/api/supabaseClient';
+import { fetchProfileById } from '@/lib/api/profile';
+import { fetchRecentCommunityPosts } from '@/lib/api/community';
+import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
 const { useState, useEffect } = React;
 
 /* -------------------------------------------------------------------------- */
@@ -71,22 +73,20 @@ const CommunityBox: React.FC = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await pb
-          .collection('community')
-          .getList(1, 2, { sort: '-created' });
+        const data = await fetchRecentCommunityPosts(2);
         setPosts(
-          res.items.map((item) => ({
+          data.map((item) => ({
             title: item.title,
-            created: item.created
+            created: item.created_at
           }))
         );
       } catch (error) {
-        console.error(error);
+        console.error('자유게시판 데이터를 불러오지 못했습니다.', error);
       } finally {
         setLoading(false);
       }
     };
-    fetchPosts();
+    void fetchPosts();
   }, []);
 
   if (loading) {
@@ -245,30 +245,35 @@ const Main = () => {
   const [userNickname, setUserNickname] = useState('방문자');
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    const loadProfile = async () => {
+      const { data } = await supabase.auth.getUser();
+      const user = data.user;
+      if (!user) return;
 
-    try {
-      const storedAuth = window.localStorage.getItem('pocketbase_auth');
-      if (!storedAuth) return;
-
-      const parsed = JSON.parse(storedAuth);
-      const nickname = parsed?.model?.nickname;
-
-      if (typeof nickname === 'string' && nickname.length > 0) {
-        setUserNickname(nickname);
+      try {
+        const profileData = await fetchProfileById(user.id);
+        if (profileData?.nickname) {
+          setUserNickname(profileData.nickname);
+        } else if (user.email) {
+          setUserNickname(user.email);
+        }
+      } catch (error) {
+        console.error('사용자 정보를 불러오지 못했습니다.', error);
       }
-    } catch (error) {
-      console.warn('Failed to parse login data', error);
-    }
+    };
+
+    void loadProfile();
   }, []);
+
+  useHeaderConfig(
+    () => ({
+      isShowLogo: true
+    }),
+    []
+  );
 
   return (
     <div className="min-h-nav-safe flex flex-col bg-[#f8f8f8]">
-      {/* Mobile Header */}
-      <div className="md:hidden">
-        <Header isShowLogo={true} />
-      </div>
-
       {/* Top Padding for Mobile */}
       <div className="h-[66px] md:hidden"></div>
 

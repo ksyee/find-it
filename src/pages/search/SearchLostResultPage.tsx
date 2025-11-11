@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef } from 'react';
-import Header from '@/widgets/header/ui/Header';
 import useSearchStore from '@/features/search/model/searchStore';
 import loading from '@/assets/loading.svg';
 import ItemBox from '@/entities/item/ui/ItemBox';
@@ -8,6 +7,7 @@ import QueryState from '@/shared/ui/QueryState';
 import EmptyState from '@/shared/ui/EmptyState';
 import { useSearchLostInfinite } from '@/features/search/api/useSearchLostInfinite';
 import { useNavigate } from 'react-router-dom';
+import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
 
 const SearchLostResult = () => {
   const {
@@ -78,12 +78,18 @@ const SearchLostResult = () => {
     }
   }, [navigate, queryEnabled]);
 
+  useHeaderConfig(
+    () => ({
+      isShowPrev: true,
+      empty: true,
+      children: '검색결과'
+    }),
+    []
+  );
+
   const loadingFallback = (
     <div className="flex h-nav-safe w-full flex-col items-center bg-gray-200">
-      <Header isShowPrev empty>
-        검색결과
-      </Header>
-      <div className="w-[375px]">
+      <div className="w-[375px] pt-[66px]">
         <div
           ref={scrollContainerRef}
           className="overflow-auto"
@@ -108,10 +114,7 @@ const SearchLostResult = () => {
       loadingFallback={loadingFallback}
     >
       <div className="flex h-nav-safe w-full flex-col items-center bg-gray-200">
-        <Header isShowPrev empty>
-          검색결과
-        </Header>
-        <div className="w-[375px]">
+        <div className="w-[375px] pt-[66px]">
           <div
             ref={scrollContainerRef}
             className="overflow-auto"

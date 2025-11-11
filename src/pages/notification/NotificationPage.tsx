@@ -1,7 +1,7 @@
 import { useState, useEffect, SetStateAction } from 'react';
-import Header from '@/widgets/header/ui/Header';
 import Notice from '@/pages/notification/NoticePage';
 import Setting from '@/pages/notification/SettingPage';
+import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
 
 interface CategoriesProps {
   onChangeCategory: React.Dispatch<SetStateAction<string>>;
@@ -59,12 +59,24 @@ const Categories = ({ onChangeCategory }: CategoriesProps) => {
 
 const Notification = () => {
   const [activeCategory, setActiveCategory] = useState('notice');
+  useHeaderConfig(
+    () => ({
+      isShowPrev: true,
+      children: '키워드 알림',
+      empty: true
+    }),
+    []
+  );
+
   return (
-    <div className="flex w-full min-w-[375px] flex-col items-center">
-      <Header isShowPrev={true} children="키워드 알림" empty={true} />
-      <Categories onChangeCategory={setActiveCategory} />
-      {activeCategory === 'notice' && <Notice />}
-      {activeCategory === 'setting' && <Setting />}
+    <div className="flex w-full flex-col items-center px-4 pt-[66px] pb-20 md:px-0 md:pt-8">
+      <div className="w-full max-w-[430px]">
+        <Categories onChangeCategory={setActiveCategory} />
+        <div className="mt-6">
+          {activeCategory === 'notice' && <Notice />}
+          {activeCategory === 'setting' && <Setting />}
+        </div>
+      </div>
     </div>
   );
 };

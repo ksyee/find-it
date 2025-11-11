@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef } from 'react';
-import Header from '@/widgets/header/ui/Header';
 import loading from '@/assets/loading.svg';
 import ItemBox from '@/entities/item/ui/ItemBox';
 import Skeleton from '@/entities/item/ui/Skeleton';
@@ -7,6 +6,7 @@ import QueryState from '@/shared/ui/QueryState';
 import EmptyState from '@/shared/ui/EmptyState';
 import { useFoundItemsInfinite } from '@/entities/found/model/useFoundItemsInfinite';
 import useScrollRestoration from '@/shared/hooks/useScrollRestoration';
+import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
 
 const GetList = () => {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -68,15 +68,19 @@ const GetList = () => {
     };
   }, [handleScroll]);
 
+  useHeaderConfig(
+    () => ({
+      isShowSymbol: true,
+      isShowSearch: true,
+      link: '/searchfind',
+      children: '습득물 찾기'
+    }),
+    []
+  );
+
   const loadingFallback = (
     <div className="flex h-nav-safe w-full flex-col items-center bg-white">
-      <Header
-        isShowSymbol
-        isShowSearch
-        link="/searchfind"
-        children="습득물 찾기"
-      />
-      <div className="w-full mx-auto max-w-7xl pt-[66px] md:pt-0">
+      <div className="mx-auto w-full max-w-7xl pt-[66px] md:pt-0">
         <div
           ref={scrollContainerRef}
           className="overflow-auto"
@@ -103,13 +107,7 @@ const GetList = () => {
       loadingFallback={loadingFallback}
     >
       <div className="flex h-nav-safe w-full flex-col items-center bg-white">
-        <Header
-          isShowSymbol
-          isShowSearch
-          link="/searchfind"
-          children="습득물 찾기"
-        />
-        <div className="w-full mx-auto max-w-7xl pt-[66px] md:pt-0">
+        <div className="mx-auto w-full max-w-7xl pt-[66px] md:pt-0">
           <div
             ref={scrollContainerRef}
             className="overflow-auto"

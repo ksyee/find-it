@@ -1,12 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import {
-  Home,
-  FileText,
-  Package,
-  MessageSquare,
-  User
-} from 'lucide-react';
+import { Home, FileText, Package, MessageSquare, User } from 'lucide-react';
+import { supabase } from '@/lib/api/supabaseClient';
 
 const Navigation = () => {
   const location = useLocation();
@@ -20,8 +15,29 @@ const Navigation = () => {
   }, []);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    setIsLoggedIn(!!window.localStorage.getItem('pocketbase_auth'));
+    let isMounted = true;
+
+    const fetchSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (isMounted) {
+        setIsLoggedIn(!!data.session);
+      }
+    };
+
+    void fetchSession();
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (isMounted) {
+          setIsLoggedIn(!!session);
+        }
+      }
+    );
+
+    return () => {
+      isMounted = false;
+      listener?.subscription.unsubscribe();
+    };
   }, []);
 
   // 현재 경로에 따라 active 상태 결정

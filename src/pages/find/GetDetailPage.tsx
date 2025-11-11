@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import ItemDetail from '@/entities/item/ui/ItemDetail';
 import { getSearchId } from '@/lib/utils/getAPIData';
 import useDetailDataStore from '@/entities/item/model/useDetailDataStore';
-import Header from '@/widgets/header/ui/Header';
+import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
 
 const GetDetail = () => {
   const setDetail = useDetailDataStore((state) => state.setDetail);
@@ -21,9 +21,17 @@ const GetDetail = () => {
     searchId();
   }, [id, setDetail]);
 
+  useHeaderConfig(
+    () => ({
+      children: '습득물 상세정보',
+      isShowPrev: true,
+      empty: true
+    }),
+    []
+  );
+
   return (
-    <div className="mx-auto w-[375px]">
-      <Header children="습득물 상세정보" isShowPrev empty />
+    <div className="w-full">
       {detail && <ItemDetail detail={detail} />}
     </div>
   );

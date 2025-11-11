@@ -1,10 +1,10 @@
-import { pb } from '@/lib/api/getPbData';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllData } from '@/lib/utils/getAPIData';
 import { GetDetailData } from '@/types/types';
 import none_alarm from '@/assets/none_alarm.svg';
 import icon_next from '@/assets/icons/icon_next.svg';
+import { supabase } from '@/lib/api/supabaseClient';
 interface KeywordType {
   keywords: string;
 }
@@ -33,20 +33,28 @@ const Notice = () => {
         return;
       }
 
-      const pocketAuth = window.localStorage.getItem('pocketbase_auth');
-      const pocketData = pocketAuth ? JSON.parse(pocketAuth) : null;
+      try {
+        const { data } = await supabase.auth.getUser();
+        const user = data.user;
+        if (!user) return;
 
-      // 로그인 유저의 키워드 데이터 가져오기
-      if (pocketAuth) {
-        const userKeywordData: KeywordType = await pb
-          .collection('users')
-          .getOne(pocketData.model.id, {
-            fields: 'keywords',
-            headers: {
-              'Access-Control-Allow-Origin': '*',
-            },
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('keywords')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        if (error) {
+          throw error;
+        }
+
+        if (profile) {
+          setUserKeyword({
+            keywords: profile.keywords ?? '',
           });
-        setUserKeyword(userKeywordData);
+        }
+      } catch (error) {
+        console.error('사용자 키워드를 불러오지 못했습니다.', error);
       }
     };
     fetchUserKeyword();

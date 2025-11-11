@@ -20,6 +20,7 @@ import {
   PostList,
   PostDetail,
   SearchPost,
+  ResetPassword,
   CreatePost,
   SearchFindDetail,
   SearchLostDetail,
@@ -47,6 +48,7 @@ const AppRouter = () => {
         <Route path="/notification" element={<Notification />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/welcome" element={<Welcome />} />
         <Route path="/notice" element={<Notice />} />
         <Route path="/credit" element={<Credit />} />

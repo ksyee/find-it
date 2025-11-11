@@ -4,7 +4,7 @@
 - **기간**: 2024.02.19 ~ 2024.03.14 (4주)  
 - **팀 구성**: 프론트엔드 4인 (FE School 8기 7조)  
 - **역할**: 프론트엔드 / 인터랙션 설계 / 공공 데이터 연동  
-- **소개**: 경찰청 유실물 공개 API와 PocketBase를 결합해, 잃어버린 물품을 빠르게 찾도록 돕는 반응형 웹 서비스입니다.  
+- **소개**: 경찰청 유실물 공개 API와 Supabase를 결합해, 잃어버린 물품을 빠르게 찾도록 돕는 반응형 웹 서비스입니다.  
 - **배포**: https://find-it.vercel.app  
 - **깃허브**: https://github.com/FRONTENDSCHOOL8/find-it
 
@@ -16,7 +16,7 @@
 ## 나의 기여
 - **공공 데이터 파이프라인 구축**: XML 기반 경찰청 Open API를 TypeScript 친화적으로 파싱하는 유틸리티를 설계해 재사용성을 확보했습니다. (예: `src/lib/utils/getAPIData.ts`, `raiseValue.ts`, `xmlToJson.ts`)  
 - **리스트/검색 UX 고도화**: React Query 기반 무한 스크롤과 `useScrollRestoration` 훅을 도입해 목록형 페이지의 연속 탐색 경험을 개선했습니다. (예: `src/entities/found/model/useFoundItemsInfinite.ts`, `src/shared/hooks/useScrollRestoration.ts`)  
-- **키워드 알림 기능 개발**: PocketBase와 로컬 스토리지를 연동한 키워드 추천 알림을 구현해 개인화된 습득물 추천을 제공합니다. (예: `src/pages/notification`)  
+- **키워드 알림 기능 개발**: Supabase와 로컬 스토리지를 연동한 키워드 추천 알림을 구현해 개인화된 습득물 추천을 제공합니다. (예: `src/pages/notification`)  
 - **접근성·품질 개선**: 헤더에 스킵 내비게이션을 추가하고, 공통 로딩/에러 UI 컴포넌트(`QueryState`, `EmptyState`)를 제작해 일관된 피드백 경험을 마련했습니다.  
 - **배포 파이프라인 정비**: Vercel 환경에서 HTTP/HTTPS 혼용에 따른 Mixed Content 이슈를 해결하기 위해 API Base URL을 런타임에서 동적으로 보정했습니다. (예: `src/entities/found/api/getFoundItems.ts`)
 
@@ -28,7 +28,7 @@
    - 카테고리(대·소분류), 지역, 기간 조건을 Zustand 전역 상태로 관리해 여러 페이지 간 검색 조건을 공유합니다. (`src/features/search/model/searchStore.ts`)  
    - 날짜를 선택하지 않으면 검색 화면으로 리다이렉트해 API 오남용을 차단합니다.  
 3. **커뮤니티 & 마이페이지**  
-   - PocketBase를 사용한 인증/CRUD, 이메일·닉네임 중복 검증, 비밀번호 규칙 검사를 제공했습니다.  
+   - Supabase를 사용한 인증/CRUD, 이메일·닉네임 중복 검증, 비밀번호 규칙 검사를 제공합니다.  
    - 자유게시판 최신 글을 메인에서 바로 확인하고, 로그인 사용자는 글쓰기 플로우로 이어집니다.
 4. **키워드 알림 & 추천**  
    - 사용자가 등록한 키워드를 기반으로 최신 습득물에서 랜덤 추천을 제공하고, 읽은 알림은 즉시 제거합니다.  
@@ -39,7 +39,7 @@
 
 ## 기술 스택
 - **Frontend**: React 18, TypeScript, Vite, TailwindCSS, Zustand, @tanstack/react-query, React Router  
-- **Backend(BaaS)**: PocketBase (Auth, 커뮤니티, 키워드 저장)  
+- **Backend(BaaS)**: Supabase (Auth, 커뮤니티, 키워드 저장)  
 - **Infra & Tools**: Vercel, ESLint, Prettier, pnpm, PostCSS  
 - **외부 API**: 경찰청 유실물 공개 API, 행정표준코드 서비스(지역 코드), Tawk.to 채팅 위젯
 
@@ -50,7 +50,7 @@
 [행정표준코드 API] ─┘
                          │
                          ├─ Zustand (검색 조건/필터 상태)
-                         └─ PocketBase (회원·게시판·키워드)
+                         └─ Supabase (회원·게시판·키워드)
                                         │
                                         └─ My Page / Community / Notification
 ```
@@ -62,7 +62,7 @@
 | HTTPS 배포 시 Mixed Content로 공공 API 호출 실패 | `resolveApiBaseUrl` 함수에서 실행 환경을 판별해 HTTPS 요청은 Vercel 프록시를 타도록 재구성했습니다. (ex. `src/entities/found/api/getFoundItems.ts`) |
 | 무한 스크롤에서 페이지를 이탈 후 돌아오면 리스트 위치가 초기화됨 | `useScrollRestoration` 훅을 만들어 sessionStorage에 스크롤 위치를 저장하고, `ResizeObserver`로 DOM 렌더 완료 시점을 감지해 원위치 시켰습니다. |
 | 키워드 추천 알림이 중복 저장되어 UX 저하 | 추천 데이터는 로컬 스토리지에 저장·소비하고, 키워드 삭제 시 연동 데이터를 즉시 정리하도록 했습니다. (`src/pages/notification/SettingPage.tsx`) |
-| 이메일/닉네임 중복 체크 시 불필요한 API 호출 | PocketBase `filter`를 활용해 서버에서 선별, 프론트에서는 debounce 없이도 즉시 결과를 반환하도록 구성했습니다. |
+| 이메일/닉네임 중복 체크 시 불필요한 API 호출 | Supabase `eq`/`or` 조건을 활용해 서버에서 선별, 프론트에서는 debounce 없이도 즉시 결과를 반환하도록 구성했습니다. |
 
 ## 협업 및 프로세스
 - 디자인 시안을 먼저 확정하고 컴포넌트 기반으로 작업 영역을 분리했습니다.  

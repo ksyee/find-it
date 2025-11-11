@@ -1,18 +1,12 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
-
-interface CommunityPost {
-  id: string;
-  created: string;
-  title: string;
-  content: string;
-  tag: string;
-}
-
-import { getData } from '@/lib/utils/crud';
 import { getTimeDiff } from '@/lib/utils/getTimeDiff';
-import Header from '@/widgets/header/ui/Header';
 import Horizon from '@/shared/ui/layout/Horizon';
+import {
+  searchCommunityPosts,
+  CommunityPost
+} from '@/lib/api/community';
+import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
 
 const SearchPost = () => {
   const [inputValue, setInputValue] = useState('');
@@ -37,9 +31,7 @@ const SearchPost = () => {
       e.preventDefault();
       if (inputValue.trim() !== '') {
         const sanitizedInput = inputValue.trim().replace(/"/g, '\\"');
-        const data = await getData<CommunityPost>('community', {
-          filter: `(title ~ "${sanitizedInput}") || (content ~ "${sanitizedInput}")`
-        });
+        const data = await searchCommunityPosts(sanitizedInput);
         setData(data);
         setInputValue('');
         setShowNoResult(data.length === 0);
@@ -58,7 +50,7 @@ const SearchPost = () => {
         <div key={item.id} className="w-full">
           <Link to={`/postdetail/${item.id}`}>
             <section className="relative mx-auto my-0 h-40 w-full max-w-3xl px-4 pt-2.5">
-              {getTimeDiff({ createdAt: data[index].created })}
+              {getTimeDiff({ createdAt: data[index].created_at })}
               <h1 className="truncate pt-2 text-base text-black">
                 {item.title}
               </h1>
@@ -68,7 +60,7 @@ const SearchPost = () => {
                   item.content}
               </span>
               <span className="text-gray-450 absolute bottom-3.5 block text-xs">
-                #{item.tag}
+                #{item.tag ?? ''}
               </span>
             </section>
           </Link>
@@ -81,9 +73,17 @@ const SearchPost = () => {
   const NoResult = (
     <div className="pt-5 text-center">검색 결과가 없습니다.</div>
   );
+  useHeaderConfig(
+    () => ({
+      isShowPrev: true,
+      children: '게시물 검색',
+      empty: true
+    }),
+    []
+  );
+
   return (
     <div className="fixed inset-0 flex flex-col bg-white">
-      <Header isShowPrev={true} children="게시물 검색" empty={true} />
       <Horizon lineBold="bold" lineWidth="long" />
 
       <div className="mx-auto w-full max-w-7xl flex-1 overflow-auto">

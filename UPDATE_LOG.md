@@ -1,5 +1,12 @@
 # Recent Fix Summary
 
+## Supabase Migration
+
+- Replaced the PocketBase client with Supabase (`src/lib/api/supabaseClient.ts`) and formalized `profiles`/`community` helpers (`src/lib/api/profile.ts`, `src/lib/api/community.ts`).
+- Signup/Login/Mypage/Notification/Community pages now call Supabase Auth + PostgREST directly; the old `crud.ts` helper and `getPbData` module were removed.
+- Avatar uploads use Supabase Storage (`avatars` bucket) and profile keywords/state/city fields live in Supabase tables.
+- Added `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` envs and documented the new flow in the README/notes.
+
 ## Authentication & Community Changes
 
 - Consolidated PocketBase usage to `src/lib/api/getPbData.ts` and removed the duplicate util. All components now share a single client instance.

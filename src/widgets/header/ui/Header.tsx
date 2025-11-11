@@ -7,7 +7,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { ReactNode } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
-interface HeaderProps {
+export interface HeaderProps {
   isShowLogo?: boolean;
   isShowPrev?: boolean;
   isShowSymbol?: boolean;
@@ -16,7 +16,9 @@ interface HeaderProps {
   empty?: boolean; // 헤더 영역에 2개 요소만 사용 시 빈자리에 해당 prop 전달 필요
   link?: string;
   customStyle?: string;
-  children?: string;
+  children?: ReactNode;
+  onSubmitClick?: () => void;
+  submitLabel?: string;
 }
 
 type ElementType =
@@ -37,7 +39,9 @@ const Header = ({
   empty,
   link,
   customStyle,
-  children
+  children,
+  onSubmitClick,
+  submitLabel
 }: HeaderProps) => {
   const queryClient = useQueryClient();
   const location = useLocation();
@@ -50,8 +54,8 @@ const Header = ({
   let submitButton: ElementType = null;
   let emptyBox: ElementType = null;
 
-  const defaultStyle =
-    'mx-auto flex h-[26px] w-full lg:max-w-[1280px] items-center justify-around px-5 md:px-8';
+  const baseWrapperStyle =
+    'mx-auto flex h-[26px] w-full items-center px-5 md:px-8 lg:max-w-[1280px]';
 
   const navigate = useNavigate();
 
@@ -126,28 +130,35 @@ const Header = ({
   }
 
   if (isShowSubmit !== undefined) {
-    if (isShowSubmit) {
-      submitButton = (
-        <button type="submit" className="text-primary">
-          완료
-        </button>
-      );
-    } else {
-      submitButton = (
-        <button type="submit" disabled className="text-gray-400">
-          완료
-        </button>
-      );
-    }
+    const isActive = Boolean(isShowSubmit);
+    submitButton = (
+      <button
+        type="button"
+        className={isActive ? 'text-primary' : 'text-gray-400'}
+        disabled={!isActive}
+        onClick={isActive ? onSubmitClick : undefined}
+      >
+        {submitLabel ?? '완료'}
+      </button>
+    );
   }
 
   if (children !== undefined) {
-    paragraph = <p className="text-[20px]">{children}</p>;
+    paragraph = typeof children === 'string'
+      ? <p className="text-[20px] font-semibold">{children}</p>
+      : children;
   }
 
   if (empty !== undefined) {
-    emptyBox = <span className="h-[21px] w-[21px]"></span>;
+    emptyBox = <span aria-hidden className="h-[21px] w-[21px]"></span>;
   }
+
+  const shouldCenterSymbolOnly = !paragraph && !homeLogo && symbolLogo;
+  const leftItems = [prevIcon, shouldCenterSymbolOnly ? null : symbolLogo].filter(
+    Boolean
+  );
+  const centerContent = paragraph ?? homeLogo ?? (shouldCenterSymbolOnly ? symbolLogo : null);
+  const rightItems = [searchIcon, submitButton, emptyBox].filter(Boolean);
 
   return (
     <>
@@ -158,17 +169,19 @@ const Header = ({
         메인 콘텐츠로 건너뛰기
       </a>
       <header
-        className="fixed top-0 left-1/2 z-[9999] w-full -translate-x-1/2 transform bg-white py-[20px] lg:max-w-[1280px] md:hidden"
+        className="fixed top-0 left-1/2 z-[9999] w-full -translate-x-1/2 transform bg-white py-[20px] md:hidden"
         role="banner"
       >
-        <div className={`${defaultStyle} ${customStyle || ''}`}>
-          {prevIcon}
-          {symbolLogo}
-          {paragraph}
-          {homeLogo}
-          {searchIcon}
-          {submitButton}
-          {emptyBox}
+        <div className={`${baseWrapperStyle} ${customStyle || ''}`}>
+          <div className="flex min-w-[48px] items-center gap-2">
+            {leftItems.length > 0 ? leftItems : null}
+          </div>
+          <div className="flex flex-1 items-center justify-center text-center">
+            {centerContent}
+          </div>
+          <div className="flex min-w-[48px] items-center justify-end gap-2">
+            {rightItems.length > 0 ? rightItems : null}
+          </div>
         </div>
       </header>
     </>

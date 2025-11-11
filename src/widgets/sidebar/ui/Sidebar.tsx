@@ -1,26 +1,22 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { pb } from '@/lib/api/getPbData';
 import { getTimeDiff } from '@/lib/utils/getTimeDiff';
-
-interface CommunityPost {
-  id: string;
-  created: string;
-  title: string;
-  content: string;
-  tag: string;
-}
+import { fetchRecentCommunityPosts } from '@/lib/api/community';
 
 const Sidebar = () => {
   // 최근 게시물 가져오기
   const { data: posts } = useQuery({
     queryKey: ['recentPosts'],
-    queryFn: async () => {
-      const res = await pb
-        .collection('community')
-        .getList(1, 5, { sort: '-created' });
-      return res.items as unknown as CommunityPost[];
-    },
+    queryFn: () =>
+      fetchRecentCommunityPosts(5).then((items) =>
+        items.map((item) => ({
+          id: item.id,
+          created: item.created_at,
+          title: item.title,
+          content: item.content,
+          tag: item.tag ?? ''
+        }))
+      ),
     staleTime: 1000 * 60 * 5
   });
 
@@ -86,7 +82,7 @@ const Sidebar = () => {
                           {getTimeDiff({ createdAt: post.created })}
                         </span>
                         <span className="text-xs text-gray-400">
-                          #{post.tag}
+                          {post.tag ? `#${post.tag}` : '#'}
                         </span>
                       </div>
                     </Link>

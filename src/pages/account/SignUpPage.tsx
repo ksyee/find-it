@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { ClientResponseError } from 'pocketbase';
-import { pb } from '@/lib/api/getPbData';
-import { createData } from '@/lib/utils/crud';
-import Header from '@/widgets/header/ui/Header';
+import { AuthError, type PostgrestError } from '@supabase/supabase-js';
+import { supabase } from '@/lib/api/supabaseClient';
+import { fetchProfileByNickname, upsertProfile } from '@/lib/api/profile';
 import InputForm from '@/features/auth/sign-in/ui/InputForm';
 import {
   GetSidoList,
@@ -12,6 +11,7 @@ import {
 import ButtonVariable from '@/shared/ui/buttons/ButtonVariable';
 import ButtonSelectItem from '@/shared/ui/select/ButtonSelectItem';
 import SelectCategoryList from '@/shared/ui/select/SelectCategoryList';
+import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
 
 // 타입 정의
 type AlertProps =
@@ -24,6 +24,8 @@ type AlertProps =
   | 'userEmail'
   | 'userEmailDouble'
   | '';
+
+type ConfirmProps = '' | 'doubleCheckNickname';
 
 const SignUp = () => {
   /* -------------------------------------------------------------------------- */
@@ -44,11 +46,14 @@ const SignUp = () => {
   const [passwordCheckType, setPasswordCheckType] = useState('password');
 
   const [nicknameValue, setNicknameValue] = useState('');
+  const [isNicknameVerified, setIsNicknameVerified] = useState(false);
+  const [isCheckingNickname, setIsCheckingNickname] = useState(false);
 
   const [alertEmail, setAlertEmail] = useState<AlertProps>();
   const [alertPassword, setAlertPassword] = useState<AlertProps>();
   const [alertPasswordCheck, setAlertPasswordCheck] = useState<AlertProps>();
   const [alertNickname, setAlertNickname] = useState<AlertProps>();
+  const [confirmNickname, setConfirmNickname] = useState<ConfirmProps>('');
 
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
@@ -93,19 +98,49 @@ const SignUp = () => {
     }
   };
   // 닉네임 입력 & 중복검사 문구 지우기, 중복검사 상태 지우기
-  const handleNickname = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setNicknameValue(newValue);
-    setAlertNickname('');
-  };
+const handleNickname = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const newValue = e.target.value;
+  setNicknameValue(newValue);
+  setAlertNickname('');
+  setConfirmNickname('');
+  setIsNicknameVerified(false);
+};
 
   /* -------------------------------------------------------------------------- */
 
-  const handleUnavailableCheck = () => {
-    setSubmitError('중복 확인 기능을 사용할 수 없습니다. 완료 버튼을 눌러 가입을 진행해 주세요.');
-  };
-  // 비번 보이기 눈 버튼 : 인풋 타입을 텍스트로 바꿈
-  const handleEyePassword = () => {
+const handleNicknameDoubleCheck = async () => {
+  const trimmed = nicknameValue.trim();
+  if (!trimmed) {
+    setAlertNickname('invalidValue');
+    setConfirmNickname('');
+    setIsNicknameVerified(false);
+    return;
+  }
+
+  setIsCheckingNickname(true);
+  setAlertNickname('');
+  setConfirmNickname('');
+
+  try {
+    const records = await fetchProfileByNickname(trimmed);
+    if (records.length > 0) {
+      setAlertNickname('doubleCheckNickname');
+      setIsNicknameVerified(false);
+    } else {
+      setConfirmNickname('doubleCheckNickname');
+      setIsNicknameVerified(true);
+    }
+  } catch (error) {
+    console.error('닉네임 중복 확인 실패:', error);
+    setAlertNickname('invalidValue');
+    setIsNicknameVerified(false);
+  } finally {
+    setIsCheckingNickname(false);
+  }
+};
+
+// 비번 보이기 눈 버튼 : 인풋 타입을 텍스트로 바꿈
+const handleEyePassword = () => {
     setPasswordType((passwordType === 'password' && 'text') || 'password');
   };
   const handleEyePasswordCheck = () => {
@@ -127,10 +162,12 @@ const SignUp = () => {
     setPasswordCheckValue('');
     setAlertPasswordCheck('');
   };
-  const handleDeleteNickname = () => {
-    setNicknameValue('');
-    setAlertNickname('');
-  };
+const handleDeleteNickname = () => {
+  setNicknameValue('');
+  setAlertNickname('');
+  setConfirmNickname('');
+  setIsNicknameVerified(false);
+};
 
   /* -------------------------------------------------------------------------- */
   // 지역 선택 버튼
@@ -166,17 +203,6 @@ const SignUp = () => {
   const secondItemList = GetGunguList(LOCAL_CODE || selectFirstItem);
 
   /* -------------------------------------------------------------------------- */
-  // 신규 유저 데이터
-  const newUserData = {
-    email: emailValue,
-    emailVisibility: true,
-    password: passwordValue,
-    passwordConfirm: passwordCheckValue,
-    nickname: nicknameValue,
-    state: selectFirstItem,
-    city: selectSecondItem
-  };
-  /* -------------------------------------------------------------------------- */
   // 최종 버튼 활성화 조건 버튼 변경 & 데이터 보내기
   const [variant, setVariant] = useState<'submit' | 'disabled'>('disabled');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -187,7 +213,7 @@ const SignUp = () => {
       valiPasswordForm &&
       passwordValue !== '' &&
       passwordValue === passwordCheckValue;
-    const hasNickname = nicknameValue.trim() !== '';
+    const hasNickname = isNicknameVerified;
     const hasLocation = selectFirstItem !== '' && selectSecondItem !== '';
 
     if (hasEmail && hasValidPassword && hasNickname && hasLocation) {
@@ -202,11 +228,33 @@ const SignUp = () => {
     passwordValue,
     passwordCheckValue,
     nicknameValue,
+    isNicknameVerified,
     selectFirstItem,
     selectSecondItem
   ]);
 
-  // 유저 데이터 pb에 쓰기
+  const getSignUpErrorMessage = (error: AuthError) => {
+    const message = error.message.toLowerCase();
+
+    if (message.includes('email address') && message.includes('invalid')) {
+      return '허용되지 않은 이메일 주소입니다. 허용된 도메인으로 다시 시도해주세요.';
+    }
+    if (
+      message.includes('already registered') ||
+      message.includes('user already registered')
+    ) {
+      return '이미 가입된 이메일입니다. 로그인하거나 다른 이메일을 사용해주세요.';
+    }
+    if (
+      message.includes('password') &&
+      message.includes('should be at least')
+    ) {
+      return '비밀번호 조건을 만족하지 않습니다. 영어, 숫자, 특수문자를 포함한 8자 이상으로 입력해주세요.';
+    }
+    return '회원가입에 실패했습니다. 입력 정보를 다시 확인해주세요.';
+  };
+
+  // 유저 데이터 supabase에 쓰기
   const createUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (variant !== 'submit' || isSubmitting) {
@@ -217,13 +265,56 @@ const SignUp = () => {
     setIsSubmitting(true);
 
     try {
-      const userData = await createData('users', newUserData);
-      await pb.collection('users').authWithPassword(emailValue, passwordValue);
+      const normalizedEmail = emailValue.trim();
+
+      const { data, error } = await supabase.auth.signUp({
+        email: normalizedEmail,
+        password: passwordValue,
+        options: {
+          data: {
+            nickname: nicknameValue,
+            state: selectFirstItem,
+            city: selectSecondItem
+          }
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      const userId = data.user?.id;
+
+      if (userId) {
+        try {
+          await upsertProfile(userId, {
+            email: normalizedEmail,
+            nickname: nicknameValue,
+            state: selectFirstItem,
+            city: selectSecondItem,
+            keywords: ''
+          });
+        } catch (profileError) {
+          const pgError = profileError as PostgrestError;
+          if (pgError?.code === '23503') {
+            // 프로필 FK는 이메일 인증 이후 auth.users에 행이 생기면 보강한다.
+            console.warn('[signup] 프로필 생성이 지연되어 로그인 후 다시 시도합니다.');
+          } else {
+            throw profileError;
+          }
+        }
+      }
+
       window.location.href = '/welcome';
-      return userData;
     } catch (error) {
-      console.error('회원가입 유저 데이터 보내기 에러났슈:', error);
-      setSubmitError('회원가입 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      console.error('회원가입 유저 데이터 보내기 에러:', error);
+      if (error instanceof AuthError) {
+        setSubmitError(getSignUpErrorMessage(error));
+      } else {
+        setSubmitError(
+          '회원가입 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
+        );
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -232,12 +323,20 @@ const SignUp = () => {
   /* -------------------------------------------------------------------------- */
   /* -------------------------------------------------------------------------- */
   // jsx 반환
+  useHeaderConfig(
+    () => ({
+      isShowPrev: true,
+      children: '회원가입',
+      empty: true
+    }),
+    []
+  );
+
   return (
     <div className="min-h-nav-safe flex w-full flex-col items-center bg-white md:mt-5">
-      <Header isShowPrev={true} children="회원가입" empty={true} />
       <div className="flex w-full flex-col items-center pt-[66px] md:pt-0">
-        <div className="flex flex-col items-center">
-          <form className="w-[375px] px-5 pb-10" onSubmit={createUser}>
+        <div className="flex w-full justify-center">
+          <form className="w-full max-w-[430px] px-5 pb-10" onSubmit={createUser}>
             <InputForm
               ref={emailRef}
               type="email"
@@ -246,7 +345,6 @@ const SignUp = () => {
               value={emailValue}
               onChange={handleEmail}
               iconDelete={!!emailValue}
-              onClickDoubleCheck={handleUnavailableCheck}
               onClickDelete={handleDeleteEmail}
               alertCase={alertEmail}
               iconDoubleCheck={false}
@@ -289,15 +387,14 @@ const SignUp = () => {
               placeholder="닉네임을 입력해주세요."
               value={nicknameValue}
               onChange={handleNickname}
-              iconDoubleCheck={false}
+              iconDoubleCheck={true}
               iconDelete={!!nicknameValue}
-              onClickDoubleCheck={handleUnavailableCheck}
+              onClickDoubleCheck={handleNicknameDoubleCheck}
               onClickDelete={handleDeleteNickname}
               alertCase={alertNickname}
+              confirmCase={confirmNickname}
+              disabledDoubleCheck={isCheckingNickname || nicknameValue.trim() === ''}
             />
-            <p className="pt-2 text-xs text-gray-400">
-              중복 확인 기능은 현재 사용할 수 없습니다. 완료 버튼을 눌러 가입을 진행해 주세요.
-            </p>
             <div className="mt-2.5 flex h-12 w-full items-center justify-between">
               <input
                 style={{ pointerEvents: 'none', cursor: 'default' }}
@@ -311,22 +408,22 @@ const SignUp = () => {
                 firstName={selectFirstItem || '시/도'}
                 secondName={selectSecondItem || '군/구'}
                 onClickFirst={handleFirstItem} // 컴포넌트 렌더 실행
-            onClickSecond={handleSecondItem}
-            disabledSecond={disabledSecond}
-          />
+                onClickSecond={handleSecondItem}
+                disabledSecond={disabledSecond}
+              />
+            </div>
+            {submitError && (
+              <p className="pt-4 text-sm text-red-500">{submitError}</p>
+            )}
+            <div className="box-border flex flex-col items-center gap-4 pt-20">
+              <ButtonVariable
+                buttonText={isSubmitting ? '처리 중...' : '완료'}
+                variant={isSubmitting ? 'disabled' : variant}
+              />
+            </div>
+          </form>
         </div>
-        {submitError && (
-          <p className="pt-4 text-sm text-red-500">{submitError}</p>
-        )}
-        <div className="box-border flex flex-col items-center gap-4 pt-20">
-          <ButtonVariable
-            buttonText={isSubmitting ? '처리 중...' : '완료'}
-            variant={isSubmitting ? 'disabled' : variant}
-          />
-        </div>
-      </form>
-    </div>
-    {renderFirstList && (
+        {renderFirstList && (
           <SelectCategoryList
             title={'거주하시는 시/도를 선택하세요.'}
             dataList={firstItemList}
