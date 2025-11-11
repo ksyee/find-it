@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/lib/api/supabaseClient';
 import { createCommunityPost } from '@/lib/api/community';
 import { fetchProfileById } from '@/lib/api/profile';
 import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
-import { Hash, Eye } from 'lucide-react';
+import { Hash } from 'lucide-react';
 
 // 1. 유저 닉네임 전달
 // 2 제목, 시간, 내용 ,해시태그 전달
@@ -79,18 +79,13 @@ const CreatePost = () => {
     window.location.href = '/postlist';
   };
 
-  const handleHeaderSubmit = useCallback(() => {
-    formRef.current?.requestSubmit();
-  }, []);
-
   useHeaderConfig(
     () => ({
       isShowPrev: true,
       children: '글쓰기',
-      isShowSubmit: submit,
-      onSubmitClick: handleHeaderSubmit
+      empty: true
     }),
-    [submit, handleHeaderSubmit]
+    []
   );
 
   return (
@@ -161,32 +156,18 @@ const CreatePost = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-4 border-t border-gray-100 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
-                  <button
-                    type="button"
-                    className="flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600"
-                  >
-                    <Eye className="h-4 w-4" />
-                    미리보기
-                  </button>
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      className="rounded-full border border-gray-200 px-4 py-2 text-sm text-gray-700 hover:border-blue-200 hover:text-blue-600"
-                    >
-                      임시저장
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={!submit}
-                      className={`rounded-full px-5 py-2 text-sm font-semibold text-white transition-colors ${
-                        submit ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-300'
-                      }`}
-                    >
-                      게시하기
-                    </button>
-                  </div>
-                </div>
+        <div className="flex flex-col gap-4 border-t border-gray-100 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <div />
+          <button
+            type="submit"
+            disabled={!submit}
+            className={`rounded-full px-5 py-2 text-sm font-semibold text-white transition-colors ${
+              submit ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-300'
+            }`}
+          >
+            게시하기
+          </button>
+        </div>
               </div>
             </form>
           </div>

@@ -13,17 +13,10 @@ const PostDetail = () => {
   );
 
   return (
-    <div className="flex h-nav-safe w-full flex-col items-center">
+    <div className="flex min-h-nav-safe w-full flex-col items-center bg-gray-50">
       <Horizon lineBold="thin" lineWidth="long" />
-      <div className="w-full max-w-[430px] px-6 pt-[66px] md:pt-8">
-        <div
-          className="flex w-full justify-center overflow-auto"
-          style={{
-            height: 'calc(100dvh - 66px - var(--app-nav-bottom) - 16px)'
-          }}
-        >
-          <PostDetailBody />
-        </div>
+      <div className="w-full max-w-[430px] px-6 pt-[66px] pb-20 md:max-w-5xl md:px-0 md:pt-8">
+        <PostDetailBody />
       </div>
     </div>
   );
