@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef } from 'react';
-import loading from '@/assets/loading.svg';
+import { Link } from 'react-router-dom';
+import { Search } from 'lucide-react';
 import ItemBox from '@/entities/item/ui/ItemBox';
 import Skeleton from '@/entities/item/ui/Skeleton';
 import QueryState from '@/shared/ui/QueryState';
 import EmptyState from '@/shared/ui/EmptyState';
+import DotPulse from '@/shared/ui/DotPulse';
 import { useLostItemsInfinite } from '@/entities/lost/model/useLostItemsInfinite';
 import useScrollRestoration from '@/shared/hooks/useScrollRestoration';
 import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
@@ -132,10 +134,20 @@ const LostList = () => {
               />
             )}
             {isFetchingNextPage && (
-              <img src={loading} alt="로딩 중" className="mx-auto" />
+              <div className="py-8">
+                <DotPulse size="md" />
+              </div>
             )}
           </div>
         </div>
+        {/* Search Floating Button - Desktop Only */}
+        <Link
+          to="/searchlost"
+          className="fixed bottom-10 right-10 z-20 hidden rounded-full bg-[#4F7EFF] p-4 shadow-xl transition-all hover:scale-110 hover:bg-[#3B63E3] md:block"
+          aria-label="분실물 상세검색"
+        >
+          <Search className="h-6 w-6 text-white" />
+        </Link>
       </div>
     </QueryState>
   );

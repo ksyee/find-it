@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef } from 'react';
 import useSearchStore from '@/features/search/model/searchStore';
-import loading from '@/assets/loading.svg';
 import ItemBox from '@/entities/item/ui/ItemBox';
 import Skeleton from '@/entities/item/ui/Skeleton';
 import QueryState from '@/shared/ui/QueryState';
 import EmptyState from '@/shared/ui/EmptyState';
+import DotPulse from '@/shared/ui/DotPulse';
 import { useSearchLostInfinite } from '@/features/search/api/useSearchLostInfinite';
 import { useNavigate } from 'react-router-dom';
 import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
@@ -88,19 +88,21 @@ const SearchLostResult = () => {
   );
 
   const loadingFallback = (
-    <div className="flex h-nav-safe w-full flex-col items-center bg-gray-200">
-      <div className="w-[375px]">
+    <div className="flex h-nav-safe w-full flex-col items-center bg-white">
+      <div className="mx-auto w-full max-w-7xl">
         <div
           ref={scrollContainerRef}
           className="overflow-auto"
           style={{
             height:
-              'calc(100dvh - var(--app-nav-top, 0px) - var(--app-nav-bottom) - 16px)'
+              'calc(100dvh - var(--app-nav-top, 0px) - var(--app-nav-bottom))'
           }}
         >
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center lg:grid lg:grid-cols-2 lg:gap-4 md:px-5 lg:px-5">
             {Array.from({ length: 10 }).map((_, index) => (
-              <Skeleton key={index} />
+              <div key={index} className="w-full">
+                <Skeleton />
+              </div>
             ))}
           </div>
         </div>
@@ -114,20 +116,20 @@ const SearchLostResult = () => {
       isError={isError}
       loadingFallback={loadingFallback}
     >
-      <div className="flex h-nav-safe w-full flex-col items-center bg-gray-200">
-        <div className="w-[375px]">
+      <div className="flex h-nav-safe w-full flex-col items-center bg-white">
+        <div className="mx-auto w-full max-w-7xl">
           <div
             ref={scrollContainerRef}
             className="overflow-auto"
             style={{
               height:
-                'calc(100dvh - var(--app-nav-top, 0px) - var(--app-nav-bottom) - 16px)'
+                'calc(100dvh - var(--app-nav-top, 0px) - var(--app-nav-bottom))'
             }}
           >
             {items.length > 0 ? (
-              <ul className="flex flex-col items-center">
+              <ul className="flex flex-col items-center lg:grid lg:grid-cols-2 lg:gap-4 md:px-5 lg:px-5">
                 {items.map((item, index) => (
-                  <li key={`${item.atcId}-${index}`} className="flex justify-center">
+                  <li key={`${item.atcId}-${index}`} className="w-full">
                     <ItemBox item={item} itemType="lost" />
                   </li>
                 ))}
@@ -139,7 +141,9 @@ const SearchLostResult = () => {
               />
             )}
             {isFetchingNextPage && (
-              <img src={loading} alt="로딩 중" className="mx-auto" />
+              <div className="py-8">
+                <DotPulse size="md" />
+              </div>
             )}
           </div>
         </div>
