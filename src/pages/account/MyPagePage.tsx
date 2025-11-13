@@ -159,7 +159,7 @@ const MyPage = () => {
   ];
 
   return (
-    <div className="min-h-nav-safe w-full bg-gray-50 pt-[66px]">
+    <div className="min-h-nav-safe w-full bg-gray-50">
       <div className="mx-auto max-w-4xl px-4 py-6 md:py-10">
         <section className="mb-6 rounded-3xl bg-white p-6 shadow-sm md:p-8">
           <div className="flex flex-col items-center gap-6 md:flex-row md:items-start">

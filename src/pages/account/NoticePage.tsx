@@ -13,7 +13,7 @@ const Notice = () => {
 
   return (
     <>
-      <div className="flex w-full flex-col items-center pt-[66px]">
+      <div className="flex w-full flex-col items-center">
         <ul className="mx-auto my-0 flex w-[315px] flex-col">
           <NoticeItem
             title="찾아줘! 서비스가 오픈했습니다."

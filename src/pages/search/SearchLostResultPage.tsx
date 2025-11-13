@@ -89,12 +89,13 @@ const SearchLostResult = () => {
 
   const loadingFallback = (
     <div className="flex h-nav-safe w-full flex-col items-center bg-gray-200">
-      <div className="w-[375px] pt-[66px]">
+      <div className="w-[375px]">
         <div
           ref={scrollContainerRef}
           className="overflow-auto"
           style={{
-            height: 'calc(100dvh - 66px - var(--app-nav-bottom) - 16px)'
+            height:
+              'calc(100dvh - var(--app-nav-top, 0px) - var(--app-nav-bottom) - 16px)'
           }}
         >
           <div className="flex flex-col items-center">
@@ -114,12 +115,13 @@ const SearchLostResult = () => {
       loadingFallback={loadingFallback}
     >
       <div className="flex h-nav-safe w-full flex-col items-center bg-gray-200">
-        <div className="w-[375px] pt-[66px]">
+        <div className="w-[375px]">
           <div
             ref={scrollContainerRef}
             className="overflow-auto"
             style={{
-              height: 'calc(100dvh - 66px - var(--app-nav-bottom) - 16px)'
+              height:
+                'calc(100dvh - var(--app-nav-top, 0px) - var(--app-nav-bottom) - 16px)'
             }}
           >
             {items.length > 0 ? (

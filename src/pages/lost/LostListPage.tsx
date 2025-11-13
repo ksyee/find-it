@@ -80,12 +80,13 @@ const LostList = () => {
 
   const loadingFallback = (
     <div className="flex h-nav-safe w-full flex-col items-center bg-white">
-      <div className="mx-auto w-full max-w-7xl pt-[66px] md:pt-0">
+      <div className="mx-auto w-full max-w-7xl">
         <div
           ref={scrollContainerRef}
           className="overflow-auto"
           style={{
-            height: 'calc(100dvh - 66px - var(--app-nav-bottom))'
+            height:
+              'calc(100dvh - var(--app-nav-top, 0px) - var(--app-nav-bottom))'
           }}
         >
           <div className="flex flex-col items-center lg:grid lg:grid-cols-2 lg:gap-4 md:px-5 lg:px-5">
@@ -107,12 +108,13 @@ const LostList = () => {
       loadingFallback={loadingFallback}
     >
       <div className="flex h-nav-safe w-full flex-col items-center bg-white">
-        <div className="mx-auto w-full max-w-7xl pt-[66px] md:pt-0">
+        <div className="mx-auto w-full max-w-7xl">
           <div
             ref={scrollContainerRef}
             className="overflow-auto"
             style={{
-              height: 'calc(100dvh - 66px - var(--app-nav-bottom))'
+              height:
+                'calc(100dvh - var(--app-nav-top, 0px) - var(--app-nav-bottom))'
             }}
           >
             {items.length > 0 ? (

@@ -68,8 +68,8 @@ const PostList = () => {
   );
 
   return (
-    <div className="h-nav-safe flex w-full flex-col items-center overflow-hidden bg-white">
-      <div className="w-full flex-1 pt-[66px] md:pt-0">
+    <div className="flex w-full flex-col items-center bg-white">
+      <div className="w-full flex-1">
         <Horizon lineBold="bold" lineWidth="long" />
         <div className="w-full border-b border-gray-100 px-5 py-4 md:py-6">
           <div className="mx-auto flex w-full max-w-4xl flex-col gap-3">
@@ -96,13 +96,7 @@ const PostList = () => {
             )}
           </div>
         </div>
-        <div className="relative mx-auto w-full max-w-7xl">
-          <div
-            className="overflow-auto"
-            style={{
-              height: 'calc(100dvh - 66px - var(--app-nav-bottom) - 16px)'
-            }}
-          >
+        <div className="relative mx-auto w-full max-w-7xl pb-20">
             {isSearching && (
               <p className="py-10 text-center text-sm text-gray-500">
                 검색 중입니다...
@@ -141,7 +135,6 @@ const PostList = () => {
             ) : (
               !isSearching && <PostBox />
             )}
-          </div>
           {isLoggedIn && (
             <Link
               to="/createpost"

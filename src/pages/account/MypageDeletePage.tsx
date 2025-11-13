@@ -120,7 +120,7 @@ const MypageDelete = () => {
   );
 
   return (
-    <div className="mx-auto my-0 flex w-full max-w-[430px] flex-col px-6 pt-[66px]">
+    <div className="mx-auto my-0 flex w-full max-w-[430px] flex-col px-6">
       <form className="stext-left mx-[30px] mt-[20px]" onSubmit={isComplete}>
         <h1 className="leading-7.5 text-xl">
           회원 확인을 위해

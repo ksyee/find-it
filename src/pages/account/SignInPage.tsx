@@ -163,7 +163,7 @@ const SignIn = () => {
 
   return (
     <div className="min-h-nav-safe flex w-full flex-col items-center bg-white md:mt-5">
-      <div className="flex w-full flex-col items-center pt-[66px] md:pt-0">
+      <div className="flex w-full flex-col items-center">
         <div className="flex w-full justify-center">
           <form className="w-full max-w-[430px] px-5 pb-10" onSubmit={handleSignIn}>
             <div className="flex flex-col gap-5">

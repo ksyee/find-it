@@ -15,6 +15,7 @@ const AppLayoutInner = () => {
     (import.meta.env.VITE_APP_BASE_URL as string | undefined)?.trim() ||
     'https://find-it.vercel.app/';
   const headerConfig = useHeaderState();
+  const { visible, ...headerProps } = headerConfig;
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -43,7 +44,22 @@ const AppLayoutInner = () => {
     }
   }, [location.pathname, location.search, navigate]);
 
-  const { visible, ...headerProps } = headerConfig;
+  useEffect(() => {
+    if (typeof document === 'undefined') {
+      return;
+    }
+
+    const { body } = document;
+    if (visible) {
+      body.classList.add('has-mobile-header');
+    } else {
+      body.classList.remove('has-mobile-header');
+    }
+
+    return () => {
+      body.classList.remove('has-mobile-header');
+    };
+  }, [visible]);
 
   return (
     <>

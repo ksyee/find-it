@@ -69,7 +69,7 @@ const Notification = () => {
   );
 
   return (
-    <div className="flex w-full flex-col items-center px-4 pt-[66px] pb-20 md:px-0 md:pt-8">
+    <div className="flex w-full flex-col items-center px-4 pb-20 md:px-0 md:pt-8">
       <div className="w-full max-w-[430px]">
         <Categories onChangeCategory={setActiveCategory} />
         <div className="mt-6">

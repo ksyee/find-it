@@ -274,8 +274,6 @@ const Main = () => {
 
   return (
     <div className="min-h-nav-safe flex flex-col bg-[#f8f8f8]">
-      {/* Top Padding for Mobile */}
-      <div className="h-[66px] md:hidden"></div>
 
       {/* Main Content */}
       <main className="flex-1 pb-20 md:pb-8">
