@@ -11,6 +11,7 @@ import { getSearchLostData } from '@/lib/utils/getAPIData';
 import useSearchStore from '@/features/search/model/searchStore';
 import getFormattedDate from '@/lib/utils/getFormattedDate';
 import { mainCategories, subCategories, areas } from '@/features/search/constants';
+import { ChevronRight, Calendar } from 'lucide-react';
 
 interface SearchData {
   body?: {
@@ -116,70 +117,63 @@ const SearchLostDetail = () => {
   );
 
   return (
-    <div className="flex flex-col items-center">
-      <form>
-        <section className={sectionStyle}>
-          <div className="flex items-center justify-between">
-            <SearchParagraph>분류</SearchParagraph>
-            <div className="h-[25px] w-[274px] gap-[14px] flex justify-end">
-              <div className="relative inline-block">
-                <select
-                  id="mainCategory"
-                  value={selectedMainCategoryValue}
-                  onChange={handleMainCategoriesSelectChange}
-                  className="hover: h-[25px] w-[87px] pl-[14px] text-[10px] flex appearance-none items-center justify-center rounded-full border border-gray-500"
-                >
-                  {mainCategories.map((category) => (
-                    <option key={category.value} value={category.value}>
-                      {category.label}
-                    </option>
-                  ))}
-                </select>
-                <img
-                  src={select}
-                  alt="대분류 선택"
-                  className="right-[10px] top-[7px] h-[11px] w-[9px] pointer-events-none absolute bottom-0"
-                />
-              </div>
-              <div className="relative inline-block">
-                <select
-                  id="subCategory"
-                  value={selectedSubCategoryValue}
-                  onChange={handleSubCategoriesSelectChange}
-                  className="h-[25px] w-[87px] border-gray-350 px-[14px] text-[10px] flex appearance-none items-center justify-center rounded-full border"
-                >
-                  {subCategories[selectedMainCategoryValue] &&
-                    subCategories[selectedMainCategoryValue].map(
-                      (subCategory) => (
-                        <option
-                          key={subCategory.value}
-                          value={subCategory.value}
-                        >
-                          {subCategory.label}
-                        </option>
-                      )
-                    )}
-                </select>
-                <img
-                  src={select}
-                  alt="소분류 선택"
-                  className="right-[10px] top-[7px] h-[11px] w-[9px] pointer-events-none absolute bottom-0"
-                />
+    <div className="min-h-nav-safe flex w-full flex-col bg-[#f8f8f8]">
+      {/* Main Content */}
+      <div className="mx-auto w-full max-w-4xl px-4 py-6 md:py-8">
+        <div className="rounded-3xl bg-white p-6 shadow-sm md:p-8">
+          <form>
+            {/* 분류 */}
+            <div className="mb-8">
+              <label className="mb-4 block text-[#1a1a1a]">분류</label>
+              <div className="flex flex-col gap-3 md:flex-row">
+                <div className="relative flex-1">
+                  <select
+                    id="mainCategory"
+                    value={selectedMainCategoryValue}
+                    onChange={handleMainCategoriesSelectChange}
+                    className="w-full appearance-none rounded-xl border border-gray-200 bg-white px-4 py-3 transition-colors hover:border-[#4F7EFF]"
+                  >
+                    {mainCategories.map((category) => (
+                      <option key={category.value} value={category.value}>
+                        {category.label}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronRight className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#666]" />
+                </div>
+                <div className="relative flex-1">
+                  <select
+                    id="subCategory"
+                    value={selectedSubCategoryValue}
+                    onChange={handleSubCategoriesSelectChange}
+                    className="w-full appearance-none rounded-xl border border-gray-200 bg-white px-4 py-3 transition-colors hover:border-[#4F7EFF]"
+                  >
+                    {subCategories[selectedMainCategoryValue] &&
+                      subCategories[selectedMainCategoryValue].map(
+                        (subCategory) => (
+                          <option
+                            key={subCategory.value}
+                            value={subCategory.value}
+                          >
+                            {subCategory.label}
+                          </option>
+                        )
+                      )}
+                  </select>
+                  <ChevronRight className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#666]" />
+                </div>
               </div>
             </div>
-          </div>
-          <Horizon lineBold="thin" lineWidth="short" />
-        </section>
-        <section className={sectionStyle}>
-          <div className="flex items-center justify-between">
-            <SearchParagraph>분실 지역</SearchParagraph>
-            <div className="h-[25px] w-[274px] gap-[14px] flex justify-end">
-              <div className="relative inline-block">
+
+            {/* 분실 지역 */}
+            <div className="mb-8">
+              <label className="mb-4 block text-[#1a1a1a]">분실 지역</label>
+              <div className="relative">
                 <select
                   id="area"
                   value={selectedAreaValue}
                   onChange={handleAreasSelectChange}
-                  className="hover: h-[25px] w-[87px] pl-[14px] text-[10px] flex appearance-none items-center justify-center rounded-full border border-gray-500"
+                  className="w-full appearance-none rounded-xl border border-gray-200 bg-white px-4 py-3 transition-colors hover:border-[#4F7EFF]"
                 >
                   {areas.map((area) => (
                     <option key={area.value} value={area.value}>
@@ -187,43 +181,56 @@ const SearchLostDetail = () => {
                     </option>
                   ))}
                 </select>
-                <img
-                  src={select}
-                  alt="시/도 선택"
-                  className="right-[10px] top-[7px] h-[11px] w-[9px] pointer-events-none absolute bottom-0"
-                />
+                <ChevronRight className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#666]" />
               </div>
             </div>
-          </div>
-          <Horizon lineBold="thin" lineWidth="short" />
-        </section>
-        <section className={sectionStyle}>
-          <SearchDate
-            selectDate={selectStartDate}
-            setSelectDate={setSelectStartDate}
-          >
-            분실 시작일
-          </SearchDate>
-          <SearchDate
-            selectDate={selectEndDate}
-            setSelectDate={setSelectEndDate}
-          >
-            분실 종료일
-          </SearchDate>
-        </section>
-        <section className={`${sectionStyle} mt-[40px] items-center`}>
-          <ButtonVariable
-            variant="primarySolidThin"
-            buttonText="검색"
-            onClick={handleSearchButtonClick}
-          />
-          <Shortcut
-            link="/searchfind"
-            text="습득물 검색으로 이동하기"
-            alt="습득물물 검색으로 이동하기"
-          />
-        </section>
-      </form>
+
+            {/* Desktop Grid for Dates */}
+            <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
+              {/* 분실 시작일 */}
+              <div>
+                <label className="mb-4 block text-[#1a1a1a]">분실 시작일</label>
+                <SearchDate
+                  selectDate={selectStartDate}
+                  setSelectDate={setSelectStartDate}
+                >
+                  분실 시작일
+                </SearchDate>
+              </div>
+
+              {/* 분실 종료일 */}
+              <div>
+                <label className="mb-4 block text-[#1a1a1a]">분실 종료일</label>
+                <SearchDate
+                  selectDate={selectEndDate}
+                  setSelectDate={setSelectEndDate}
+                >
+                  분실 종료일
+                </SearchDate>
+              </div>
+            </div>
+
+            {/* Search Button */}
+            <button
+              type="button"
+              onClick={handleSearchButtonClick}
+              className="mb-4 w-full rounded-2xl bg-[#4F7EFF] py-4 text-white transition-colors hover:bg-[#3B63E3]"
+            >
+              검색
+            </button>
+
+            {/* Link to Found Items */}
+            <button
+              type="button"
+              onClick={() => navigate('/searchfind')}
+              className="flex w-full items-center justify-center gap-1 text-center text-[#666] transition-colors hover:text-[#4F7EFF]"
+            >
+              <span>습득물 검색으로 이동하기</span>
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };
