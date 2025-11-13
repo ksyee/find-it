@@ -362,13 +362,11 @@ const getBaseUrl = () => {
 
 - **초기 로딩 시간**: ~2.5초 (Vite 번들 최적화)
 - **캐시 히트율**: ~60% (React Query 전략)
-- **번들 사이즈**: ~350KB (gzipped)
 - **Lighthouse 점수**: Performance 90+ / Accessibility 95+
 
 ### 👥 사용자 경험
 
 - **무한 스크롤**: 평균 탐색 시간 **70% 단축**
-- **키워드 알림**: 재방문율 **35% 증가** (추정)
 - **모바일 최적화**: 터치 이벤트 반응 시간 **100ms 이하**
 
 ---
@@ -415,18 +413,15 @@ const getBaseUrl = () => {
 
 ## 📞 Contact
 
-**개발자**: 김상연
-**Email**: your.email@example.com
-**Portfolio**: https://your-portfolio.com
-**LinkedIn**: https://linkedin.com/in/your-profile
+**개발자**: 강선영
+**Email**: tjssud0647@gmail.com
+**Portfolio**: https://ksyee.dev
 
 ---
 
 <div align="center">
 
 ### ⭐ 이 프로젝트가 유용했다면 Star를 눌러주세요!
-
-**Made with ❤️ by FE School 8기 7조**
 
 [🔝 맨 위로 가기](#-찾아줘-find-it)
 
