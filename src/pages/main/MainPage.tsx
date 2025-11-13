@@ -67,7 +67,7 @@ const FindItemBox = () => {
 /* -------------------------------------------------------------------------- */
 
 const CommunityBox: React.FC = () => {
-  const [posts, setPosts] = useState<{ title: string; created: string }[]>([]);
+  const [posts, setPosts] = useState<{ id: string; title: string; created: string }[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -76,6 +76,7 @@ const CommunityBox: React.FC = () => {
         const data = await fetchRecentCommunityPosts(2);
         setPosts(
           data.map((item) => ({
+            id: item.id,
             title: item.title,
             created: item.created_at
           }))
@@ -109,9 +110,10 @@ const CommunityBox: React.FC = () => {
         {posts.length === 0 ? (
           <p className="text-sm text-[#999]">표시할 게시물이 없습니다.</p>
         ) : (
-          posts.map((post, idx) => (
-            <div
-              key={idx}
+          posts.map((post) => (
+            <Link
+              key={post.id}
+              to={`/postdetail/${post.id}`}
               className="-mx-2 flex items-center justify-between rounded-lg border-b border-gray-100 px-2 py-2 transition-colors hover:bg-gray-50"
             >
               <div className="flex-1">
@@ -120,7 +122,7 @@ const CommunityBox: React.FC = () => {
               <span className="text-sm text-[#999]">
                 {getTimeDiff({ createdAt: post.created })}
               </span>
-            </div>
+            </Link>
           ))
         )}
       </div>
