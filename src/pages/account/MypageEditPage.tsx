@@ -301,7 +301,7 @@ const MypageEdit = () => {
     <>
       <form
         ref={formRef}
-        className="mx-auto my-0 flex w-full max-w-[430px] flex-col gap-6 px-6 pt-[66px]"
+        className="mx-auto my-0 flex w-full max-w-[430px] flex-col gap-6 px-6"
         onSubmit={buttonSubmit}
       >
         <input

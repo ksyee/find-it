@@ -89,7 +89,7 @@ const CreatePost = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-[66px] md:pt-0">
+    <div className="min-h-screen bg-gray-50">
       <div className="mx-auto max-w-4xl px-4 py-6 md:px-6 md:py-8">
         <div className="flex flex-col">
           <div className="w-full">
@@ -156,22 +156,21 @@ const CreatePost = () => {
                   </div>
                 </div>
 
-        <div className="flex flex-col gap-4 border-t border-gray-100 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <div />
-          <button
-            type="submit"
-            disabled={!submit}
-            className={`rounded-full px-5 py-2 text-sm font-semibold text-white transition-colors ${
-              submit ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-300'
-            }`}
-          >
-            게시하기
-          </button>
-        </div>
+                <div className="flex flex-col gap-4 border-t border-gray-100 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div />
+                  <button
+                    type="submit"
+                    disabled={!submit}
+                    className={`rounded-full px-5 py-2 text-sm font-semibold text-white transition-colors ${
+                      submit ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-300'
+                    }`}
+                  >
+                    게시하기
+                  </button>
+                </div>
               </div>
             </form>
           </div>
-
         </div>
       </div>
     </div>

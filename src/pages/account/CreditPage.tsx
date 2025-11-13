@@ -56,7 +56,7 @@ const Credit = () => {
   );
 
   return (
-    <div className="flex w-full flex-col items-center pt-[66px]">
+    <div className="flex w-full flex-col items-center">
       <Main />
     </div>
   );

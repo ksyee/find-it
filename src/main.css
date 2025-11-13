@@ -73,6 +73,12 @@
     --app-nav-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
   }
 
+  @media (max-width: 767px) {
+    body.has-mobile-header {
+      --app-nav-top: calc(66px + env(safe-area-inset-top, 0px));
+    }
+  }
+
   @media (min-width: 768px) {
     body.has-navigation {
       --app-nav-top: 64px;
