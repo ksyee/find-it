@@ -50,6 +50,26 @@ const SearchLostResult = () => {
 
   const items = data?.pages?.flatMap((page) => page) ?? [];
 
+  // 데스크탑에서 스크롤이 부족할 경우 자동으로 다음 페이지 로드
+  useEffect(() => {
+    const checkAndLoadMore = () => {
+      const el = scrollContainerRef.current;
+      if (!el || !hasNextPage || isFetchingNextPage) return;
+
+      const { scrollHeight, clientHeight } = el;
+      // 스크롤 가능한 콘텐츠가 뷰포트보다 작거나 거의 같으면 다음 페이지 로드
+      if (scrollHeight <= clientHeight + 100) {
+        void fetchNextPage();
+      }
+    };
+
+    // 아이템이 로드된 후 체크
+    if (items.length > 0) {
+      // DOM 업데이트 후 체크하기 위해 setTimeout 사용
+      setTimeout(checkAndLoadMore, 100);
+    }
+  }, [items.length, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
   const handleScroll = useCallback(
     (event: Event) => {
       const target = event.target as HTMLDivElement;

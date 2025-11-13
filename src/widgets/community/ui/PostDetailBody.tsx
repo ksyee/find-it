@@ -7,6 +7,7 @@ import {
   fetchCommunityPostById
 } from '@/lib/api/community';
 import { fetchProfileById } from '@/lib/api/profile';
+import DotPulse from '@/shared/ui/DotPulse';
 
 const PostDetailBody: React.FC = () => {
   const { id } = useParams();
@@ -36,7 +37,11 @@ const PostDetailBody: React.FC = () => {
     })();
   }, [id]);
 
-  if (isLoading) return <div className="pt-5">로딩중...</div>;
+  if (isLoading) return (
+    <div className="flex justify-center pt-10">
+      <DotPulse size="md" />
+    </div>
+  );
 
   // 데이터가 없을 경우 예외 처리
   if (!thisData) return <div>게시글이 존재하지 않습니다.</div>;
