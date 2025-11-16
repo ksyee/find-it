@@ -2,6 +2,7 @@ import KakaoMap from '@/shared/ui/KakaoMap';
 import { DetailData } from '@/types/types';
 import { Camera, MapPin, Phone, Share2 } from 'lucide-react';
 import { logger } from '@/lib/utils/logger';
+import formatDisplayDate from '@/lib/utils/formatDisplayDate';
 
 interface ItemDetailProps {
   detail: DetailData;
@@ -66,7 +67,9 @@ const ItemDetail = ({ detail }: ItemDetailProps) => {
 
                     <div className="flex border-b border-gray-100 pb-3">
                       <span className="w-20 md:w-24 text-sm md:text-base text-gray-600 shrink-0">습득일자</span>
-                      <span className="text-sm md:text-base text-gray-900">{detail.date}</span>
+                      <span className="text-sm md:text-base text-gray-900">
+                        {formatDisplayDate(detail.date)}
+                      </span>
                     </div>
 
                     <div className="flex border-b border-gray-100 pb-3">

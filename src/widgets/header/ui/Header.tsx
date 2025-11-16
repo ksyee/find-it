@@ -4,7 +4,7 @@ import LOGOTYPE from '@/assets/icons/LOGOTYPE_true.svg';
 import icon_search from '@/assets/icons/icon_search.svg';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { ReactNode } from 'react';
+import { ReactNode, Children } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 export interface HeaderProps {
@@ -154,11 +154,11 @@ const Header = ({
   }
 
   const shouldCenterSymbolOnly = !paragraph && !homeLogo && symbolLogo;
-  const leftItems = [prevIcon, shouldCenterSymbolOnly ? null : symbolLogo].filter(
-    Boolean
+  const leftItems = Children.toArray(
+    [prevIcon, shouldCenterSymbolOnly ? null : symbolLogo].filter(Boolean)
   );
   const centerContent = paragraph ?? homeLogo ?? (shouldCenterSymbolOnly ? symbolLogo : null);
-  const rightItems = [searchIcon, submitButton, emptyBox].filter(Boolean);
+  const rightItems = Children.toArray([searchIcon, submitButton, emptyBox].filter(Boolean));
 
   return (
     <>

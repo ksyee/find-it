@@ -12,6 +12,7 @@ import { fetchProfileById } from '@/lib/api/profile';
 import { fetchRecentCommunityPosts } from '@/lib/api/community';
 import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
 import { logger } from '@/lib/utils/logger';
+import formatDisplayDate from '@/lib/utils/formatDisplayDate';
 const { useState, useEffect } = React;
 
 // 유저 이름 렌더링
@@ -199,7 +200,9 @@ const RecommendedItems: React.FC = () => {
                       </div>
                       <div className="space-y-1">
                         <p className="text-sm text-white/80">습득일자</p>
-                        <p className="font-medium text-white">{item.fdYmd}</p>
+                        <p className="font-medium text-white">
+                          {formatDisplayDate(item.fdYmd)}
+                        </p>
                       </div>
                     </div>
                     <div className="ml-4 flex h-24 w-24 items-center justify-center overflow-hidden rounded-2xl bg-white/20 backdrop-blur-sm">

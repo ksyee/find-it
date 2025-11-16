@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import default_item from '@/assets/itembox/default_item.svg';
+import formatDisplayDate from '@/lib/utils/formatDisplayDate';
 
 type itemTypeProps = {
   itemType: 'get' | 'lost' | 'main';
@@ -49,7 +50,7 @@ const ItemBox = ({ itemType, item }: itemTypeProps) => {
     ) {
       const newGetItem: GetItemType = {
         get_item_name: item.fdPrdtNm,
-        get_date: item.fdYmd,
+        get_date: formatDisplayDate(item.fdYmd),
         storage: item.depPlace,
         get_item_image: item.fdFilePathImg
       };
@@ -61,7 +62,7 @@ const ItemBox = ({ itemType, item }: itemTypeProps) => {
     if (item && item.lstPrdtNm && item.lstYmd && item.lstPlace) {
       const newLostItem: LostItemType = {
         lost_item_name: item.lstPrdtNm,
-        lost_date: item.lstYmd,
+        lost_date: formatDisplayDate(item.lstYmd),
         lost_place: item.lstPlace
       };
       setLostItemData(newLostItem);
