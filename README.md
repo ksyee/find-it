@@ -86,6 +86,14 @@ VITE_APP_BASE_URL=http://localhost:5173
 
 ---
 
+## 🆕 최근 업데이트
+
+- **전역 프로그레스바 도입**: `RouteProgressProvider`와 `TopProgressBar`로 라우팅·무한 스크롤·Suspense 로딩을 하나의 상단 진행 표시로 통합.
+- **로딩 상태 일원화**: `QueryState` + `useProgressIndicator` 조합으로 모든 비동기 쿼리가 자동으로 진행률을 공유하도록 리팩토링.
+- **모바일 헤더 호환성 개선**: 고정 헤더 위에서도 로딩 바가 보이도록 z-index 및 레이아웃을 조정해 일관된 UX 제공.
+
+---
+
 ## 🛠️ 기술 스택
 
 ### Frontend
