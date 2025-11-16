@@ -4,6 +4,7 @@ import AppProviders from '@/app/providers/AppProviders';
 import AppRouter from '@/app/router/AppRouter';
 import ErrorBoundary from '@/shared/ui/ErrorBoundary';
 import { logger } from '@/lib/utils/logger';
+import { Analytics } from '@vercel/analytics/react';
 
 const SPLASH_KEY = 'alreadyVisited';
 
@@ -74,6 +75,7 @@ const App = () => {
     <ErrorBoundary fallback={errorFallback}>
       <AppProviders>
         <AppRouter />
+        <Analytics />
       </AppProviders>
     </ErrorBoundary>
   );
