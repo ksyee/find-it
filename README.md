@@ -349,10 +349,12 @@ const getBaseUrl = () => {
 
 | 상태 | 컴포넌트 | 위치 |
 |------|----------|------|
-| 로딩 중 | `<Skeleton />` | `src/shared/ui/` |
+| 로딩 중 | `<Skeleton />`, 상단 `<TopProgressBar />` | `src/shared/ui/`, `src/shared/ui/progress/TopProgressBar.tsx` |
 | 에러 발생 | `<ErrorBoundary />` | `src/shared/ui/ErrorBoundary.tsx` |
 | 빈 데이터 | `<EmptyState />` | `src/shared/ui/EmptyState.tsx` |
 | 쿼리 상태 통합 | `<QueryState />` | `src/shared/ui/QueryState.tsx` |
+
+상단 프로그레스바는 `RouteProgressProvider`와 `useProgressIndicator` 훅을 통해 라우트 이동 및 모든 비동기 쿼리 로딩을 자동 감지해 일관된 진행 표시를 제공합니다.
 
 ---
 
