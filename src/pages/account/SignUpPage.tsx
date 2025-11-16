@@ -3,11 +3,9 @@ import { AuthError, type PostgrestError } from '@supabase/supabase-js';
 import { supabase } from '@/lib/api/supabaseClient';
 import { fetchProfileByNickname, upsertProfile } from '@/lib/api/profile';
 import InputForm from '@/features/auth/sign-in/ui/InputForm';
-import {
-  GetSidoList,
-  GetGunguList,
-  GetCode
-} from '@/features/auth/sign-in/ui/GetLocalList';
+import useSidoList from '@/features/auth/sign-in/hooks/useSidoList';
+import useGunguList from '@/features/auth/sign-in/hooks/useGunguList';
+import useSidoCode from '@/features/auth/sign-in/hooks/useSidoCode';
 import ButtonVariable from '@/shared/ui/buttons/ButtonVariable';
 import ButtonSelectItem from '@/shared/ui/select/ButtonSelectItem';
 import SelectCategoryList from '@/shared/ui/select/SelectCategoryList';
@@ -195,9 +193,9 @@ const SignUp = () => {
     setSelectSecondItem(item);
   };
   // 뿌릴 데이터 종류 전달
-  const LOCAL_CODE = GetCode(selectFirstItem);
-  const firstItemList = GetSidoList(); // 문자열로 된 배열 반환
-  const secondItemList = GetGunguList(LOCAL_CODE || selectFirstItem);
+  const LOCAL_CODE = useSidoCode(selectFirstItem);
+  const firstItemList = useSidoList(); // 문자열로 된 배열 반환
+  const secondItemList = useGunguList(LOCAL_CODE || selectFirstItem);
 
     // 최종 버튼 활성화 조건 버튼 변경 & 데이터 보내기
   const [variant, setVariant] = useState<'submit' | 'disabled'>('disabled');

@@ -7,11 +7,9 @@ import {
 } from '@/lib/api/profile';
 import { Link } from 'react-router-dom';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  GetSidoList,
-  GetGunguList,
-  GetCode,
-} from '@/features/auth/sign-in/ui/GetLocalList';
+import useSidoList from '@/features/auth/sign-in/hooks/useSidoList';
+import useGunguList from '@/features/auth/sign-in/hooks/useGunguList';
+import useSidoCode from '@/features/auth/sign-in/hooks/useSidoCode';
 import profile from '@/assets/profile.svg';
 import profileIcon from '@/assets/icons/icon_camera.svg';
 import Horizon from '@/shared/ui/layout/Horizon';
@@ -182,9 +180,9 @@ const MypageEdit = () => {
     setSelectSecondItem(item);
   };
   // 뿌릴 데이터 종류 전달
-  const LOCAL_CODE = GetCode(selectFirstItem);
-  const firstItemList = GetSidoList(); // 문자열로 된 배열 반환
-  const secondItemList = GetGunguList(LOCAL_CODE || selectFirstItem);
+  const LOCAL_CODE = useSidoCode(selectFirstItem);
+  const firstItemList = useSidoList(); // 문자열로 된 배열 반환
+  const secondItemList = useGunguList(LOCAL_CODE || selectFirstItem);
 
   // 완료 조건
   const [submit, setSubmit] = useState(false);

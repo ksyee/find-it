@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useRouteProgress } from '@/shared/ui/progress/RouteProgressProvider';
+import { useRouteProgress } from '@/shared/ui/progress/useRouteProgress';
 
 export const useProgressIndicator = (active: boolean) => {
   const { start, done } = useRouteProgress();

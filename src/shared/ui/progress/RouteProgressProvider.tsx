@@ -1,28 +1,16 @@
 import {
   ReactNode,
-  createContext,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
   useState
 } from 'react';
 import { useLocation } from 'react-router-dom';
-
-interface RouteProgressContextValue {
-  start: () => void;
-  done: () => void;
-  isActive: boolean;
-  progress: number;
-}
-
-const RouteProgressContext = createContext<RouteProgressContextValue>({
-  start: () => {},
-  done: () => {},
-  isActive: false,
-  progress: 0
-});
+import {
+  RouteProgressContext,
+  type RouteProgressContextValue
+} from './RouteProgressContext';
 
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
@@ -190,5 +178,3 @@ export const RouteProgressProvider = ({
     </RouteProgressContext.Provider>
   );
 };
-
-export const useRouteProgress = () => useContext(RouteProgressContext);

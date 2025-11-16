@@ -1,4 +1,4 @@
-import { useRouteProgress } from './RouteProgressProvider';
+import { useRouteProgress } from './useRouteProgress';
 
 const TopProgressBar = () => {
   const { isActive, progress } = useRouteProgress();

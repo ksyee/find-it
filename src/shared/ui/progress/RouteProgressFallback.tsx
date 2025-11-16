@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useRouteProgress } from './RouteProgressProvider';
+import { useRouteProgress } from './useRouteProgress';
 
 const RouteProgressFallback = () => {
   const { start, done } = useRouteProgress();
