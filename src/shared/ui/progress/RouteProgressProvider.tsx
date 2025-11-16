@@ -7,10 +7,7 @@ import {
   useState
 } from 'react';
 import { useLocation } from 'react-router-dom';
-import {
-  RouteProgressContext,
-  type RouteProgressContextValue
-} from './RouteProgressContext';
+import { RouteProgressContext } from './RouteProgressContext';
 
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
