@@ -1,6 +1,7 @@
 import { xmlToJson } from '@/lib/utils/xmlToJson';
 import { raiseValue } from '@/lib/utils/raiseValue';
 import { JsonObject, DetailData, JsonValue } from '@/types/types';
+import { logger } from '@/lib/utils/logger';
 
 const DEFAULT_IMAGE =
   'https://www.lost112.go.kr/lostnfs/images/sub/img02_no_img.gif';
@@ -99,13 +100,12 @@ export const getAllData = async (options = {}) => {
         throw new Error('items의 타입이 배열이 아닙니다.');
       }
 
-      // items는 JsonValue[] (JsonArray)이므로 JsonValue로 캐스팅하여 전달
       const result = raiseValue(items as JsonValue);
 
       return result;
     }
   } catch (error) {
-    console.error('error: ' + error);
+    logger.error('getAllData 요청 실패', error);
     return null;
   }
 };
@@ -142,7 +142,7 @@ export const getSearchData = async (query: string, options = {}) => {
       return result;
     }
   } catch (error) {
-    console.error('error: ' + error);
+    logger.error('getSearchData 요청 실패', error);
   }
 };
 
@@ -182,7 +182,7 @@ export const getSearchId = async (id: string): Promise<DetailData | null> => {
 
     return detailData;
   } catch (error) {
-    console.error('error: ' + error);
+    logger.error('getSearchId 요청 실패', error);
     return null;
   }
 };
@@ -219,7 +219,7 @@ export const getSearchFindData = async (query = {}) => {
       return result;
     }
   } catch (error) {
-    console.error('error: ' + error);
+    logger.error('getSearchFindData 요청 실패', error);
   }
 };
 
@@ -255,6 +255,6 @@ export const getSearchLostData = async (query = {}) => {
       return result;
     }
   } catch (error) {
-    console.error('error: ' + error);
+    logger.error('getSearchLostData 요청 실패', error);
   }
 };

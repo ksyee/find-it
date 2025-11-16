@@ -46,8 +46,7 @@ const InputForm: React.ForwardRefRenderFunction<
   },
   ref
 ) => {
-  /* -------------------------------------------------------------------------- */
-  // 인풋 접근시 색상 변경 , 포커스 아웃 효과
+  // 포커스 상태에 따라 보더 색상을 조정한다.
   const [isFocus, setIsFocus] = useState(false);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -67,8 +66,6 @@ const InputForm: React.ForwardRefRenderFunction<
   const activeColor = '#4785ff';
   const borderColor = (isFocus && activeColor) || defaultColor;
 
-  /* -------------------------------------------------------------------------- */
-  // jsx 반환
   return (
     <div
       style={{

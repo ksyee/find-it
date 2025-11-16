@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import useGetToken from '@/lib/utils/useGetToken';
+import { logger } from '@/lib/utils/logger';
 
 const DEFAULT_SIDO_LIST = [
   '서울특별시',
@@ -61,12 +62,10 @@ const DEFAULT_GUNGU_BY_SIDO: Record<string, string[]> = {
   제주특별자치도: ['제주시', '서귀포시']
 };
 
-/* -------------------------------------------------------------------------- */
 // 타입 정의
 interface AddressData {
   result: { addr_name: string; cd: number }[];
 }
-/* -------------------------------------------------------------------------- */
 // 시도 리스트
 export const GetSidoList = () => {
   const accessToken = useGetToken();
@@ -86,13 +85,13 @@ export const GetSidoList = () => {
           throw new Error('시/도 목록을 불러오는데 실패했습니다.');
         }
         const jsonData: AddressData = await response.json();
-        const items = jsonData.result; // 최종 데이터
+        const items = jsonData.result;
         const nameList = items.map((item) => item.addr_name);
         if (nameList.length > 0) {
           setLocalList(nameList);
         }
       } catch (error) {
-        console.error('시도 리스트 뿌리기 에러남: ' + error);
+        logger.error('시도 리스트 불러오기 실패', error);
       }
     };
     getLocalList();
@@ -100,9 +99,7 @@ export const GetSidoList = () => {
   return localList;
 };
 
-/* -------------------------------------------------------------------------- */
 // 시도 코드 가져오기
-
 export const GetCode = (addrName: string) => {
   const accessToken = useGetToken();
   const [localCode, setLocalCode] = useState<string | null>(null);
@@ -134,7 +131,7 @@ export const GetCode = (addrName: string) => {
         const code = data?.find((item) => item.addr_name.includes(addrName))?.cd;
         setLocalCode(code?.toString() ?? fallbackCode ?? null);
       } catch (error) {
-        console.error('시도 코드 가져오기 에러남: ' + error);
+        logger.error('시도 코드 가져오기 실패', error);
         setLocalCode(fallbackCode ?? null);
       }
     };
@@ -143,9 +140,7 @@ export const GetCode = (addrName: string) => {
   return localCode;
 };
 
-/* -------------------------------------------------------------------------- */
-//군구 리스트
-
+// 군/구 리스트
 export const GetGunguList = (codeOrName: string) => {
   const [localList, setLocalList] = useState<string[]>([]);
   const accessToken = useGetToken();
@@ -180,16 +175,15 @@ export const GetGunguList = (codeOrName: string) => {
           throw new Error('군/구 목록을 불러오는데 실패했습니다.');
         }
         const jsonData: AddressData = await response.json();
-        const items = jsonData.result; // 최종데이터
-
-        const nameList = items.map((item) => item.addr_name); // 가져온 데이터에서 이름 뿌리기
+        const items = jsonData.result;
+        const nameList = items.map((item) => item.addr_name);
         if (nameList.length > 0) {
           setLocalList(nameList);
         } else if (fallbackList) {
           setLocalList(fallbackList);
         }
       } catch (error) {
-        console.error('군구 리스트 뿌리기 에러남: ' + error);
+        logger.error('군구 리스트 불러오기 실패', error);
         if (fallbackList) {
           setLocalList(fallbackList);
         }

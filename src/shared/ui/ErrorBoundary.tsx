@@ -1,4 +1,5 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
+import { logger } from '@/lib/utils/logger';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -11,11 +12,7 @@ interface ErrorBoundaryState {
   error?: Error;
 }
 
-/**
- * 애플리케이션에서 발생하는 예기치 않은 오류를 처리하는 컴포넌트
- * 자식 컴포넌트에서 오류가 발생하면 오류 UI를 표시합니다.
- * React 18과 호환되도록 업데이트되었습니다.
- */
+// 애플리케이션에서 발생하는 예기치 않은 오류를 처리하는 컴포넌트
 class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
@@ -23,30 +20,23 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    // 다음 렌더링에서 폴백 UI가 보이도록 상태를 업데이트합니다.
     return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    // 에러 로깅 서비스에 오류를 기록할 수 있습니다.
-    console.error('ErrorBoundary에서 오류가 발생했습니다:', error, errorInfo);
-    
-    // 사용자 정의 오류 처리 함수가 있으면 호출합니다.
+    logger.error('ErrorBoundary에서 오류가 발생했습니다:', error, errorInfo);
+
     if (this.props.onError) {
       this.props.onError(error, errorInfo);
     }
   }
 
-  /**
-   * 오류 상태를 초기화하는 메서드
-   */
   resetErrorBoundary = (): void => {
     this.setState({ hasError: false, error: undefined });
   };
 
   render(): ReactNode {
     if (this.state.hasError) {
-      // 사용자 정의 폴백 UI를 렌더링하거나 기본 오류 메시지를 표시합니다.
       return this.props.fallback || (
         <div 
           role="alert" 

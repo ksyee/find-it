@@ -12,6 +12,7 @@ import ButtonVariable from '@/shared/ui/buttons/ButtonVariable';
 import ButtonSelectItem from '@/shared/ui/select/ButtonSelectItem';
 import SelectCategoryList from '@/shared/ui/select/SelectCategoryList';
 import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
+import { logger } from '@/lib/utils/logger';
 
 // 타입 정의
 type AlertProps =
@@ -28,13 +29,11 @@ type AlertProps =
 type ConfirmProps = '' | 'doubleCheckNickname';
 
 const SignUp = () => {
-  /* -------------------------------------------------------------------------- */
-  // 유효성 검사용 정규식 : 비번 8자이상 20자 이하영문 숫자 특수문자 포함
+  // 이메일과 비밀번호 정규식
   const regex = {
     emailRegex: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
     pwRegex: /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,}$/
   };
-  /* -------------------------------------------------------------------------- */
   const [emailValue, setEmailValue] = useState('');
   const [valiEmailForm, setValiEmailForm] = useState(false);
 
@@ -60,8 +59,7 @@ const SignUp = () => {
   const passwordCheckRef = useRef(null);
   const nicknameRef = useRef(null);
 
-  /* -------------------------------------------------------------------------- */
-  // 이메일 입력 & 정규식 검사
+    // 이메일 입력 & 정규식 검사
   const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const newValue = e.target.value;
@@ -97,79 +95,78 @@ const SignUp = () => {
       setAlertPasswordCheck('');
     }
   };
-  // 닉네임 입력 & 중복검사 문구 지우기, 중복검사 상태 지우기
-const handleNickname = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const newValue = e.target.value;
-  setNicknameValue(newValue);
-  setAlertNickname('');
-  setConfirmNickname('');
-  setIsNicknameVerified(false);
-};
-
-  /* -------------------------------------------------------------------------- */
-
-const handleNicknameDoubleCheck = async () => {
-  const trimmed = nicknameValue.trim();
-  if (!trimmed) {
-    setAlertNickname('invalidValue');
+  const handleNickname = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setNicknameValue(newValue);
+    setAlertNickname('');
     setConfirmNickname('');
     setIsNicknameVerified(false);
-    return;
-  }
+  };
 
-  setIsCheckingNickname(true);
-  setAlertNickname('');
-  setConfirmNickname('');
-
-  try {
-    const records = await fetchProfileByNickname(trimmed);
-    if (records.length > 0) {
-      setAlertNickname('doubleCheckNickname');
+  const handleNicknameDoubleCheck = async () => {
+    const trimmed = nicknameValue.trim();
+    if (!trimmed) {
+      setAlertNickname('invalidValue');
+      setConfirmNickname('');
       setIsNicknameVerified(false);
-    } else {
-      setConfirmNickname('doubleCheckNickname');
-      setIsNicknameVerified(true);
+      return;
     }
-  } catch (error) {
-    console.error('닉네임 중복 확인 실패:', error);
-    setAlertNickname('invalidValue');
-    setIsNicknameVerified(false);
-  } finally {
-    setIsCheckingNickname(false);
-  }
-};
 
-// 비번 보이기 눈 버튼 : 인풋 타입을 텍스트로 바꿈
-const handleEyePassword = () => {
-    setPasswordType((passwordType === 'password' && 'text') || 'password');
+    setIsCheckingNickname(true);
+    setAlertNickname('');
+    setConfirmNickname('');
+
+    try {
+      const records = await fetchProfileByNickname(trimmed);
+      if (records.length > 0) {
+        setAlertNickname('doubleCheckNickname');
+        setIsNicknameVerified(false);
+      } else {
+        setConfirmNickname('doubleCheckNickname');
+        setIsNicknameVerified(true);
+      }
+    } catch (error) {
+      logger.error('닉네임 중복 확인 실패', error);
+      setAlertNickname('invalidValue');
+      setIsNicknameVerified(false);
+    } finally {
+      setIsCheckingNickname(false);
+    }
   };
+
+  const toggleType = (current: string) =>
+    current === 'password' ? 'text' : 'password';
+
+  const handleEyePassword = () => {
+    setPasswordType((current) => toggleType(current));
+  };
+
   const handleEyePasswordCheck = () => {
-    setPasswordCheckType(
-      (passwordCheckType === 'password' && 'text') || 'password'
-    );
+    setPasswordCheckType((current) => toggleType(current));
   };
-  /* -------------------------------------------------------------------------- */
-  // 딜리트 버튼 실행 : 값초기화와 빈문자로 바꾸기
+
   const handleDeleteEmail = () => {
     setEmailValue('');
     setAlertEmail('');
   };
+
   const handleDeletePassword = () => {
     setPasswordValue('');
     setAlertPassword('');
   };
+
   const handleDeletePasswordCheck = () => {
     setPasswordCheckValue('');
     setAlertPasswordCheck('');
   };
-const handleDeleteNickname = () => {
-  setNicknameValue('');
-  setAlertNickname('');
-  setConfirmNickname('');
-  setIsNicknameVerified(false);
-};
 
-  /* -------------------------------------------------------------------------- */
+  const handleDeleteNickname = () => {
+    setNicknameValue('');
+    setAlertNickname('');
+    setConfirmNickname('');
+    setIsNicknameVerified(false);
+  };
+
   // 지역 선택 버튼
 
   // 대분류 버튼 클릭시 대분류 리스트 랜더링 & 소분류 비활성화 & 소분류 초기화
@@ -202,8 +199,7 @@ const handleDeleteNickname = () => {
   const firstItemList = GetSidoList(); // 문자열로 된 배열 반환
   const secondItemList = GetGunguList(LOCAL_CODE || selectFirstItem);
 
-  /* -------------------------------------------------------------------------- */
-  // 최종 버튼 활성화 조건 버튼 변경 & 데이터 보내기
+    // 최종 버튼 활성화 조건 버튼 변경 & 데이터 보내기
   const [variant, setVariant] = useState<'submit' | 'disabled'>('disabled');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -298,7 +294,9 @@ const handleDeleteNickname = () => {
           const pgError = profileError as PostgrestError;
           if (pgError?.code === '23503') {
             // 프로필 FK는 이메일 인증 이후 auth.users에 행이 생기면 보강한다.
-            console.warn('[signup] 프로필 생성이 지연되어 로그인 후 다시 시도합니다.');
+            logger.warn(
+              '[signup] 프로필 생성이 지연되어 로그인 후 다시 시도합니다.'
+            );
           } else {
             throw profileError;
           }
@@ -307,7 +305,7 @@ const handleDeleteNickname = () => {
 
       window.location.href = '/welcome';
     } catch (error) {
-      console.error('회원가입 유저 데이터 보내기 에러:', error);
+      logger.error('회원가입 유저 데이터 전송 오류', error);
       if (error instanceof AuthError) {
         setSubmitError(getSignUpErrorMessage(error));
       } else {
@@ -320,9 +318,7 @@ const handleDeleteNickname = () => {
     }
   };
 
-  /* -------------------------------------------------------------------------- */
-  /* -------------------------------------------------------------------------- */
-  // jsx 반환
+      // jsx 반환
   useHeaderConfig(
     () => ({
       isShowPrev: true,

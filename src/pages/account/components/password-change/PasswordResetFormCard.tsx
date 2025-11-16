@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { AuthError } from '@supabase/supabase-js';
 import ButtonVariable from '@/shared/ui/buttons/ButtonVariable';
 import { supabase } from '@/lib/api/supabaseClient';
+import { logger } from '@/lib/utils/logger';
 
 type RecoveryStatus = 'checking' | 'ready' | 'success' | 'error';
 
@@ -81,7 +82,7 @@ const PasswordResetFormCard = () => {
           setErrorMessage('');
           return;
         } catch (error) {
-          console.error('비밀번호 복구 세션 생성 실패:', error);
+          logger.error('비밀번호 복구 세션 생성 실패', error);
           setStatus('error');
           setErrorMessage('링크가 만료되었거나 이미 사용되었습니다. 다시 요청해주세요.');
           return;
@@ -126,7 +127,7 @@ const PasswordResetFormCard = () => {
       setPassword('');
       setPasswordConfirm('');
     } catch (error) {
-      console.error('비밀번호 재설정 실패:', error);
+      logger.error('비밀번호 재설정 실패', error);
       if (error instanceof AuthError) {
         setFormError(error.message);
       } else {

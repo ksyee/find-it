@@ -11,64 +11,57 @@ interface IconProps {
   onClickEye?: () => void;
   disabledDoubleCheck?: boolean;
 }
-/* -------------------------------------------------------------------------- */
 const DoubleCheck = ({
   isShow,
   onClickDoubleCheck,
-  disabledDoubleCheck,
+  disabledDoubleCheck
 }: IconProps) => {
-  const doubleCheckcolor = (!disabledDoubleCheck && 'black') || '#bcbcbc';
-  if (isShow) {
-    return (
-      <button
-        type="button"
-        onClick={onClickDoubleCheck}
-        disabled={disabledDoubleCheck}
-      >
-        <IconDoubleCheck color={doubleCheckcolor} />
-      </button>
-    );
-  } else {
+  if (!isShow) {
     return null;
   }
+
+  const doubleCheckColor = (!disabledDoubleCheck && 'black') || '#bcbcbc';
+  return (
+    <button
+      type="button"
+      onClick={onClickDoubleCheck}
+      disabled={disabledDoubleCheck}
+    >
+      <IconDoubleCheck color={doubleCheckColor} />
+    </button>
+  );
 };
-/* -------------------------------------------------------------------------- */
+
 const DeleteContent = ({ isShow, onClickDelete }: IconProps) => {
-  if (isShow) {
-    return (
-      <button type="button" onClick={onClickDelete}>
-        <IconDelete color="#4785ff" />
-      </button>
-    );
-  } else {
+  if (!isShow) {
     return null;
   }
+
+  return (
+    <button type="button" onClick={onClickDelete}>
+      <IconDelete color="#4785ff" />
+    </button>
+  );
 };
-/* -------------------------------------------------------------------------- */
+
 const EyeToggle = ({ isShow, onClickEye }: IconProps) => {
   const [isEyeOn, setIsEyeOn] = useState(false);
+
   const toggleEye = () => {
-    setIsEyeOn(!isEyeOn);
-    if (onClickEye) {
-      onClickEye();
-    }
+    setIsEyeOn((prev) => !prev);
+    onClickEye?.();
   };
 
-  if (isShow) {
-    return (
-      <>
-        <button type="button" onClick={toggleEye}>
-          {isEyeOn && <IconEyeOn />}
-          {!isEyeOn && <IconEyeOff />}
-        </button>
-      </>
-    );
-  } else {
+  if (!isShow) {
     return null;
   }
+
+  return (
+    <button type="button" onClick={toggleEye}>
+      {isEyeOn ? <IconEyeOn /> : <IconEyeOff />}
+    </button>
+  );
 };
-/* -------------------------------------------------------------------------- */
-// 최종 실행 함수
 
 interface InputIconButtonProps {
   iconDoubleCheck: boolean;
@@ -86,7 +79,7 @@ export const InputIconButton = ({
   onClickDoubleCheck,
   onClickDelete,
   onClickEye,
-  disabledDoubleCheck,
+  disabledDoubleCheck
 }: InputIconButtonProps) => {
   return (
     <div className="flex gap-[10px] pr-[12px]">

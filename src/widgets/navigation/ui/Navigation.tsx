@@ -56,7 +56,6 @@ const Navigation = () => {
 
   return (
     <>
-      {/* Desktop Top Navigation */}
       <nav className="fixed top-0 right-0 left-0 z-50 hidden border-b border-gray-200 bg-white md:block">
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex h-16 items-center justify-between">
@@ -126,7 +125,6 @@ const Navigation = () => {
         </div>
       </nav>
 
-      {/* Mobile Bottom Navigation */}
       <nav className="fixed right-0 bottom-0 left-0 z-50 border-t border-gray-200 bg-white md:hidden">
         <div className="grid h-16 grid-cols-5">
           <Link

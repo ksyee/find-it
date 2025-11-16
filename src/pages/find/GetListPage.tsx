@@ -139,7 +139,6 @@ const GetList = () => {
             )}
           </div>
         </div>
-        {/* Search Floating Button - Desktop Only */}
         <Link
           to="/searchfind"
           className="fixed bottom-10 right-10 z-20 hidden rounded-full bg-[#4F7EFF] p-4 shadow-xl transition-all hover:scale-110 hover:bg-[#3B63E3] md:block"

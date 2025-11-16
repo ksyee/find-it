@@ -5,11 +5,7 @@ export interface IconDoubleCheckProps {
   className?: string;
 }
 
-/**
- * 중복확인 텍스트를 아이콘 형태로 렌더링하는 컴포넌트
- * @param color - 텍스트 색상
- * @param className - 추가 스타일 클래스
- */
+// 중복확인 텍스트를 아이콘 형태로 렌더링하는 컴포넌트
 const IconDoubleCheck: React.FC<IconDoubleCheckProps> = ({
   color = 'black',
   className = '',

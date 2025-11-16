@@ -13,8 +13,7 @@ const SelectCategoryList = ({
   getSelectItem,
   onClose,
 }: SelectCategoryListProps) => {
-  /* -------------------------------------------------------------------------- */
-  //함수 본문
+    //함수 본문
 
   const [selectedItem, setSelectedItem] = useState<string>("");
   const ulRef = useRef<HTMLUListElement>(null);
@@ -38,8 +37,7 @@ const SelectCategoryList = ({
     </svg>
   );
 
-  /* -------------------------------------------------------------------------- */
-  // 클릭한 아이템값 가져오기
+    // 클릭한 아이템값 가져오기
   const handleClickItem = (
     item: string,
     event?: React.MouseEvent<HTMLAnchorElement>,
@@ -50,8 +48,7 @@ const SelectCategoryList = ({
     onClose();
   };
 
-  /* -------------------------------------------------------------------------- */
-  // 바깥 영역 클릭시 컴포넌트 사라짐
+    // 바깥 영역 클릭시 컴포넌트 사라짐
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -67,8 +64,7 @@ const SelectCategoryList = ({
     };
   }, [onClose]);
 
-  /* -------------------------------------------------------------------------- */
-  // jsx 반환
+    // jsx 반환
   return (
     <div className="fixed inset-0 z-30	bg-[#00000045]">
       <ul

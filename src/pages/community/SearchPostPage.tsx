@@ -7,6 +7,7 @@ import {
   CommunityPost
 } from '@/lib/api/community';
 import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
+import { logger } from '@/lib/utils/logger';
 
 const SearchPost = () => {
   const [inputValue, setInputValue] = useState('');
@@ -18,14 +19,12 @@ const SearchPost = () => {
     inputRef.current?.focus();
   }, []);
 
-  // 인풋 값 잡기
   const inputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const thisValue = e.target.value;
     setInputValue(thisValue);
   };
 
-  // pb 와 비교 검색
   const submitInput = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
@@ -36,12 +35,11 @@ const SearchPost = () => {
         setInputValue('');
         setShowNoResult(data.length === 0);
       } else {
-        // 검색어가 빈 문자열 또는 공백 문자열인 경우에 대한 처리
         setData([]);
         setShowNoResult(false);
       }
     } catch (error) {
-      console.error('게시물 검색 pb 통신 에러 ', error);
+      logger.error('게시물 검색 통신 에러', error);
     }
   };
   const SearchResult = (

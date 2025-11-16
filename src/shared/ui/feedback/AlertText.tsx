@@ -28,12 +28,7 @@ export interface AlertTextProps {
   children?: React.ReactNode;
 }
 
-/**
- * 경고 메시지를 표시하는 컴포넌트
- * @param alertCase - 표시할 경고 메시지 유형
- * @param className - 추가 스타일 클래스
- * @param children - 기본 메시지 대신 직접 지정할 메시지 내용
- */
+// 경고 메시지를 표시하는 컴포넌트
 const AlertText: React.FC<AlertTextProps> = ({
   alertCase = '',
   className = '',

@@ -2,6 +2,7 @@ import { useState, useEffect, SetStateAction } from 'react';
 import Notice from '@/pages/notification/NoticePage';
 import Setting from '@/pages/notification/SettingPage';
 import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
+import { logger } from '@/lib/utils/logger';
 
 interface CategoriesProps {
   onChangeCategory: React.Dispatch<SetStateAction<string>>;
@@ -27,7 +28,7 @@ const Categories = ({ onChangeCategory }: CategoriesProps) => {
         setVoidAlarmIcon(true);
       }
     } catch (error) {
-      console.warn('Failed to read recommendations', error);
+      logger.warn('Failed to read recommendations', error);
       setVoidAlarmIcon(false);
     }
   }, []);

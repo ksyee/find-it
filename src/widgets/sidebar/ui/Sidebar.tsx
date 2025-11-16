@@ -23,7 +23,6 @@ const Sidebar = () => {
   return (
     <aside className="sidebar-desktop bg-gray-100 h-[calc(100vh-72px)] sticky top-[72px] overflow-y-auto">
       <div className="p-6 space-y-6">
-        {/* 검색 섹션 */}
         <section className="bg-white rounded-2xl p-5 shadow-sm">
           <h2 className="text-lg font-semibold mb-4">Search</h2>
           <div className="space-y-3">
@@ -42,7 +41,6 @@ const Sidebar = () => {
           </div>
         </section>
 
-        {/* Lost Items 섹션 */}
         <section className="bg-white rounded-2xl p-5 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold">Lost Items</h2>
@@ -55,7 +53,6 @@ const Sidebar = () => {
           </p>
         </section>
 
-        {/* Community Board 섹션 */}
         <section className="bg-white rounded-2xl p-5 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold">Community Board</h2>

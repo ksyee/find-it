@@ -11,13 +11,10 @@ import { supabase } from '@/lib/api/supabaseClient';
 import { fetchProfileById } from '@/lib/api/profile';
 import { fetchRecentCommunityPosts } from '@/lib/api/community';
 import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
+import { logger } from '@/lib/utils/logger';
 const { useState, useEffect } = React;
 
-/* -------------------------------------------------------------------------- */
-/*                                  유저 이름 렌더링                              */
-/* -------------------------------------------------------------------------- */
-
-// 타입 지정
+// 유저 이름 렌더링
 interface ProfileBoxProps {
   userName?: string;
 }
@@ -44,9 +41,6 @@ const ProfileBox = ({ userName = '방문자' }: ProfileBoxProps) => {
   );
 };
 
-/* -------------------------------------------------------------------------- */
-/*                                 물품 찾기 박스                                */
-/* -------------------------------------------------------------------------- */
 const FindItemBox = () => {
   return (
     <button className="flex flex-1 flex-col items-center justify-center rounded-2xl bg-white p-6 transition-colors hover:bg-gray-50 md:p-8">
@@ -61,10 +55,6 @@ const FindItemBox = () => {
     </button>
   );
 };
-
-/* -------------------------------------------------------------------------- */
-/*                             자유게시판 최근 게시물 렌더링                             */
-/* -------------------------------------------------------------------------- */
 
 const CommunityBox: React.FC = () => {
   const [posts, setPosts] = useState<{ id: string; title: string; created: string }[]>([]);
@@ -82,7 +72,7 @@ const CommunityBox: React.FC = () => {
           }))
         );
       } catch (error) {
-        console.error('자유게시판 데이터를 불러오지 못했습니다.', error);
+        logger.error('자유게시판 데이터를 불러오지 못했습니다.', error);
       } finally {
         setLoading(false);
       }
@@ -130,9 +120,6 @@ const CommunityBox: React.FC = () => {
   );
 };
 
-/* -------------------------------------------------------------------------- */
-/*                             추천 습득물 섹션                                  */
-/* -------------------------------------------------------------------------- */
 const RecommendedItems: React.FC = () => {
   const { data, isLoading } = useFoundItemsInfinite({
     pageSize: 5,
@@ -166,7 +153,6 @@ const RecommendedItems: React.FC = () => {
 
   return (
     <div>
-      {/* Recommendations Section Header */}
       <div className="mb-3 flex items-center justify-between">
         <span className="text-sm text-[#666]">추천을 찾아요!</span>
         <Link
@@ -178,7 +164,6 @@ const RecommendedItems: React.FC = () => {
         </Link>
       </div>
 
-      {/* Carousel */}
       {items.length > 0 ? (
         <Swiper
           modules={[Pagination, Autoplay]}
@@ -240,9 +225,6 @@ const RecommendedItems: React.FC = () => {
   );
 };
 
-/* -------------------------------------------------------------------------- */
-/*                                메인페이지 렌더링                              */
-/* -------------------------------------------------------------------------- */
 const Main = () => {
   const [userNickname, setUserNickname] = useState('방문자');
 
@@ -260,7 +242,7 @@ const Main = () => {
           setUserNickname(user.email);
         }
       } catch (error) {
-        console.error('사용자 정보를 불러오지 못했습니다.', error);
+        logger.error('사용자 정보를 불러오지 못했습니다.', error);
       }
     };
 
@@ -276,22 +258,12 @@ const Main = () => {
 
   return (
     <div className="min-h-nav-safe flex flex-col bg-[#f8f8f8]">
-
-      {/* Main Content */}
       <main className="flex-1 pb-20 md:pb-8">
         <div className="mx-auto max-w-7xl px-4 py-6 md:py-8">
-          {/* Main Grid Layout */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
-            {/* Top Left - Profile */}
             <ProfileBox userName={userNickname} />
-
-            {/* Top Right - Find Item */}
             <FindItemBox />
-
-            {/* Bottom Left - Recommendations */}
             <RecommendedItems />
-
-            {/* Bottom Right - Community Board */}
             <div className="space-y-6 md:space-y-8">
               <CommunityBox />
             </div>

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import ErrorBoundary from '@/shared/ui/ErrorBoundary';
 import { Splash } from '@/pages';
 import AppProviders from '@/app/providers/AppProviders';
 import AppRouter from '@/app/router/AppRouter';
+import ErrorBoundary from '@/shared/ui/ErrorBoundary';
+import { logger } from '@/lib/utils/logger';
 
 const SPLASH_KEY = 'alreadyVisited';
 
@@ -32,7 +33,7 @@ const getInitialSplashState = () => {
     );
     return !alreadyVisited;
   } catch (error) {
-    console.warn('Failed to read splash state from localStorage', error);
+    logger.warn('Failed to read splash state from localStorage', error);
     return true;
   }
 };
@@ -55,7 +56,7 @@ const App = () => {
         try {
           window.localStorage.setItem(SPLASH_KEY, JSON.stringify(true));
         } catch (error) {
-          console.warn('Failed to persist splash state', error);
+          logger.warn('Failed to persist splash state', error);
         }
       }, 3500);
     }

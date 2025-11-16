@@ -59,11 +59,6 @@ export const getFoundItems = async (
     };
   }
 
-  console.log('[getFoundItems] request', {
-    url: `${API_BASE_URL}/found-items?page=${page}&size=${size}`,
-    headers: requestOptions.headers ?? null
-  });
-
   const response = await fetch(
     `${API_BASE_URL}/found-items?page=${page}&size=${size}`,
     requestOptions
@@ -74,8 +69,6 @@ export const getFoundItems = async (
   }
 
   const json = (await response.json()) as GetFoundItemsResponse;
-
-  console.log('[getFoundItems] response', json);
 
   if (!json.success || !Array.isArray(json.data)) {
     throw new Error(json.message || '습득물 데이터 형식이 올바르지 않습니다.');

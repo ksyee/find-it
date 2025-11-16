@@ -3,6 +3,7 @@ import Horizon from '@/shared/ui/layout/Horizon';
 import icon_delete from '@/assets/icons/icon_delete.svg';
 import ModalComp from '@/shared/ui/modal/ModalComp';
 import { supabase } from '@/lib/api/supabaseClient';
+import { logger } from '@/lib/utils/logger';
 
 interface KeywordType {
   keywords: string;
@@ -65,7 +66,7 @@ const Setting = () => {
           });
         }
       } catch (error) {
-        console.error('사용자 키워드를 불러오지 못했습니다.', error);
+        logger.error('사용자 키워드를 불러오지 못했습니다.', error);
       }
     })();
   }, []);

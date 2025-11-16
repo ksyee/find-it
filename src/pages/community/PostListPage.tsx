@@ -6,8 +6,9 @@ import { getTimeDiff } from '@/lib/utils/getTimeDiff';
 import SearchBar from '@/shared/ui/SearchBar';
 import Horizon from '@/shared/ui/layout/Horizon';
 import { searchCommunityPosts, CommunityPost } from '@/lib/api/community';
-import { supabase } from '@/lib/api/supabaseClient';
 import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
+import { supabase } from '@/lib/api/supabaseClient';
+import { logger } from '@/lib/utils/logger';
 
 const PostList = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -35,7 +36,7 @@ const PostList = () => {
       const data = await searchCommunityPosts(sanitizedQuery);
       setSearchResults(data);
     } catch (error) {
-      console.error('게시물 검색 오류', error);
+      logger.error('게시물 검색 오류', error);
       setSearchError(
         '검색 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'
       );

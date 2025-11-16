@@ -1,17 +1,13 @@
 import { useEffect, useState } from 'react';
 import useGetToken from '@/lib/utils/useGetToken';
+import { logger } from '@/lib/utils/logger';
 
-/**
- * 주소 데이터 응답 타입
- */
+// 주소 데이터 응답 타입
 interface AddressData {
   result: { addr_name: string; cd: number }[];
 }
 
-/**
- * 시/도 목록을 가져오는 훅
- * @returns 시/도 이름 목록 배열
- */
+// 시/도 목록을 가져오는 훅
 export const useSidoList = () => {
   const accessToken = useGetToken();
   const [localList, setLocalList] = useState<string[]>([]);
@@ -33,7 +29,7 @@ export const useSidoList = () => {
         const nameList = items.map((item) => item.addr_name); // 가져온 데이터에서 이름 뿌리기
         setLocalList(nameList);
       } catch (error) {
-        console.error('시도 리스트 가져오기 에러:', error);
+        logger.error('시도 리스트 가져오기 에러', error);
       }
     };
     getLocalList();
@@ -42,11 +38,7 @@ export const useSidoList = () => {
   return localList;
 };
 
-/**
- * 주소 이름에 해당하는 코드를 가져오는 훅
- * @param addrName 주소 이름
- * @returns 주소 코드 (string | null)
- */
+// 주소 이름에 해당하는 코드를 가져오는 훅
 export const useLocationCode = (addrName: string) => {
   const accessToken = useGetToken();
   const [localCode, setLocalCode] = useState<string | null>(null);
@@ -69,7 +61,7 @@ export const useLocationCode = (addrName: string) => {
         )?.cd;
         setLocalCode(code?.toString() || null);
       } catch (error) {
-        console.error('시도 코드 가져오기 에러:', error);
+        logger.error('시도 코드 가져오기 에러', error);
       }
     };
     getLocalList();
@@ -78,11 +70,7 @@ export const useLocationCode = (addrName: string) => {
   return localCode;
 };
 
-/**
- * 군/구 목록을 가져오는 훅
- * @param codeParam 시/도 코드
- * @returns 군/구 이름 목록 배열
- */
+// 군/구 목록을 가져오는 훅
 export const useGunguList = (codeParam: string) => {
   const [localList, setLocalList] = useState<string[]>([]);
   const accessToken = useGetToken();
@@ -104,7 +92,7 @@ export const useGunguList = (codeParam: string) => {
         const nameList = items.map((item) => item.addr_name); // 가져온 데이터에서 이름 뿌리기
         setLocalList(nameList);
       } catch (error) {
-        console.error('군구 리스트 가져오기 에러:', error);
+        logger.error('군구 리스트 가져오기 에러', error);
       }
     };
     getLocalList();

@@ -1,6 +1,7 @@
 import KakaoMap from '@/shared/ui/KakaoMap';
 import { DetailData } from '@/types/types';
 import { Camera, MapPin, Phone, Share2 } from 'lucide-react';
+import { logger } from '@/lib/utils/logger';
 
 interface ItemDetailProps {
   detail: DetailData;
@@ -19,7 +20,7 @@ const ItemDetail = ({ detail }: ItemDetailProps) => {
         await navigator.share(sharePayload);
         return;
       } catch (error) {
-        console.warn('native share failed, fallback to clipboard', error);
+        logger.warn('Native share failed, fallback to clipboard', error);
       }
     }
 
@@ -27,7 +28,7 @@ const ItemDetail = ({ detail }: ItemDetailProps) => {
       await navigator.clipboard.writeText(sharePayload.url);
       alert('공유하기를 지원하지 않는 브라우저입니다. 링크를 클립보드에 복사했어요.');
     } catch (clipboardError) {
-      console.error('clipboard write failed', clipboardError);
+      logger.error('Clipboard write failed', clipboardError);
       alert('링크 복사에도 실패했습니다. 다시 시도해 주세요.');
     }
   };
@@ -37,9 +38,7 @@ const ItemDetail = ({ detail }: ItemDetailProps) => {
       <div className="max-w-6xl mx-auto">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="grid md:grid-cols-2 gap-0">
-            {/* 왼쪽: 이미지 및 상세 정보 */}
             <div className="p-4 md:p-8 md:border-r md:border-gray-200">
-              {/* 이미지 영역 */}
               <div className="bg-gray-100 rounded-lg aspect-4/3 flex items-center justify-center mb-4 md:mb-8 overflow-hidden">
                 {detail.image ? (
                   <img
@@ -55,7 +54,6 @@ const ItemDetail = ({ detail }: ItemDetailProps) => {
                 )}
               </div>
 
-              {/* 상세 정보 */}
               <div className="space-y-4 md:space-y-6">
                 <div>
                   <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">{detail.item_name}</h2>
@@ -90,10 +88,8 @@ const ItemDetail = ({ detail }: ItemDetailProps) => {
               </div>
             </div>
 
-            {/* 오른쪽: 지도 및 보관 정보 */}
             <div className="p-4 md:p-8 bg-gray-50">
               <div className="space-y-4 md:space-y-6">
-                {/* 보관 장소 정보 */}
                 <div>
                   <h3 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">보관장소</h3>
                   <div className="bg-white rounded-lg p-3 md:p-4 space-y-3">
@@ -108,7 +104,6 @@ const ItemDetail = ({ detail }: ItemDetailProps) => {
                   </div>
                 </div>
 
-                {/* 지도 */}
                 <div>
                   <div className="bg-gray-200 rounded-lg aspect-4/3 flex items-center justify-center relative overflow-hidden">
                     <KakaoMap place={detail.storage} className="w-full h-full" />
@@ -118,7 +113,6 @@ const ItemDetail = ({ detail }: ItemDetailProps) => {
                   </p>
                 </div>
 
-                {/* 공유하기 버튼 */}
                 <button
                   type="button"
                   onClick={handleShare}

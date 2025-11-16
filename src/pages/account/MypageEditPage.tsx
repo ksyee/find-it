@@ -20,6 +20,7 @@ import ButtonSelectItem from '@/shared/ui/select/ButtonSelectItem';
 import SelectCategoryList from '@/shared/ui/select/SelectCategoryList';
 import ModalComp from '@/shared/ui/modal/ModalComp';
 import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
+import { logger } from '@/lib/utils/logger';
 
 // 타입 정의
 type AlertProps =
@@ -31,8 +32,7 @@ type AlertProps =
 type ConfirmProps = 'doubleCheckEmail' | 'doubleCheckNickname' | '';
 
 const MypageEdit = () => {
-  /* -------------------------------------------------------------------------- */
-  // 유효성 검사
+    // 유효성 검사
   const [userNickname, setUserNickname] = useState('');
   const [userId, setUserId] = useState('');
   const [userAvatar, setUserAvatar] = useState('');
@@ -58,15 +58,14 @@ const MypageEdit = () => {
           setUserGungu(profileData.city ?? '');
         }
       } catch (error) {
-        console.error('프로필 정보를 불러오지 못했습니다.', error);
+        logger.error('프로필 정보를 불러오지 못했습니다.', error);
       }
     };
 
     void loadProfile();
   }, []);
 
-  /* -------------------------------------------------------------------------- */
-  // 입력값
+    // 입력값
 
   const [nicknameValue, setNicknameValue] = useState('');
   const [valiNickDouble, setValiNickDouble] = useState(false);
@@ -111,7 +110,7 @@ const MypageEdit = () => {
       setConfirmNickname('doubleCheckNickname');
       setValiNickDouble(true);
     } catch (error) {
-      console.log(error);
+      logger.error('닉네임 중복 확인에 실패했습니다.', error);
     }
   };
   // 삭제 버튼
@@ -147,7 +146,7 @@ const MypageEdit = () => {
           '비밀번호 재설정 메일을 전송했습니다. 메일함을 확인해주세요.'
         );
       } catch (error) {
-        console.error('비밀번호 재설정 메일 전송 실패:', error);
+        logger.error('비밀번호 재설정 메일 전송 실패', error);
         setPasswordResetMessage('메일을 보내지 못했습니다. 잠시 후 다시 시도해주세요.');
       } finally {
         setIsSendingPasswordReset(false);
@@ -155,8 +154,7 @@ const MypageEdit = () => {
     })();
   };
 
-  /* -------------------------------------------------------------------------- */
-  // 지역 선택 버튼
+    // 지역 선택 버튼
 
   // 대분류 버튼 클릭시 대분류 리스트 랜더링 & 소분류 비활성화 & 소분류 초기화
   const [renderFirstList, setRenderFirstList] = useState(false);
@@ -205,7 +203,7 @@ const MypageEdit = () => {
   const buttonSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!userId) {
-      console.warn('사용자 정보를 찾을 수 없어 프로필을 수정할 수 없습니다.');
+      logger.warn('사용자 정보를 찾을 수 없어 프로필을 수정할 수 없습니다.');
       return;
     }
 
@@ -225,7 +223,7 @@ const MypageEdit = () => {
 
       setIsModalOpen(true);
     } catch (error) {
-      console.error('프로필 수정 페이지 통신 오류:', error);
+      logger.error('프로필 수정 페이지 통신 오류', error);
       setPWModalOpen(true);
     }
   };
@@ -235,8 +233,7 @@ const MypageEdit = () => {
     window.location.href = '/mypage';
   };
 
-  /* -------------------------------------------------------------------------- */
-  // 프로필 사진 변경
+    // 프로필 사진 변경
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const AVATAR_BUCKET = 'avatars';
 
@@ -269,7 +266,7 @@ const MypageEdit = () => {
       await updateProfile(userId, { avatar_url: publicUrl });
       setUserAvatar(publicUrl);
     } catch (error) {
-      console.error('프로필 변경 데이터 통신 오류:', error);
+      logger.error('프로필 변경 데이터 통신 오류', error);
       alert('프로필 이미지를 업로드하지 못했습니다. 잠시 후 다시 시도해주세요.');
     }
   };
@@ -278,9 +275,7 @@ const MypageEdit = () => {
     fileInputRef.current?.click();
   };
 
-  /* -------------------------------------------------------------------------- */
-  /* -------------------------------------------------------------------------- */
-  const avatarSrc = userAvatar || profile;
+      const avatarSrc = userAvatar || profile;
 
   const handleHeaderSubmit = useCallback(() => {
     formRef.current?.requestSubmit();

@@ -5,8 +5,8 @@ import { fetchProfileById, upsertProfile } from '@/lib/api/profile';
 import InputForm from '@/features/auth/sign-in/ui/InputForm';
 import ButtonVariable from '@/shared/ui/buttons/ButtonVariable';
 import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
+import { logger } from '@/lib/utils/logger';
 
-/* -------------------------------------------------------------------------- */
 //알럿창 타입 정의
 type AlertProps =
   | 'doubleCheckEmail'
@@ -20,7 +20,6 @@ type AlertProps =
   | '';
 
 const SignIn = () => {
-  /* -------------------------------------------------------------------------- */
   // 변수
   const [emailValue, setEmailValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
@@ -32,7 +31,6 @@ const SignIn = () => {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
 
-  /* -------------------------------------------------------------------------- */
   // 입력 함수
   const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -48,7 +46,9 @@ const SignIn = () => {
 
   // 비밀번호 눈 보이기
   const handleEyePassword = () => {
-    setPasswordType((passwordType === 'password' && 'text') || 'password');
+    setPasswordType((current) =>
+      current === 'password' ? 'text' : 'password'
+    );
   };
 
   // 삭제 버튼
@@ -60,7 +60,6 @@ const SignIn = () => {
     setPasswordValue('');
     setAlertPassword('');
   };
-  /* -------------------------------------------------------------------------- */
   // 회원가입 버튼
   const handleSignUp = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -112,7 +111,7 @@ const SignIn = () => {
         });
       } catch (profileError) {
         // 최초 로그인 시점에만 일시적으로 실패할 수 있으므로 사용자 흐름을 막지 않는다.
-        console.warn('로그인 중 프로필 동기화 실패:', profileError);
+        logger.warn('로그인 중 프로필 동기화 실패:', profileError);
       }
     };
 
@@ -149,8 +148,6 @@ const SignIn = () => {
       }
     }
   };
-  /* -------------------------------------------------------------------------- */
-  /* -------------------------------------------------------------------------- */
   // 마크업
   useHeaderConfig(
     () => ({

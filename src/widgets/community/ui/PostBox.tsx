@@ -5,6 +5,7 @@ import {
   fetchRecentCommunityPosts,
   CommunityPost
 } from '@/lib/api/community';
+import { logger } from '@/lib/utils/logger';
 
 const PostBox = () => {
   const [posts, setPosts] = useState<CommunityPost[]>([]);
@@ -21,7 +22,7 @@ const PostBox = () => {
           setPosts(data);
         }
       } catch (err) {
-        console.error('커뮤니티 게시물 불러오기 실패', err);
+        logger.error('커뮤니티 게시물 불러오기 실패', err);
         if (isMounted) {
           setError('게시물을 불러오는 중 문제가 발생했습니다.');
         }

@@ -89,10 +89,8 @@ const AppLayoutInner = () => {
 
       {visible && <Header {...headerProps} />}
 
-      {/* 네비게이션 */}
       <Navigation />
 
-      {/* 메인 콘텐츠 영역 */}
       <div className="w-full min-h-nav-safe pt-nav-safe pb-nav-safe">
         <Outlet />
       </div>

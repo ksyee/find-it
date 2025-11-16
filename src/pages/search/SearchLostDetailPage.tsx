@@ -1,17 +1,17 @@
 import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
 import SearchDate from '@/features/search/ui/SearchDate';
-import Horizon from '@/shared/ui/layout/Horizon';
-import SearchParagraph from '@/features/search/ui/SearchParagraph';
-import ButtonVariable from '@/shared/ui/buttons/ButtonVariable';
-import Shortcut from '@/widgets/shortcut/ui/Shortcut';
-import select from '@/assets/search/select.svg';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getSearchLostData } from '@/lib/utils/getAPIData';
 import useSearchStore from '@/features/search/model/searchStore';
 import getFormattedDate from '@/lib/utils/getFormattedDate';
-import { mainCategories, subCategories, areas } from '@/features/search/constants';
-import { ChevronRight, Calendar } from 'lucide-react';
+import {
+  mainCategories,
+  subCategories,
+  areas
+} from '@/features/search/constants';
+import { ChevronRight } from 'lucide-react';
+import { logger } from '@/lib/utils/logger';
 
 interface SearchData {
   body?: {
@@ -37,8 +37,6 @@ const SearchLostDetail = () => {
   } = useSearchStore();
 
   const navigate = useNavigate();
-
-  const sectionStyle = 'flex flex-col gap-[20px] justify-center pt-[20px]';
 
   const handleMainCategoriesSelectChange = (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -94,7 +92,7 @@ const SearchLostDetail = () => {
           setResultData(resultData ?? null);
         }
       } catch (error) {
-        console.error('error: ' + error);
+        logger.error('분실물 상세 검색 데이터 요청 실패', error);
       }
     };
 
@@ -118,11 +116,9 @@ const SearchLostDetail = () => {
 
   return (
     <div className="min-h-nav-safe flex w-full flex-col bg-[#f8f8f8]">
-      {/* Main Content */}
       <div className="mx-auto w-full max-w-4xl px-4 py-6 md:py-8">
         <div className="rounded-3xl bg-white p-6 shadow-sm md:p-8">
           <form>
-            {/* 분류 */}
             <div className="mb-8">
               <label className="mb-4 block text-[#1a1a1a]">분류</label>
               <div className="flex flex-col gap-3 md:flex-row">
@@ -165,7 +161,6 @@ const SearchLostDetail = () => {
               </div>
             </div>
 
-            {/* 분실 지역 */}
             <div className="mb-8">
               <label className="mb-4 block text-[#1a1a1a]">분실 지역</label>
               <div className="relative">
@@ -185,9 +180,7 @@ const SearchLostDetail = () => {
               </div>
             </div>
 
-            {/* Desktop Grid for Dates */}
             <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
-              {/* 분실 시작일 */}
               <div>
                 <label className="mb-4 block text-[#1a1a1a]">분실 시작일</label>
                 <SearchDate
@@ -198,7 +191,6 @@ const SearchLostDetail = () => {
                 </SearchDate>
               </div>
 
-              {/* 분실 종료일 */}
               <div>
                 <label className="mb-4 block text-[#1a1a1a]">분실 종료일</label>
                 <SearchDate
@@ -210,7 +202,6 @@ const SearchLostDetail = () => {
               </div>
             </div>
 
-            {/* Search Button */}
             <button
               type="button"
               onClick={handleSearchButtonClick}
@@ -219,7 +210,6 @@ const SearchLostDetail = () => {
               검색
             </button>
 
-            {/* Link to Found Items */}
             <button
               type="button"
               onClick={() => navigate('/searchfind')}

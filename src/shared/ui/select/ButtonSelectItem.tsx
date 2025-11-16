@@ -16,8 +16,7 @@ const ButtonSelectItem = ({
   onClickSecond,
   disabledSecond,
 }: ButtonSelectItemProps) => {
-  /* -------------------------------------------------------------------------- */
-  // 버튼 선택시 스타일변경 & 상위 프롭 함수 실행
+    // 버튼 선택시 스타일변경 & 상위 프롭 함수 실행
   const [isActiveFirst, setIsActiveFirst] = useState(false);
   const [secondTextColor, setSecondTextColor] = useState('#666');
   const [secondBorderColor, setSecondBorderColor] = useState('#666');
@@ -45,8 +44,7 @@ const ButtonSelectItem = ({
   const firstTextColor = (!isActiveFirst && 'black') || isActiveColor;
   const firstBorderColor = (!isActiveFirst && '#666') || isActiveColor;
 
-  /* -------------------------------------------------------------------------- */
-  // jsx 반환
+    // jsx 반환
   return (
     <div className="flex gap-[10px]">
       <button

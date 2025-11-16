@@ -8,6 +8,7 @@ import {
 } from '@/lib/api/community';
 import { fetchProfileById } from '@/lib/api/profile';
 import DotPulse from '@/shared/ui/DotPulse';
+import { logger } from '@/lib/utils/logger';
 
 const PostDetailBody: React.FC = () => {
   const { id } = useParams();
@@ -30,18 +31,20 @@ const PostDetailBody: React.FC = () => {
           setThisData(null);
         }
       } catch (error) {
-        console.error('자유게시판 글을 불러오지 못했습니다.', error);
+        logger.error('자유게시판 글을 불러오지 못했습니다.', error);
       } finally {
         setIsLoading(false);
       }
     })();
   }, [id]);
 
-  if (isLoading) return (
-    <div className="flex justify-center pt-10">
-      <DotPulse size="md" />
-    </div>
-  );
+  if (isLoading) {
+    return (
+      <div className="flex justify-center pt-10">
+        <DotPulse size="md" />
+      </div>
+    );
+  }
 
   // 데이터가 없을 경우 예외 처리
   if (!thisData) return <div>게시글이 존재하지 않습니다.</div>;

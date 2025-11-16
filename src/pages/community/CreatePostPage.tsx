@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { supabase } from '@/lib/api/supabaseClient';
 import { createCommunityPost } from '@/lib/api/community';
 import { fetchProfileById } from '@/lib/api/profile';
-import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
 import { Hash } from 'lucide-react';
-
-// 1. 유저 닉네임 전달
-// 2 제목, 시간, 내용 ,해시태그 전달
+import { supabase } from '@/lib/api/supabaseClient';
+import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
+import { logger } from '@/lib/utils/logger';
 
 const formatHashtags = (value: string) =>
   value
@@ -15,7 +13,6 @@ const formatHashtags = (value: string) =>
     .map((tag) => (tag.startsWith('#') ? tag : `#${tag}`))
     .join(' ');
 
-/* -------------------------------------------------------------------------- */
 const CreatePost = () => {
   const [submit, setSubmit] = useState(false);
   const [titleValue, setTitleValue] = useState('');
@@ -40,15 +37,13 @@ const CreatePost = () => {
           setUserNickname(user.email);
         }
       } catch (error) {
-        console.error('사용자 정보를 불러오지 못했습니다.', error);
+        logger.error('사용자 정보를 불러오지 못했습니다.', error);
       }
     };
 
     void loadUser();
   }, []);
 
-  // 글 데이터
-  // 완료 조건
   useEffect(() => {
     const isReady =
       titleValue.trim() !== '' &&
@@ -59,7 +54,6 @@ const CreatePost = () => {
 
   const formRef = useRef<HTMLFormElement | null>(null);
 
-  //완료 버튼
   const buttonSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!userId || !userNickname) {

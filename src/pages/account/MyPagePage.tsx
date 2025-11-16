@@ -9,6 +9,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import profile from '@/assets/profile.svg';
 import { Bookmark, FileText, Mail, Search, Bell, Edit2 } from 'lucide-react';
 import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
+import { logger } from '@/lib/utils/logger';
 
 declare global {
   interface Window {
@@ -24,12 +25,10 @@ type AuthUserInfo = Pick<
   'id' | 'nickname' | 'email' | 'avatar_url' | 'state' | 'city'
 >;
 
-/* -------------------------------------------------------------------------- */
 // 서비스 준비 알럿
 const showAlert = () => {
   alert('서비스 준비 중이에요, 조금만 기다려주세요! 😀');
 };
-/* -------------------------------------------------------------------------- */
 
 const MyPage = () => {
   const location = useLocation();
@@ -67,7 +66,7 @@ const MyPage = () => {
           });
         }
       } catch (error) {
-        console.error('프로필 정보를 불러오지 못했습니다.', error);
+        logger.error('프로필 정보를 불러오지 못했습니다.', error);
       }
     };
 
@@ -115,7 +114,7 @@ const MyPage = () => {
         setHasRecommendationAlert(true);
       }
     } catch (error) {
-      console.warn('Failed to read recommendations', error);
+      logger.warn('Failed to read recommendations', error);
       setHasRecommendationAlert(false);
     }
   }, []);

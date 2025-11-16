@@ -1,9 +1,10 @@
-import { supabase } from '@/lib/api/supabaseClient';
 import { useEffect, useRef, useState } from 'react';
 import InputFormSlim from '@/features/auth/sign-in/ui/InputFormSlim';
 import ButtonVariable from '@/shared/ui/buttons/ButtonVariable';
 import ModalComp from '@/shared/ui/modal/ModalComp';
+import { supabase } from '@/lib/api/supabaseClient';
 import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
+import { logger } from '@/lib/utils/logger';
 
 // 타입 정의
 type AlertProps =
@@ -35,7 +36,6 @@ const MypageDelete = () => {
     void loadUser();
   }, []);
 
-  // 이메일 변수
   const [emailValue, setEmailValue] = useState('');
   const [emailCheckValue, setEmailCheckValue] = useState('');
   const [alertEmail, setAlertEmail] = useState<AlertProps>();
@@ -43,21 +43,18 @@ const MypageDelete = () => {
   const emailRef = useRef(null);
   const emailCheckRef = useRef(null);
 
-  // 이메일1 입력값
   const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const newValue = e.target.value;
     setEmailValue(newValue);
     setAlertEmail('');
   };
-  // 이메일2 입력갑 확인 & 1과 비교
   const handleEmailCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const newValue = e.target.value;
     setEmailCheckValue(newValue);
   };
 
-  // 이메일 삭제 버튼
   const handleDeleteEmail = () => {
     setEmailValue('');
     setAlertEmail('');
@@ -65,8 +62,6 @@ const MypageDelete = () => {
   const handleDeleteEmailCheck = () => {
     setEmailCheckValue('');
   };
-  /* -------------------------------------------------------------------------- */
-  // 최종 버튼 활성화 조건 = 입력값 동일시 & 버튼 변경
   const [variant, setVariant] = useState<'submit' | 'disabled'>('disabled');
   useEffect(() => {
     if (
@@ -80,7 +75,6 @@ const MypageDelete = () => {
     }
   }, [emailValue, emailCheckValue]);
 
-  // 최종 버튼 && 유저 이메일 비교
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const deleteData = async () => {
@@ -89,7 +83,7 @@ const MypageDelete = () => {
       await supabase.from('profiles').delete().eq('id', userId);
       await supabase.auth.signOut();
     } catch (error) {
-      console.error('사용자 데이터 삭제 오류', error);
+      logger.error('사용자 데이터 삭제 오류', error);
     }
   };
 
@@ -108,8 +102,6 @@ const MypageDelete = () => {
     window.location.href = '/';
   };
 
-  /* -------------------------------------------------------------------------- */
-  /* -------------------------------------------------------------------------- */
   useHeaderConfig(
     () => ({
       isShowPrev: true,

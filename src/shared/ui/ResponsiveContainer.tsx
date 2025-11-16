@@ -5,12 +5,7 @@ interface ResponsiveContainerProps {
   className?: string;
 }
 
-/**
- * 반응형 컨테이너 컴포넌트
- * - 모바일: 375px 고정
- * - 태블릿: 768px max
- * - 데스크탑: 1280px max
- */
+// 반응형 컨테이너 컴포넌트
 const ResponsiveContainer = ({
   children,
   className = ''

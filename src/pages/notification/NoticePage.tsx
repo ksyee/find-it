@@ -5,6 +5,7 @@ import { GetDetailData } from '@/types/types';
 import none_alarm from '@/assets/none_alarm.svg';
 import icon_next from '@/assets/icons/icon_next.svg';
 import { supabase } from '@/lib/api/supabaseClient';
+import { logger } from '@/lib/utils/logger';
 interface KeywordType {
   keywords: string;
 }
@@ -54,7 +55,7 @@ const Notice = () => {
           });
         }
       } catch (error) {
-        console.error('사용자 키워드를 불러오지 못했습니다.', error);
+        logger.error('사용자 키워드를 불러오지 못했습니다.', error);
       }
     };
     fetchUserKeyword();

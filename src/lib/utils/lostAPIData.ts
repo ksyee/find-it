@@ -1,6 +1,7 @@
 import { xmlToJson } from '@/lib/utils/xmlToJson';
 import { raiseValue } from '@/lib/utils/raiseValue';
 import { DetailData, JsonObject } from '@/types/types';
+import { logger } from '@/lib/utils/logger';
 
 function isJsonObject(value: unknown): value is JsonObject {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -78,7 +79,7 @@ export const lostAllData = async (option = {}) => {
       return result;
     }
   } catch (error) {
-    console.error('error: ' + error);
+    logger.error('lostAllData 요청 실패', error);
   }
 };
 
@@ -114,7 +115,7 @@ export const lostSearchData = async (query: string, options = {}) => {
       return result;
     }
   } catch (error) {
-    console.error('error: ' + error);
+    logger.error('lostSearchData 요청 실패', error);
   }
 };
 
@@ -165,6 +166,6 @@ export const lostSearchId = async (id: string) => {
       }
     }
   } catch (error) {
-    console.error('error: ' + error);
+    logger.error('lostSearchId 요청 실패', error);
   }
 };
