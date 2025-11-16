@@ -4,10 +4,10 @@ import ItemBox from '@/entities/item/ui/ItemBox';
 import Skeleton from '@/entities/item/ui/Skeleton';
 import QueryState from '@/shared/ui/QueryState';
 import EmptyState from '@/shared/ui/EmptyState';
-import DotPulse from '@/shared/ui/DotPulse';
 import { useSearchFindInfinite } from '@/features/search/api/useSearchFindInfinite';
 import { useNavigate } from 'react-router-dom';
 import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
+import { useProgressIndicator } from '@/shared/hooks/useProgressIndicator';
 
 const SearchFindResult = () => {
   const {
@@ -49,6 +49,7 @@ const SearchFindResult = () => {
   );
 
   const items = data?.pages?.flatMap((page) => page) ?? [];
+  useProgressIndicator(isFetchingNextPage);
 
   // 데스크탑에서 스크롤이 부족할 경우 자동으로 다음 페이지 로드
   useEffect(() => {
@@ -160,11 +161,7 @@ const SearchFindResult = () => {
                 description="조건을 조정해 다시 시도해 주세요."
               />
             )}
-            {isFetchingNextPage && (
-              <div className="py-8">
-                <DotPulse size="md" />
-              </div>
-            )}
+            {isFetchingNextPage && <div className="py-8" />}
           </div>
         </div>
       </div>

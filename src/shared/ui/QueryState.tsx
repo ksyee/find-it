@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { useProgressIndicator } from '@/shared/hooks/useProgressIndicator';
 
 interface QueryStateProps {
   isLoading: boolean;
@@ -21,6 +22,8 @@ const QueryState = ({
   errorFallback,
   children
 }: QueryStateProps) => {
+  useProgressIndicator(isLoading);
+
   if (isLoading) {
     return <>{loadingFallback}</>;
   }

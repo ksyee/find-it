@@ -2,7 +2,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode, Suspense } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
-import FullScreenSpinner from '@/shared/ui/FullScreenSpinner';
+import { RouteProgressProvider } from '@/shared/ui/progress/RouteProgressProvider';
+import TopProgressBar from '@/shared/ui/progress/TopProgressBar';
+import RouteProgressFallback from '@/shared/ui/progress/RouteProgressFallback';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,7 +24,12 @@ const AppProviders = ({ children }: AppProvidersProps) => {
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
         <BrowserRouter>
-          <Suspense fallback={<FullScreenSpinner />}>{children}</Suspense>
+          <RouteProgressProvider>
+            <TopProgressBar />
+            <Suspense fallback={<RouteProgressFallback />}>
+              {children}
+            </Suspense>
+          </RouteProgressProvider>
         </BrowserRouter>
       </HelmetProvider>
     </QueryClientProvider>

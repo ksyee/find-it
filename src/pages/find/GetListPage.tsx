@@ -5,10 +5,10 @@ import ItemBox from '@/entities/item/ui/ItemBox';
 import Skeleton from '@/entities/item/ui/Skeleton';
 import QueryState from '@/shared/ui/QueryState';
 import EmptyState from '@/shared/ui/EmptyState';
-import DotPulse from '@/shared/ui/DotPulse';
 import { useFoundItemsInfinite } from '@/entities/found/model/useFoundItemsInfinite';
 import useScrollRestoration from '@/shared/hooks/useScrollRestoration';
 import { useHeaderConfig } from '@/widgets/header/model/HeaderConfigContext';
+import { useProgressIndicator } from '@/shared/hooks/useProgressIndicator';
 
 const GetList = () => {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -28,6 +28,7 @@ const GetList = () => {
 
   const items = data?.pages?.flatMap((page) => page) ?? [];
   useScrollRestoration(scrollContainerRef, 'getlist');
+  useProgressIndicator(isFetchingNextPage);
 
   // 데스크탑에서 스크롤이 부족할 경우 자동으로 다음 페이지 로드
   useEffect(() => {
@@ -132,11 +133,7 @@ const GetList = () => {
                 description="새로운 습득물 정보를 기다리고 있어요."
               />
             )}
-            {isFetchingNextPage && (
-              <div className="py-8">
-                <DotPulse size="md" />
-              </div>
-            )}
+            {isFetchingNextPage && <div className="py-8" />}
           </div>
         </div>
         <Link

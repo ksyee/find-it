@@ -7,14 +7,15 @@ import {
   fetchCommunityPostById
 } from '@/lib/api/community';
 import { fetchProfileById } from '@/lib/api/profile';
-import DotPulse from '@/shared/ui/DotPulse';
 import { logger } from '@/lib/utils/logger';
+import { useProgressIndicator } from '@/shared/hooks/useProgressIndicator';
 
 const PostDetailBody: React.FC = () => {
   const { id } = useParams();
   const [thisData, setThisData] = useState<CommunityPost | null>(null);
   const [authorAvatar, setAuthorAvatar] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
+  useProgressIndicator(isLoading);
 
   useEffect(() => {
     (async () => {
@@ -39,11 +40,7 @@ const PostDetailBody: React.FC = () => {
   }, [id]);
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center pt-10">
-        <DotPulse size="md" />
-      </div>
-    );
+    return null;
   }
 
   // 데이터가 없을 경우 예외 처리
