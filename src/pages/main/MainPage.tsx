@@ -58,7 +58,9 @@ const FindItemBox = () => {
 };
 
 const CommunityBox: React.FC = () => {
-  const [posts, setPosts] = useState<{ id: string; title: string; created: string }[]>([]);
+  const [posts, setPosts] = useState<
+    { id: string; title: string; created: string }[]
+  >([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -81,14 +83,6 @@ const CommunityBox: React.FC = () => {
     void fetchPosts();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="rounded-3xl border border-gray-200 bg-white p-6 md:p-8">
-        <p className="text-[#666]">게시물을 불러오는 중입니다...</p>
-      </div>
-    );
-  }
-
   return (
     <div className="rounded-3xl border border-gray-200 bg-white p-6 md:mt-8 md:p-8">
       <div className="mb-4 flex items-center justify-between">
@@ -98,7 +92,9 @@ const CommunityBox: React.FC = () => {
         </Link>
       </div>
       <div className="space-y-4">
-        {posts.length === 0 ? (
+        {loading ? (
+          <p className="text-sm text-[#666]">게시물을 불러오는 중입니다...</p>
+        ) : posts.length === 0 ? (
           <p className="text-sm text-[#999]">표시할 게시물이 없습니다.</p>
         ) : (
           posts.map((post) => (
