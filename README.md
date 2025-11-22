@@ -1,5 +1,3 @@
-<div align="center">
-
 # 🔍 찾아줘! (Find It)
 
 ### 전국 유실물을 한눈에, 잃어버린 소중함을 되찾다
@@ -12,7 +10,15 @@
 
 [📱 데모 체험하기](https://find-it-alpha.vercel.app/) • [📖 API 명세서](API_SPEC.md) • [🗒️ 개발 노트](find-it.md)
 
-</div>
+---
+
+## 📸 미리보기
+
+|                      메인 화면                       |                    검색 화면                    |
+| :--------------------------------------------------: | :---------------------------------------------: |
+|     ![Main Screen](public/screenshots/home.png)      | ![Search Screen](public/screenshots/search.png) |
+|                    **알림 설정**                     |                  **커뮤니티**                   |
+| ![Notification](public/screenshots/notification.png) | ![Community](public/screenshots/community.png)  |
 
 ---
 
@@ -24,33 +30,37 @@
 
 ### 💡 핵심 가치
 
-| 문제 | 해결 |
-|------|------|
+| 문제                          | 해결                                                |
+| ----------------------------- | --------------------------------------------------- |
 | 🔍 **기관마다 흩어진 데이터** | 경찰청 API 통합으로 전국 습득물/분실물 한 번에 검색 |
-| ⏰ **반복적인 수동 검색** | 키워드 알림 시스템으로 자동 알림 (최대 10개) |
-| 🤝 **경험 공유 부재** | 커뮤니티 탭으로 분실/습득 경험 공유 |
-| 📱 **모바일 최적화 부족** | 반응형 디자인으로 언제 어디서나 접근 가능 |
+| ⏰ **반복적인 수동 검색**     | 키워드 알림 시스템으로 자동 알림 (최대 10개)        |
+| 🤝 **경험 공유 부재**         | 커뮤니티 탭으로 분실/습득 경험 공유                 |
+| 📱 **모바일 최적화 부족**     | 반응형 디자인으로 언제 어디서나 접근 가능           |
 
 ---
 
 ## ✨ 주요 기능
 
 ### 🔎 **통합 검색 시스템**
+
 - 전국 습득물/분실물 실시간 조회
 - 지역·기간·카테고리 필터링
 - 무한 스크롤 + 스크롤 위치 복원으로 끊김 없는 탐색
 
 ### 🔔 **스마트 키워드 알림**
+
 - 사용자 맞춤 키워드 최대 10개 등록
 - Supabase 기반 실시간 추천 알림
 - 중복 방지 및 로컬 캐싱 최적화
 
 ### 💬 **커뮤니티 & 공유**
+
 - 분실/습득 경험 공유 게시판
 - 실시간 댓글 시스템
 - 메인 페이지에서 최신 글 노출
 
 ### 🗺️ **위치 기반 안내**
+
 - Kakao 지도 API 연동
 - 보관 장소 시각화
 - 연락처 및 상세 정보 제공
@@ -78,6 +88,7 @@ pnpm dev
 ```
 
 ### 📋 필수 환경 변수
+
 ```env
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
@@ -97,22 +108,26 @@ VITE_APP_BASE_URL=http://localhost:5173
 ## 🛠️ 기술 스택
 
 ### Frontend
+
 ![React](https://img.shields.io/badge/React_18-61DAFB?style=flat-square&logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind_v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
 
 ### State & Data Fetching
+
 ![React Query](https://img.shields.io/badge/TanStack_Query-FF4154?style=flat-square&logo=reactquery&logoColor=white)
 ![Zustand](https://img.shields.io/badge/Zustand-443E38?style=flat-square)
 ![React Router](https://img.shields.io/badge/React_Router-CA4245?style=flat-square&logo=reactrouter&logoColor=white)
 
 ### Backend & API
+
 ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat-square&logo=supabase&logoColor=white)
 ![Police API](https://img.shields.io/badge/경찰청_Open_API-003580?style=flat-square)
 ![Kakao Maps](https://img.shields.io/badge/Kakao_Maps-FFCD00?style=flat-square&logo=kakao&logoColor=black)
 
 ### DevOps & Tools
+
 ![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white)
 ![pnpm](https://img.shields.io/badge/pnpm-F69220?style=flat-square&logo=pnpm&logoColor=white)
 ![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=flat-square&logo=eslint&logoColor=white)
@@ -187,26 +202,48 @@ src/
 #### 📌 주요 기여
 
 **1. 공공 데이터 파이프라인 설계 (100%)**
+
 - XML → JSON 변환 레이어 구축 (`xmlToJson` → `raiseValue` → `getAPIData`)
 - 타입 안전성 보장 및 재사용 가능한 fetch 추상화
 - 관련 파일: `src/lib/utils/xmlToJson.ts`, `src/lib/utils/getAPIData.ts`
 
 **2. 무한 스크롤 & UX 최적화 (100%)**
+
 - React Query `useInfiniteQuery` 기반 페이지네이션
 - 스크롤 위치 복원 훅 구현으로 탐색 경험 개선
 - 관련 파일: `src/entities/found/model/useFoundItemsInfinite.ts`, `src/shared/hooks/useScrollRestoration.ts`
 
 **3. 키워드 알림 시스템 (100%)**
+
 - Supabase + 로컬스토리지 하이브리드 캐싱
 - 최대 10개 제한, 중복 방지 로직
 - 관련 파일: `src/pages/notification/SettingPage.tsx`
 
 **4. 배포 환경 안정화 (100%)**
+
 - HTTPS Mixed Content 이슈 해결
 - Vercel SPA 라우팅 설정 (`vercel.json`)
 - API 프록시 구성으로 CORS 우회
 
+**5. 반응형 레이아웃 개발 (100%)**
+
+- 모바일/데스크탑 반응형 디자인 구현 및 뷰 최적화
+- 관련 파일: `src/app/layouts/AppLayout.tsx`
+
+**6. 전역 로딩 UX 개선 (100%)**
+
+- `RouteProgressProvider` 도입으로 페이지 이동 및 데이터 페칭 시 상단 프로그레스바 통합
+- 도트 펄스 로딩 컴포넌트 추가로 시각적 피드백 강화
+- 관련 파일: `src/shared/ui/progress/TopProgressBar.tsx`
+
+**7. 성능 및 배포 최적화 (100%)**
+
+- Vercel Web Analytics 연동
+- Fast Refresh 경고 해결을 위한 컨텍스트 분리
+- 카카오맵 SDK 로드 지연 처리로 초기 로딩 속도 개선
+
 #### 🤝 협업 기여
+
 - Git 브랜치 전략 수립 및 PR 리뷰
 - 공통 컴포넌트 설계 가이드라인 제시
 - 팀원 코드 리뷰 및 트러블슈팅 지원
@@ -255,16 +292,17 @@ export const getAPIData = async (params: APIParams) => {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5,        // 5분간 fresh
-      gcTime: 1000 * 60 * 30,          // 30분간 캐시 유지
-      refetchOnWindowFocus: false,     // 포커스 시 재요청 방지
-      retry: 1,                        // 1회만 재시도
-    },
-  },
+      staleTime: 1000 * 60 * 5, // 5분간 fresh
+      gcTime: 1000 * 60 * 30, // 30분간 캐시 유지
+      refetchOnWindowFocus: false, // 포커스 시 재요청 방지
+      retry: 1 // 1회만 재시도
+    }
+  }
 });
 ```
 
 **성과**:
+
 - 평균 페이지 로딩 시간 **70% 감소** (추정)
 - 네트워크 요청 **50% 절감** (캐시 히트율 기준)
 
@@ -311,7 +349,7 @@ const getBaseUrl = () => {
 
   // HTTPS 환경이면 프록시 사용
   if (!isDev && window.location.protocol === 'https:') {
-    return '/api';  // Vercel rewrite로 프록시
+    return '/api'; // Vercel rewrite로 프록시
   }
   return apiUrl;
 };
@@ -327,7 +365,7 @@ const getBaseUrl = () => {
     },
     {
       "source": "/(.*)",
-      "destination": "/index.html"  // SPA fallback
+      "destination": "/index.html" // SPA fallback
     }
   ]
 }
@@ -355,12 +393,12 @@ const getBaseUrl = () => {
 
 ### 🎭 로딩 상태 UX
 
-| 상태 | 컴포넌트 | 위치 |
-|------|----------|------|
-| 로딩 중 | `<Skeleton />`, 상단 `<TopProgressBar />` | `src/shared/ui/`, `src/shared/ui/progress/TopProgressBar.tsx` |
-| 에러 발생 | `<ErrorBoundary />` | `src/shared/ui/ErrorBoundary.tsx` |
-| 빈 데이터 | `<EmptyState />` | `src/shared/ui/EmptyState.tsx` |
-| 쿼리 상태 통합 | `<QueryState />` | `src/shared/ui/QueryState.tsx` |
+| 상태           | 컴포넌트                                  | 위치                                                          |
+| -------------- | ----------------------------------------- | ------------------------------------------------------------- |
+| 로딩 중        | `<Skeleton />`, 상단 `<TopProgressBar />` | `src/shared/ui/`, `src/shared/ui/progress/TopProgressBar.tsx` |
+| 에러 발생      | `<ErrorBoundary />`                       | `src/shared/ui/ErrorBoundary.tsx`                             |
+| 빈 데이터      | `<EmptyState />`                          | `src/shared/ui/EmptyState.tsx`                                |
+| 쿼리 상태 통합 | `<QueryState />`                          | `src/shared/ui/QueryState.tsx`                                |
 
 상단 프로그레스바는 `RouteProgressProvider`와 `useProgressIndicator` 훅을 통해 라우트 이동 및 모든 비동기 쿼리 로딩을 자동 감지해 일관된 진행 표시를 제공합니다.
 
@@ -384,16 +422,19 @@ const getBaseUrl = () => {
 ## 🔮 향후 계획
 
 ### 🎯 단기 (1개월)
+
 - [ ] SSR 도입으로 초기 로딩 개선 (Next.js 마이그레이션 검토)
 - [ ] 이메일/푸시 알림 연동
 - [ ] PWA 지원 (오프라인 모드)
 
 ### 🚀 중기 (3개월)
+
 - [ ] AI 기반 유사 이미지 검색
 - [ ] 챗봇 상담 시스템
 - [ ] 다국어 지원 (i18n)
 
 ### 💡 장기 (6개월+)
+
 - [ ] 모바일 앱 개발 (React Native)
 - [ ] 블록체인 기반 분실물 소유권 증명
 - [ ] 정부 기관 공식 파트너십
@@ -411,10 +452,13 @@ const getBaseUrl = () => {
 ## 🤝 기여 & 라이선스
 
 ### 팀 레포지토리
+
 **Original Team Project**: [FRONTENDSCHOOL8/find-it](https://github.com/FRONTENDSCHOOL8/find-it)
 
 ### 개인 리팩토링
+
 **Current Repository**: 2025년 5월부터 개인 리팩토링 진행 중
+
 - 모바일 헤더 레이아웃 시스템 개선
 - SPA 라우팅 안정화
 - 코드 품질 개선 (TypeScript strict mode)
